@@ -1,0 +1,169 @@
+.page-head {
+    padding: 70px 0 45px;
+    background: linear-gradient(90deg, #11140f, #080908);
+    border-bottom: 1px solid #282a25
+}
+
+.page-head span {
+    color: #b89252;
+    font-size: 9px;
+    letter-spacing: 1px
+}
+
+.page-head h1 {
+    font-family: Anton, sans-serif;
+    font-size: 50px;
+    font-weight: 400;
+    margin: 12px 0 5px
+}
+
+.page-head p {
+    color: #8d8d8d
+}
+
+.contact-body {
+    padding: 50px 0 80px
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 24px;
+    align-items: start
+}
+
+.box-title {
+    font-family: Anton;
+    font-weight: 400;
+    font-size: 20px;
+    letter-spacing: .5px;
+    margin: 0 0 6px
+}
+
+.info-card {
+    border: 1px solid #34352f;
+    background: #0d0e0d;
+    padding: 30px 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px
+}
+
+.info-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px
+}
+
+.info-row b {
+    font-size: 20px;
+    color: #d3a04e;
+    width: 26px;
+    text-align: center
+}
+
+.info-row strong {
+    display: block;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: #999;
+    margin-bottom: 4px
+}
+
+.info-row span {
+    font-size: 14px;
+    color: #eee
+}
+
+.login-box {
+    border: 1px solid #34352f;
+    background: #0d0e0d;
+    padding: 30px 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px
+}
+
+.login-box label {
+    font-size: 13px;
+    color: #999;
+    letter-spacing: .5px;
+    text-transform: uppercase
+}
+
+.login-box input,
+.login-box textarea {
+    width: 100%;
+    background: #101110;
+    border: 1px solid #363731;
+    color: #fff;
+    padding: 12px;
+    font-size: 15px;
+    font-family: inherit;
+    resize: vertical
+}
+
+.login-box input:focus,
+.login-box textarea:focus {
+    outline: 1px solid #c99a4a
+}
+
+.error {
+    color: #e15b5b;
+    font-size: 11px
+}
+
+.primary-btn {
+    width: 100%;
+    border: 0;
+    background: #d3a04e;
+    color: #111;
+    padding: 14px;
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    margin-top: 6px
+}
+
+.success-state {
+    text-align: center;
+    padding: 20px 10px
+}
+
+.success-icon {
+    width: 48px;
+    height: 48px;
+    line-height: 48px;
+    border-radius: 50%;
+    background: #16321f;
+    color: #3fbf60;
+    font-size: 22px;
+    margin: 0 auto 16px
+}
+
+.success-state p {
+    color: #999;
+    font-size: 13px;
+    margin: 10px 0 22px
+}
+
+@media(max-width:900px) {
+    .contact-grid {
+        grid-template-columns: 1fr
+    }
+}
+
+@media(max-width:650px) {
+    .page-head {
+        padding: 45px 20px 30px
+    }
+
+    .page-head h1 {
+        font-size: 38px
+    }
+
+    .contact-body {
+        padding: 30px 12px 50px
+    }
+}

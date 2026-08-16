@@ -1,0 +1,44 @@
+@if (product(); as product) {
+<section class="detail container">
+  <div class="breadcrumbs"><a routerLink="/">HOME</a> / <a routerLink="/products">SHOP</a> / {{ product.name }}</div>
+  <div class="detail-grid">
+    <div class="gallery">
+      <div class="main-image"><img [src]="product.image" [alt]="product.name" fetchpriority="high"></div>
+      <div class="thumbs"><img [src]="product.image" alt="" loading="lazy"><img [src]="product.image" alt="" loading="lazy"><img [src]="product.image"
+          alt="" loading="lazy"></div>
+    </div>
+    <div class="info">
+      @if (product.badge) { <span class="badge">{{ product.badge }}</span> }
+      <h1>{{ product.name }}</h1>
+      <div class="rating">★★★★★ <span>{{ product.rating }} · {{ product.reviews }} reviews</span></div>
+      <div class="price">₹{{ product.price.toLocaleString('en-IN') }} @if (product.oldPrice) { <del>₹{{
+          product.oldPrice.toLocaleString('en-IN') }}</del> }</div>
+      <p class="description">{{ product.description }}</p>
+      <div class="option">
+        <div><strong>SIZE</strong><a>Size Guide</a></div>
+        <div class="sizes">@for (size of product.sizes; track size) { <button [class.active]="selectedSize() === size"
+            (click)="selectedSize.set(size)">{{ size }}</button> }</div>
+      </div>
+      <div class="option"><strong>COLOR</strong>
+        <div class="colors">@for (color of product.colors; track color) { <button
+            [class.active]="selectedColor() === color" (click)="selectedColor.set(color)">{{ color }}</button> }</div>
+      </div>
+      <div class="buy-row">
+        <div class="qty"><button (click)="changeQuantity(-1)">−</button><span>{{ quantity() }}</span><button
+            (click)="changeQuantity(1)">+</button></div><button class="add-cart" (click)="addToCart()">ADD TO CART
+          <span>→</span></button>
+      </div>
+      @if (added()) { <div class="added">✓ Added to your cart successfully.</div> }
+      <div class="benefits">
+        <div><b>✓</b><span><strong>FREE SHIPPING</strong>On orders above ₹999</span></div>
+        <div><b>↺</b><span><strong>EASY RETURNS</strong>7-day return policy</span></div>
+        <div><b>♧</b><span><strong>SECURE PAYMENT</strong>100% protected checkout</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+} @else {
+<div class="not-found">
+  <h1>Product not found</h1><a routerLink="/products">BACK TO SHOP</a>
+</div>
+}

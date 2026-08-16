@@ -1,0 +1,182 @@
+.login-page {
+    padding: 55px 20px 90px
+}
+
+.page-title {
+    text-align: center;
+    margin-bottom: 35px
+}
+
+.page-title span {
+    font-size: 12px;
+    color: #b99253
+}
+
+.page-title h1 {
+    font-family: Anton;
+    font-weight: 400;
+    font-size: 46px;
+    margin: 10px 0
+}
+
+.profile-layout {
+    max-width: 900px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px
+}
+
+@media(max-width:800px) {
+    .profile-layout {
+        grid-template-columns: 1fr
+    }
+}
+
+.login-box {
+    border: 1px solid #34352f;
+    background: #0d0e0d;
+    padding: 30px 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px
+}
+
+.box-title {
+    font-family: Anton;
+    font-weight: 400;
+    font-size: 20px;
+    letter-spacing: .5px;
+    margin: 0
+}
+
+.box-subtitle {
+    font-size: 12px;
+    color: #777;
+    margin: -6px 0 4px
+}
+
+.login-box label {
+    font-size: 13px;
+    color: #999;
+    letter-spacing: .5px;
+    text-transform: uppercase
+}
+
+.field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px
+}
+
+.field-row>div {
+    display: flex;
+    flex-direction: column;
+    gap: 6px
+}
+
+.phone-field {
+    display: flex;
+    align-items: center;
+    border: 1px solid #363731;
+    background: #101110
+}
+
+.phone-field .prefix {
+    padding: 12px;
+    color: #888;
+    font-size: 15px;
+    border-right: 1px solid #363731
+}
+
+.phone-field input {
+    flex: 1;
+    min-width: 0;
+    background: transparent;
+    border: 0;
+    color: #fff;
+    padding: 12px;
+    font-size: 15px
+}
+
+.login-box input[type=password],
+.login-box input[type=text],
+.login-box input[type=email],
+.login-box input[type=tel] {
+    width: 100%;
+    background: #101110;
+    border: 1px solid #363731;
+    color: #fff;
+    padding: 12px;
+    font-size: 15px
+}
+
+.login-box input:focus {
+    outline: 1px solid #c99a4a
+}
+
+.error {
+    color: #e15b5b;
+    font-size: 11px
+}
+
+.success {
+    color: #4caf7d;
+    font-size: 11px
+}
+
+.primary-btn {
+    width: 100%;
+    border: 0;
+    background: #d3a04e;
+    color: #111;
+    padding: 14px;
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    margin-top: 6px
+}
+
+.primary-btn:disabled {
+    opacity: .6
+}
+
+.phone-display {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #101110;
+    border: 1px solid #363731;
+    padding: 12px;
+    font-size: 15px;
+    color: #fff
+}
+
+.locked-badge {
+    font-size: 10px;
+    color: #777;
+    letter-spacing: .5px;
+    border: 1px solid #363731;
+    padding: 3px 8px
+}
+
+.logout-row {
+    max-width: 900px;
+    margin: 24px auto 0;
+    display: flex;
+    justify-content: center
+}
+
+.logout-btn {
+    border: 1px solid #4a2020;
+    background: none;
+    color: #e15b5b;
+    padding: 12px 28px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1px
+}
+
+.logout-btn:hover {
+    background: #1a0e0e
+}

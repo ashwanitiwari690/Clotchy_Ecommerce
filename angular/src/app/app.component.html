@@ -1,0 +1,96 @@
+<header class="site-header">
+  <div class="announcement">FREE SHIPPING ON ORDERS ABOVE ₹999 <span>•</span> EASY 7-DAY RETURNS</div>
+
+  <div class="nav-wrap container">
+    <a class="logo" routerLink="/" (click)="closeMenu()">CLOTCHCY<span>.</span></a>
+
+    <nav class="desktop-nav">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact:true}">HOME</a>
+      <a routerLink="/products" routerLinkActive="active">SHOP</a>
+      <a routerLink="/collections" routerLinkActive="active">COLLECTIONS</a>
+      <a routerLink="/about" routerLinkActive="active">ABOUT US</a>
+      <a routerLink="/products" [queryParams]="{collection:'Warrior'}">WARRIOR</a>
+      <a routerLink="/track-order" routerLinkActive="active">TRACK ORDER</a>
+      <a routerLink="/contact" routerLinkActive="active">CONTACT</a>
+    </nav>
+
+    <div class="nav-actions">
+      <button aria-label="Search" title="Search" class="icon-btn" (click)="toggleSearch()">⌕</button>
+      @if (auth.isAuthenticated()) {
+        <a routerLink="/profile" class="icon-btn user-icon" aria-label="My Account" title="My Account" (click)="closeMenu()">♙</a>
+      } @else {
+        <a routerLink="/login" class="icon-btn user-icon" aria-label="Login" title="Login" (click)="closeMenu()">♙</a>
+      }
+      <a routerLink="/cart" class="cart-btn" aria-label="Cart" title="Cart">
+        🛒 <span class="cart-count">{{ cart.count() }}</span>
+      </a>
+      @if (auth.isAuthenticated()) {
+        <button class="icon-btn logout-icon" aria-label="Logout" title="Logout" (click)="logout()">⎋</button>
+      }
+      <button class="hamburger" aria-label="Menu" title="Menu" (click)="mobileMenu.update(v => !v)">☰</button>
+    </div>
+  </div>
+
+  @if (searchOpen()) {
+  <div class="search-bar container">
+    <div class="search-field">
+      <span class="search-icon">⌕</span>
+      <input #searchInput autofocus placeholder="Search t-shirts, hoodies, collections..."
+        (keyup.enter)="searchOpen.set(false)" />
+    </div>
+    <a routerLink="/products" class="search-btn" (click)="searchOpen.set(false)">SEARCH</a>
+  </div>
+  }
+
+  @if (mobileMenu()) {
+  <nav class="mobile-nav">
+    <a routerLink="/" (click)="closeMenu()">HOME</a>
+    <a routerLink="/products" (click)="closeMenu()">SHOP</a>
+    <a routerLink="/collections" (click)="closeMenu()">COLLECTIONS</a>
+    <a routerLink="/about" (click)="closeMenu()">ABOUT US</a>
+    <a routerLink="/products" [queryParams]="{collection:'Warrior'}" (click)="closeMenu()">WARRIOR</a>
+    <a routerLink="/track-order" (click)="closeMenu()">TRACK ORDER</a>
+    <a routerLink="/contact" (click)="closeMenu()">CONTACT</a>
+    <a routerLink="/cart" (click)="closeMenu()">CART ({{ cart.count() }})</a>
+  </nav>
+  }
+</header>
+
+<main>
+  <router-outlet />
+</main>
+
+<footer id="footer" class="footer">
+  <div class="container footer-grid">
+    <div class="footer-brand">
+      <a class="logo">CLOTCHCY<span>.</span></a>
+      <p>WEAR YOUR PRIDE.<br>LIVE LIKE A WARRIOR.</p>
+      <div class="socials"><span>◎</span><span>f</span><span>▶</span><span>𝕏</span><span>p</span></div>
+    </div>
+    <div>
+      <h4>SHOP</h4><a routerLink="/products">All Products</a><a routerLink="/products">New Arrivals</a><a
+        routerLink="/products">Best Sellers</a><a routerLink="/products">Offers</a><a routerLink="/products">Size
+        Guide</a>
+    </div>
+    <div>
+      <h4>COLLECTIONS</h4><a routerLink="/products" [queryParams]="{collection:'Wanderlust'}">Wanderlust</a><a routerLink="/products" [queryParams]="{collection:'Spiritual'}">Spiritual</a><a
+        routerLink="/products" [queryParams]="{collection:'Designs'}">Designs</a><a routerLink="/products" [queryParams]="{collection:'Marvel Universe'}">Marvel Universe</a><a routerLink="/products" [queryParams]="{collection:'DC Universe'}">DC Universe</a>
+    </div>
+    <div>
+      <h4>COMPANY</h4><a routerLink="/about">About Us</a><a routerLink="/about">Our Mission</a><a href="#footer">Careers</a><a
+        routerLink="/track-order">Track Order</a><a href="#footer">Terms & Conditions</a>
+    </div>
+    <div>
+      <h4>HELP</h4><a href="#footer">Shipping Policy</a><a href="#footer">Return Policy</a><a href="#footer">FAQs</a><a
+        routerLink="/contact">Contact Us</a><a href="#footer">Bulk Orders</a>
+    </div>
+    <div class="contact">
+      <h4>CONTACT US</h4>
+      <p>☎ +91 98765 43210</p>
+      <p>✉ support@clotchcy.com</p>
+      <p>⌖ New Delhi, India</p>
+      <div class="payments"><span>VISA</span><span>●●</span><span>UPI</span><span>RuPay</span></div>
+    </div>
+  </div>
+  <div class="copyright">© 2026 Clotchcy. All rights reserved.</div>
+</footer>

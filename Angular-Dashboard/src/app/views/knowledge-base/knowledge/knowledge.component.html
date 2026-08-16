@@ -1,0 +1,78 @@
+<div class="card">
+    <div class="card-header">
+        <div class="d-flex align-items-center p-3 px-xl-4">
+            <div class="fw-semibold">
+                Knowledge Base
+            </div>
+            <button class="btn btn-primary text-nowrap text-white ms-auto" [cModalToggle]="ModalOne.id">Add
+                Knowledge</button>
+        </div>
+    </div>
+    <app-global-search (search)="onSearch($event)"></app-global-search>
+    <div class="card-body">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Class</th>
+                    <th scope="col">Heading</th>
+                    <th scope="col">Heading</th>
+                    <th scope="col">Heading</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (user of data;track user.id;let i = $index) {
+                <tr>
+                    <td>{{i+1}}</td>
+                    <td>{{ user.class }}</td>
+                    <td>{{ user.col1 }}</td>
+                    <td>{{ user.col2 }}</td>
+                    <td>{{ user.col3 }}</td>
+                </tr>
+                }
+            </tbody>
+        </table>
+        <div class="d-flex justify-content-end">
+            <app-pagination [totalItems]="totalItems" [pageSize]="pageSize" (pageChange)="loadData($event)">
+            </app-pagination>
+        </div>
+    </div>
+</div>
+
+<c-modal id="liveDemoModalOne" #ModalOne alignment="center" size="lg">
+    <c-modal-header>
+        <h5 cModalTitle>Modal 1 title</h5>
+        <button [cModalToggle]="ModalOne.id" cButtonClose></button>
+    </c-modal-header>
+    <c-modal-body>
+        <form>
+            <div class="mb-3">
+                <label for="exampleFormControlInput1" class="form-label">
+                    Email address
+                </label>
+                <input type="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com" />
+            </div>
+            <div class="mb-3">
+                <select aria-label="Default select example" class="form-control">
+                    <option>Open this select menu</option>
+                    <option value="1">One</option>
+                    <option value="2">Two</option>
+                    <option value="3">Three</option>
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="exampleFormControlTextarea1" class="form-label">
+                    Example textarea
+                </label>
+                <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+            </div>
+        </form>
+
+    </c-modal-body>
+    <c-modal-footer>
+        <button [cModalToggle]="ModalOne.id" cButton color="secondary">
+            Close
+        </button>
+        <button cButton color="primary">Open second modal</button>
+    </c-modal-footer>
+</c-modal>

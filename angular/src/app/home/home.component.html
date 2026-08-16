@@ -1,0 +1,99 @@
+<section class="hero">
+  <div class="hero-overlay"></div>
+  <div class="container hero-content">
+    <span class="eyebrow">PREMIUM APPAREL • BUILT FOR BOLD LIVING</span>
+    <h1>LEGENDARY LOOKS.<br><em>FOR EVERY LEGEND.</em></h1>
+    <p>Premium apparel inspired by courage, culture & individuality.</p>
+    <div class="hero-actions">
+      <a routerLink="/products" class="btn btn-gold">SHOP NOW <span>→</span></a>
+      <a routerLink="/products" [queryParams]="{sort:'new'}" class="btn btn-outline">NEW ARRIVALS</a>
+    </div>
+  </div>
+  <div class="hero-stat"><strong>4.8/5</strong><span>1,543+ VERIFIED REVIEWS</span></div>
+</section>
+
+<section class="section category-section">
+  <div class="section-heading"><span></span><h2>SHOP BY CATEGORY</h2><span></span></div>
+  <div class="container category-grid">
+    @for (cat of categories; track cat.name) {
+      <a class="category-card" routerLink="/products" [queryParams]="{category: cat.name}">
+        <div class="category-icon">{{ cat.icon }}</div>
+        <strong>{{ cat.name }}</strong>
+      </a>
+    }
+  </div>
+</section>
+
+<section class="section collections" id="collections">
+  <div class="section-heading"><span></span><h2>EXPLORE OUR COLLECTIONS</h2><span></span></div>
+  <div class="container collection-grid">
+    @for (collection of collections; track collection.name) {
+      <a class="collection-card" routerLink="/products" [queryParams]="{collection: collection.name}">
+        <img [src]="collection.image" [alt]="collection.name" loading="lazy">
+        <div class="collection-overlay">
+          <small>{{ collection.subtitle }}</small>
+          <h3>{{ collection.name }}</h3>
+          <span class="mini-btn">SHOP NOW →</span>
+        </div>
+      </a>
+    }
+  </div>
+</section>
+
+<section class="section sellers">
+  <div class="container">
+    <div class="section-heading"><span></span><h2>BEST SELLERS</h2><span></span></div>
+    <div class="section-top"><p>Our most-loved pieces, picked by the community.</p><a routerLink="/products">VIEW ALL PRODUCTS →</a></div>
+    <div class="product-grid">
+      @for (product of products; track product.id) {
+        <app-product-card [product]="product" />
+      }
+    </div>
+  </div>
+</section>
+
+<section class="trust-strip">
+  <div class="container trust-grid">
+    <div><b>✧</b><span><strong>100%</strong> PREMIUM COTTON</span></div>
+    <div><b>▱</b><span><strong>FREE</strong> SHIPPING</span></div>
+    <div><b>◇</b><span><strong>EASY</strong> RETURNS</span></div>
+    <div><b>♧</b><span><strong>SECURE</strong> PAYMENT</span></div>
+    <div><b>⚑</b><span><strong>MADE</strong> IN INDIA</span></div>
+  </div>
+</section>
+
+<section class="section reviews" id="about">
+  <div class="container">
+    <div class="section-heading"><span></span><h2>WHAT OUR CUSTOMERS SAY</h2><span></span></div>
+    <div class="review-grid">
+      @for (review of [
+        {name:'Adil S. Jitey', text:'Bold. Feels like I’m part of something bigger.', img:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=500&q=80'},
+        {name:'Aliuje Sertin', text:'Premium quality and fits perfectly.', img:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=500&q=80'},
+        {name:'Vikass Singh', text:'Finally, apparel that matches my vibe.', img:'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=500&q=80'},
+        {name:'Farmt Meckio', text:'From fabric to design—top notch.', img:'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=500&q=80'}
+      ]; track review.name) {
+        <article class="review-card">
+          <img [src]="review.img" [alt]="review.name" loading="lazy">
+          <div><strong>{{ review.name }}</strong><div class="stars">★★★★★</div><p>{{ review.text }}</p></div>
+        </article>
+      }
+      <article class="rating-card"><strong>4.8<span>/5</span></strong><div class="stars">★★★★★</div><p>Based on 1,543+<br>verified reviews</p><button>READ MORE REVIEWS</button></article>
+    </div>
+  </div>
+</section>
+
+<section class="community container">
+  <div class="community-title"><span></span><h2>JOIN THE CLOTCHCY COMMUNITY</h2><span></span></div>
+  <div class="community-content">
+    <div class="community-photos">
+      @for (img of [
+        'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=500&q=80',
+        'https://images.unsplash.com/photo-1523381294911-8d3cead13475?auto=format&fit=crop&w=500&q=80',
+        'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=500&q=80',
+        'https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?auto=format&fit=crop&w=500&q=80',
+        'https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?auto=format&fit=crop&w=500&q=80'
+      ]; track img) { <img [src]="img" alt="Community style" loading="lazy"> }
+    </div>
+    <div class="newsletter"><small>GET ₹100 OFF YOUR FIRST ORDER</small><h3>Join the Clotchcy family!</h3><div><input placeholder="Enter your email"><button>SUBSCRIBE</button></div></div>
+  </div>
+</section>

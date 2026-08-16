@@ -1,0 +1,11 @@
+<div class="search-box">
+  <input
+    type="text"
+    placeholder="Search..."
+    [(ngModel)]="searchText"
+    (input)="onSearchChange()" />
+
+  <button (click)="onSearchChange()">
+    <i class="bi bi-search"></i>
+  </button>
+</div>

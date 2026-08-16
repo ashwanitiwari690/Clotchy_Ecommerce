@@ -1,0 +1,31 @@
+<section class="login-page container">
+  <div class="page-title"><span>HOME / LOGIN</span><h1>LOGIN</h1></div>
+
+  <div class="login-box">
+    @if (step() === 'phone') {
+      <label>Mobile Number</label>
+      <div class="phone-field">
+        <span class="prefix">+91</span>
+        <input type="tel" inputmode="numeric" maxlength="10" [value]="phone()" placeholder="Enter 10-digit mobile number"
+          (input)="onPhoneInput($event)" (keyup.enter)="submitPhone()">
+      </div>
+      @if (error()) { <small class="error">{{ error() }}</small> }
+      <button class="primary-btn" (click)="submitPhone()">CONTINUE</button>
+    } @else {
+      <div class="phone-display">
+        <span>+91 {{ phone() }}</span>
+        <button class="change-btn" (click)="changeNumber()">CHANGE</button>
+      </div>
+      <label>Password</label>
+      <div class="password-field">
+        <input [type]="showPassword() ? 'text' : 'password'" [value]="password()" placeholder="Enter your password"
+          (input)="onPasswordInput($event)" (keyup.enter)="login()">
+        <button type="button" class="otp-btn" (click)="showPassword.update(v => !v)">{{ showPassword() ? 'HIDE' : 'SHOW' }}</button>
+      </div>
+      @if (error()) { <small class="error">{{ error() }}</small> }
+      <button class="primary-btn" [disabled]="isSubmitting()" (click)="login()">{{ isSubmitting() ? 'PLEASE WAIT…' : 'LOGIN' }}</button>
+    }
+    <p class="alt-link">Don't have an account? <a routerLink="/register">Register</a></p>
+    <p class="alt-link">Forgot your password? <a routerLink="/forgot-password">Reset it</a></p>
+  </div>
+</section>

@@ -1,0 +1,40 @@
+<section class="page-head">
+  <div class="container"><span>HOME / TRACK ORDER</span><h1>TRACK YOUR ORDER</h1><p>Enter your order ID to see its current status.</p></div>
+</section>
+
+<section class="container track-body">
+  @if (!tracked()) {
+    <div class="login-box">
+      <label>Order ID</label>
+      <input type="text" [value]="orderId()" placeholder="e.g. CLTCH10234" (input)="onOrderIdInput($event)">
+
+      <label>Registered Mobile Number</label>
+      <div class="phone-field">
+        <span class="prefix">+91</span>
+        <input type="tel" inputmode="numeric" maxlength="10" [value]="phone()" placeholder="10-digit mobile number" (input)="onPhoneInput($event)" (keyup.enter)="track()">
+      </div>
+
+      @if (error()) { <small class="error">{{ error() }}</small> }
+      <button class="primary-btn" (click)="track()">TRACK ORDER</button>
+    </div>
+  } @else {
+    <div class="login-box result-box">
+      <div class="result-head">
+        <div><span class="label">ORDER ID</span><strong>{{ orderId() }}</strong></div>
+        <button class="change-btn" (click)="reset()">TRACK ANOTHER ORDER</button>
+      </div>
+
+      <div class="timeline">
+        @for (step of steps; track step.label) {
+          <div class="timeline-step" [class.done]="step.done">
+            <div class="dot"></div>
+            <div>
+              <strong>{{ step.label }}</strong>
+              <span>{{ step.date }}</span>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</section>

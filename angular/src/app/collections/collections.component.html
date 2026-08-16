@@ -1,0 +1,18 @@
+<section class="page-head">
+  <div class="container"><span>HOME / COLLECTIONS</span><h1>OUR COLLECTIONS</h1><p>Curated drops for every mood, culture and moment.</p></div>
+</section>
+
+<section class="container collections-body">
+  <div class="collection-grid">
+    @for (collection of collections; track collection.name) {
+      <a class="collection-card" routerLink="/products" [queryParams]="{collection: collection.name}">
+        <img [src]="collection.image" [alt]="collection.name" loading="lazy">
+        <div class="collection-overlay">
+          <small>{{ collection.subtitle }}</small>
+          <h3>{{ collection.name }}</h3>
+          <span class="mini-btn">SHOP NOW →</span>
+        </div>
+      </a>
+    }
+  </div>
+</section>

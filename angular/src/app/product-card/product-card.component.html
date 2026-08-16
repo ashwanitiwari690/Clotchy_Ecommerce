@@ -1,0 +1,14 @@
+<article class="product-card">
+  <a class="product-image" [routerLink]="['/product', product.id]">
+    @if (product.badge) { <span class="badge">{{ product.badge }}</span> }
+    <button class="heart" type="button" (click)="$event.preventDefault(); $event.stopPropagation()">♡</button>
+    <img [src]="product.image" [alt]="product.name" loading="lazy">
+    <div class="quick">VIEW PRODUCT</div>
+  </a>
+  <div class="product-info">
+    <a [routerLink]="['/product', product.id]" class="product-name">{{ product.name }}</a>
+    <div class="rating">★★★★★ <span>({{ product.reviews }})</span></div>
+    <div class="price">₹{{ product.price.toLocaleString('en-IN') }} @if (product.oldPrice) { <del>₹{{ product.oldPrice.toLocaleString('en-IN') }}</del> }</div>
+    <button class="add" type="button" (click)="add()">ADD TO CART <span>+</span></button>
+  </div>
+</article>

@@ -1,0 +1,45 @@
+<section class="page-head">
+  <div class="container"><span>HOME / ABOUT US</span><h1>ABOUT CLOTCHCY</h1><p>Wear your pride. Live like a warrior.</p></div>
+</section>
+
+<section class="container story">
+  <div class="story-grid">
+    <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?auto=format&fit=crop&w=900&q=85" alt="Clotchcy apparel" loading="lazy">
+    <div>
+      <span class="eyebrow">OUR STORY</span>
+      <h2>Built for people who don't blend in.</h2>
+      <p>Clotchcy started as a small idea: apparel shouldn't just be worn, it should say something. What began as a handful of graphic tees for friends has grown into a full streetwear label serving thousands of customers who wear their identity with pride — from spiritual seekers to pop-culture fans to everyday warriors.</p>
+      <p>Every design starts with a story, every fabric is chosen for comfort as much as style, and every order is packed with the same care as the first one we ever shipped.</p>
+    </div>
+  </div>
+</section>
+
+<section class="section values">
+  <div class="container">
+    <div class="section-heading"><span></span><h2>WHAT WE STAND FOR</h2><span></span></div>
+    <div class="values-grid">
+      @for (value of values; track value.title) {
+        <div class="value-card">
+          <div class="value-icon">{{ value.icon }}</div>
+          <strong>{{ value.title }}</strong>
+          <p>{{ value.text }}</p>
+        </div>
+      }
+    </div>
+  </div>
+</section>
+
+<section class="trust-strip">
+  <div class="container trust-grid">
+    <div><b>✧</b><span><strong>100%</strong> PREMIUM COTTON</span></div>
+    <div><b>▱</b><span><strong>FREE</strong> SHIPPING</span></div>
+    <div><b>◇</b><span><strong>EASY</strong> RETURNS</span></div>
+    <div><b>♧</b><span><strong>SECURE</strong> PAYMENT</span></div>
+    <div><b>⚑</b><span><strong>MADE</strong> IN INDIA</span></div>
+  </div>
+</section>
+
+<section class="container cta-band">
+  <h2>Ready to find your fit?</h2>
+  <a routerLink="/products" class="btn btn-gold">SHOP NOW <span>→</span></a>
+</section>

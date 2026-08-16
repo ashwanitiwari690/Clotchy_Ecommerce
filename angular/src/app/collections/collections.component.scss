@@ -1,0 +1,109 @@
+.page-head {
+    padding: 70px 0 45px;
+    background: linear-gradient(90deg, #11140f, #080908);
+    border-bottom: 1px solid #282a25
+}
+
+.page-head span {
+    color: #b89252;
+    font-size: 9px;
+    letter-spacing: 1px
+}
+
+.page-head h1 {
+    font-family: Anton, sans-serif;
+    font-size: 50px;
+    font-weight: 400;
+    margin: 12px 0 5px
+}
+
+.page-head p {
+    color: #8d8d8d
+}
+
+.collections-body {
+    padding: 45px 0 70px
+}
+
+.collection-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px
+}
+
+.collection-card {
+    height: 300px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #302c26
+}
+
+.collection-card img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(.58);
+    transition: .4s
+}
+
+.collection-card:hover img {
+    transform: scale(1.06);
+    filter: brightness(.72)
+}
+
+.collection-overlay {
+    position: absolute;
+    inset: auto 0 0;
+    padding: 20px;
+    color: #fff;
+    background: linear-gradient(transparent, rgba(0, 0, 0, .9))
+}
+
+.collection-overlay small {
+    font-size: 9px;
+    color: #d5a354;
+    letter-spacing: 1px
+}
+
+.collection-overlay h3 {
+    font-family: Anton, sans-serif;
+    font-weight: 400;
+    margin: 5px 0 10px;
+    font-size: 24px
+}
+
+.mini-btn {
+    border: 1px solid #eee;
+    padding: 7px 10px;
+    font-size: 9px;
+    letter-spacing: .7px
+}
+
+@media(max-width:900px) {
+    .collection-grid {
+        grid-template-columns: repeat(2, 1fr)
+    }
+}
+
+@media(max-width:650px) {
+    .page-head {
+        padding: 45px 20px 30px
+    }
+
+    .page-head h1 {
+        font-size: 38px
+    }
+
+    .collections-body {
+        padding: 25px 12px 50px
+    }
+
+    .collection-grid {
+        grid-template-columns: 1fr;
+        gap: 12px
+    }
+
+    .collection-card {
+        height: 220px
+    }
+}
