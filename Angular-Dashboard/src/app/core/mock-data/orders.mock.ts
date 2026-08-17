@@ -1,0 +1,51 @@
+import { Order } from '../models/order.model';
+import { placeholderImage } from '../models/common.model';
+
+export const ORDERS_MOCK: Order[] = [
+  { id: 'CLT-100234', customerId: 'cust-001', customerName: 'Ananya Sharma', email: 'ananya.sharma@example.com', phone: '+91 98765 43210', address: '221 Marine Drive, Mumbai, Maharashtra 400002', date: '2026-08-15',
+    items: [{ productId: 'prod-004', productName: 'Premium Hoodie', image: placeholderImage('prod-004-thumb', 100, 100), variant: 'M / Black', quantity: 1, price: 3299 }, { productId: 'prod-001', productName: 'Premium Oversized T-Shirt', image: placeholderImage('prod-001-thumb', 100, 100), variant: 'L / White', quantity: 2, price: 1199 }],
+    subtotal: 5697, discount: 300, shipping: 0, tax: 270, total: 5667, paymentMethod: 'UPI', paymentStatus: 'paid', status: 'delivered' },
+  { id: 'CLT-100235', customerId: 'cust-003', customerName: 'Priya Nair', email: 'priya.nair@example.com', phone: '+91 99887 66554', address: '9 Church Street, Kochi, Kerala 682001', date: '2026-08-16',
+    items: [{ productId: 'prod-008', productName: 'Wrap Midi Dress', image: placeholderImage('prod-008-thumb', 100, 100), variant: 'M / Black', quantity: 1, price: 3199 }],
+    subtotal: 3199, discount: 0, shipping: 99, tax: 160, total: 3458, paymentMethod: 'Credit Card', paymentStatus: 'paid', status: 'shipped' },
+  { id: 'CLT-100236', customerId: 'cust-002', customerName: 'Rohan Mehta', email: 'rohan.mehta@example.com', phone: '+91 98123 45678', address: '14 MG Road, Bengaluru, Karnataka 560001', date: '2026-08-16',
+    items: [{ productId: 'prod-003', productName: 'Relaxed Fit Jeans', image: placeholderImage('prod-003-thumb', 100, 100), variant: '32 / Blue', quantity: 1, price: 2499 }],
+    subtotal: 2499, discount: 0, shipping: 99, tax: 125, total: 2723, paymentMethod: 'COD', paymentStatus: 'pending', status: 'pending' },
+  { id: 'CLT-100237', customerId: 'cust-010', customerName: 'Karan Malhotra', email: 'karan.malhotra@example.com', phone: '+91 91098 76543', address: '42 Sector 29, Chandigarh, Punjab 160030', date: '2026-08-14',
+    items: [{ productId: 'prod-010', productName: 'Court Leather Sneakers', image: placeholderImage('prod-010-thumb', 100, 100), variant: '9 / White', quantity: 1, price: 4249 }, { productId: 'prod-012', productName: 'Distressed Denim Jacket', image: placeholderImage('prod-012-thumb', 100, 100), variant: 'L / Blue', quantity: 1, price: 3299 }],
+    subtotal: 7548, discount: 500, shipping: 0, tax: 352, total: 7400, paymentMethod: 'Credit Card', paymentStatus: 'paid', status: 'processing' },
+  { id: 'CLT-100238', customerId: 'cust-005', customerName: 'Kavya Reddy', email: 'kavya.reddy@example.com', phone: '+91 96543 21098', address: '77 Jubilee Hills, Hyderabad, Telangana 500033', date: '2026-08-13',
+    items: [{ productId: 'prod-011', productName: 'Ribbed Knit Polo', image: placeholderImage('prod-011-thumb', 100, 100), variant: 'M / Navy', quantity: 2, price: 1899 }],
+    subtotal: 3798, discount: 0, shipping: 99, tax: 190, total: 4087, paymentMethod: 'UPI', paymentStatus: 'paid', status: 'delivered' },
+  { id: 'CLT-100239', customerId: 'cust-008', customerName: 'Aditya Rao', email: 'aditya.rao@example.com', phone: '+91 93210 98765', address: '210 Industrial Area, Ahmedabad, Gujarat 380001', date: '2026-08-12',
+    items: [{ productId: 'prod-013', productName: 'Cargo Utility Trousers', image: placeholderImage('prod-013-thumb', 100, 100), variant: '34 / Black', quantity: 10, price: 2699 }],
+    subtotal: 26990, discount: 2000, shipping: 0, tax: 1250, total: 26240, paymentMethod: 'Bank Transfer', paymentStatus: 'paid', status: 'delivered' },
+  { id: 'CLT-100240', customerId: 'cust-006', customerName: 'Arjun Kapoor', email: 'arjun.kapoor@example.com', phone: '+91 95432 10987', address: '3 Camac Street, Kolkata, West Bengal 700016', date: '2026-08-11',
+    items: [{ productId: 'prod-005', productName: 'Casual Bomber Jacket', image: placeholderImage('prod-005-thumb', 100, 100), variant: 'L / Black', quantity: 1, price: 3799 }],
+    subtotal: 3799, discount: 0, shipping: 99, tax: 190, total: 4088, paymentMethod: 'Credit Card', paymentStatus: 'failed', status: 'cancelled' },
+  { id: 'CLT-100241', customerId: 'cust-007', customerName: 'Ishita Verma', email: 'ishita.verma@example.com', phone: '+91 94321 09876', address: '18 Park Street, Pune, Maharashtra 411001', date: '2026-08-10',
+    items: [{ productId: 'prod-014', productName: 'Satin Slip Dress', image: placeholderImage('prod-014-thumb', 100, 100), variant: 'S / Black', quantity: 1, price: 2999 }],
+    subtotal: 2999, discount: 0, shipping: 99, tax: 150, total: 3248, paymentMethod: 'UPI', paymentStatus: 'refunded', status: 'returned' },
+  { id: 'CLT-100242', customerId: 'cust-001', customerName: 'Ananya Sharma', email: 'ananya.sharma@example.com', phone: '+91 98765 43210', address: '221 Marine Drive, Mumbai, Maharashtra 400002', date: '2026-08-09',
+    items: [{ productId: 'prod-015', productName: 'Canvas High-Top Sneakers', image: placeholderImage('prod-015-thumb', 100, 100), variant: '8 / White', quantity: 1, price: 2299 }],
+    subtotal: 2299, discount: 0, shipping: 99, tax: 115, total: 2513, paymentMethod: 'UPI', paymentStatus: 'paid', status: 'out-for-delivery' },
+  { id: 'CLT-100243', customerId: 'cust-003', customerName: 'Priya Nair', email: 'priya.nair@example.com', phone: '+91 99887 66554', address: '9 Church Street, Kochi, Kerala 682001', date: '2026-08-08',
+    items: [{ productId: 'prod-009', productName: 'Structured Tote Bag', image: placeholderImage('prod-009-thumb', 100, 100), variant: 'One Size / Black', quantity: 1, price: 3499 }],
+    subtotal: 3499, discount: 0, shipping: 99, tax: 175, total: 3773, paymentMethod: 'Credit Card', paymentStatus: 'paid', status: 'packed' },
+  { id: 'CLT-100244', customerId: 'cust-002', customerName: 'Rohan Mehta', email: 'rohan.mehta@example.com', phone: '+91 98123 45678', address: '14 MG Road, Bengaluru, Karnataka 560001', date: '2026-08-07',
+    items: [{ productId: 'prod-007', productName: 'Slim Fit Chino Trousers', image: placeholderImage('prod-007-thumb', 100, 100), variant: '32 / Beige', quantity: 1, price: 1999 }],
+    subtotal: 1999, discount: 0, shipping: 99, tax: 100, total: 2198, paymentMethod: 'COD', paymentStatus: 'pending', status: 'confirmed' },
+  { id: 'CLT-100245', customerId: 'cust-010', customerName: 'Karan Malhotra', email: 'karan.malhotra@example.com', phone: '+91 91098 76543', address: '42 Sector 29, Chandigarh, Punjab 160030', date: '2026-08-06',
+    items: [{ productId: 'prod-002', productName: 'Classic Cotton Shirt', image: placeholderImage('prod-002-thumb', 100, 100), variant: 'L / White', quantity: 2, price: 2199 }],
+    subtotal: 4398, discount: 0, shipping: 0, tax: 220, total: 4618, paymentMethod: 'Credit Card', paymentStatus: 'paid', status: 'delivered' },
+  { id: 'CLT-100246', customerId: 'cust-005', customerName: 'Kavya Reddy', email: 'kavya.reddy@example.com', phone: '+91 96543 21098', address: '77 Jubilee Hills, Hyderabad, Telangana 500033', date: '2026-08-04',
+    items: [{ productId: 'prod-016', productName: 'Leather Belt', image: placeholderImage('prod-016-thumb', 100, 100), variant: '34 / Black', quantity: 1, price: 1299 }],
+    subtotal: 1299, discount: 0, shipping: 99, tax: 65, total: 1463, paymentMethod: 'UPI', paymentStatus: 'refunded', status: 'refunded' },
+  { id: 'CLT-100247', customerId: 'cust-009', customerName: 'Neha Joshi', email: 'neha.joshi@example.com', phone: '+91 92109 87654', address: '65 Civil Lines, Jaipur, Rajasthan 302006', date: '2026-08-02',
+    items: [{ productId: 'prod-006', productName: 'Designer Sweatshirt', image: placeholderImage('prod-006-thumb', 100, 100), variant: 'M / Beige', quantity: 1, price: 2799 }],
+    subtotal: 2799, discount: 0, shipping: 99, tax: 140, total: 3038, paymentMethod: 'COD', paymentStatus: 'pending', status: 'pending' },
+];
+
+export function getOrderById(id: string): Order | undefined {
+  return ORDERS_MOCK.find(o => o.id === id);
+}

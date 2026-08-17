@@ -1,0 +1,84 @@
+<app-page-header title="Brands" [breadcrumb]="[{ label: 'Catalog' }, { label: 'Brands' }]">
+  <button class="btn btn-primary" [cModalToggle]="brandModal.id" (click)="openAdd()">
+    <svg cIcon name="cilPlus" class="me-1"></svg> Add Brand
+  </button>
+</app-page-header>
+
+<div class="card">
+  <app-global-search (search)="onSearch($event)"></app-global-search>
+  <div class="card-body p-0">
+    <table class="table table-striped align-middle mb-0">
+      <thead>
+        <tr>
+          <th>Brand</th>
+          <th>Slug</th>
+          <th>Status</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (brand of brands; track brand.id) {
+          <tr>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <img [src]="brand.logo" [alt]="brand.name" class="brand-thumb" />
+                <span class="fw-medium">{{ brand.name }}</span>
+              </div>
+            </td>
+            <td class="text-body-secondary">{{ brand.slug }}</td>
+            <td><app-status-badge [status]="brand.status" /></td>
+            <td class="text-end">
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-secondary" [cModalToggle]="brandModal.id" (click)="openEdit(brand)">Edit</button>
+                <button class="btn btn-outline-secondary" (click)="toggleStatus(brand)">
+                  {{ brand.status === 'active' ? 'Disable' : 'Enable' }}
+                </button>
+                <button class="btn btn-outline-danger" (click)="remove(brand)">Delete</button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="4"><app-empty-state title="No brands found" message="Try a different search or add a new brand." /></td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<c-modal id="brandModal" #brandModal alignment="center" size="lg">
+  <c-modal-header>
+    <h5 cModalTitle>{{ editingId() ? 'Edit Brand' : 'Add Brand' }}</h5>
+    <button [cModalToggle]="brandModal.id" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body>
+    <form [formGroup]="form" class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Brand Name</label>
+        <input type="text" class="form-control" formControlName="name" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Slug</label>
+        <input type="text" class="form-control" formControlName="slug" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Status</label>
+        <select class="form-control" formControlName="status">
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Logo</label>
+        <app-image-uploader [multiple]="false" [images]="logoImages()" (imagesChange)="logoImages.set($event)" />
+      </div>
+    </form>
+  </c-modal-body>
+  <c-modal-footer>
+    <button [cModalToggle]="brandModal.id" cButton color="secondary">Cancel</button>
+    <button cButton color="primary" [cModalToggle]="brandModal.id" (click)="save()">Save Brand</button>
+  </c-modal-footer>
+</c-modal>
+
+<style>
+  .brand-thumb { width: 36px; height: 36px; object-fit: cover; border-radius: 0.375rem; }
+</style>

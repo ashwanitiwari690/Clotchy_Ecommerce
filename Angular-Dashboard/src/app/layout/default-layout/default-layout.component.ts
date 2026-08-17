@@ -2,13 +2,11 @@ import { Component, OnInit } from '@angular/core';
 import { RouterLink, RouterOutlet } from '@angular/router';
 import { NgScrollbar } from 'ngx-scrollbar';
 
-import { IconDirective } from '@coreui/icons-angular';
 import {
   ContainerComponent,
   ShadowOnScrollDirective,
   SidebarBrandComponent,
   SidebarComponent,
-  SidebarFooterComponent,
   SidebarHeaderComponent,
   SidebarNavComponent,
   // SidebarToggleDirective,
@@ -16,7 +14,7 @@ import {
 } from '@coreui/angular';
 
 import { DefaultFooterComponent, DefaultHeaderComponent } from './';
-import { navItemscustomer,navItemsadmin } from './_nav';
+import { navItemsEcommerce } from './_nav';
 
 @Component({
   selector: 'app-dashboard',
@@ -27,13 +25,11 @@ import { navItemscustomer,navItemsadmin } from './_nav';
     SidebarHeaderComponent,
     SidebarBrandComponent,
     SidebarNavComponent,
-    SidebarFooterComponent,
     // SidebarToggleDirective,
     // SidebarTogglerDirective,
     ContainerComponent,
     DefaultFooterComponent,
     DefaultHeaderComponent,
-    IconDirective,
     NgScrollbar,
     RouterOutlet,
     RouterLink,
@@ -42,15 +38,8 @@ import { navItemscustomer,navItemsadmin } from './_nav';
 })
 export class DefaultLayoutComponent implements OnInit {
 
-  public navItems:any;
-  public userType: any = sessionStorage.getItem('type');
+  public navItems = navItemsEcommerce;
 
-  ngOnInit(): void {
-    if(this.userType == 1) {
-      this.navItems = [...navItemsadmin];
-    }else{
-       this.navItems = [...navItemscustomer];
-    }
-  }
+  ngOnInit(): void {}
 }
 

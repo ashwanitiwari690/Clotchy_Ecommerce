@@ -1,0 +1,20 @@
+<div class="page-header d-flex flex-wrap justify-content-between align-items-center mb-4 gap-2">
+  <div>
+    <h4 class="mb-1 fw-semibold">{{ title }}</h4>
+    @if (breadcrumb?.length) {
+      <nav class="small text-body-secondary">
+        @for (b of breadcrumb; track b.label; let last = $last) {
+          @if (b.url && !last) {
+            <a [routerLink]="b.url" class="text-body-secondary text-decoration-none">{{ b.label }}</a>
+            <span class="mx-1">/</span>
+          } @else {
+            <span [class.fw-medium]="last">{{ b.label }}</span>
+          }
+        }
+      </nav>
+    }
+  </div>
+  <div class="d-flex flex-wrap gap-2">
+    <ng-content></ng-content>
+  </div>
+</div>

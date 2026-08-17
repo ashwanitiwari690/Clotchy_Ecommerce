@@ -1,0 +1,27 @@
+<div class="image-uploader">
+  <label
+    class="drop-zone"
+    [class.drag-over]="dragOver"
+    (dragover)="onDragOver($event)"
+    (dragleave)="onDragLeave()"
+    (drop)="onDrop($event)"
+  >
+    <svg cIcon name="cilCloudUpload" size="xl" class="text-body-secondary mb-2"></svg>
+    <div class="fw-medium small">{{ label }}</div>
+    <div class="text-body-secondary small">{{ hint }}</div>
+    <input type="file" accept="image/*" [multiple]="multiple" class="d-none" (change)="onFileSelected($event)" />
+  </label>
+
+  @if (images.length) {
+    <div class="image-preview-grid mt-3">
+      @for (img of images; track img.url; let i = $index) {
+        <div class="image-preview-item">
+          <img [src]="img.url" [alt]="img.name" />
+          <button type="button" class="remove-btn" (click)="remove(i)" aria-label="Remove image">
+            <svg cIcon name="cilX" size="sm"></svg>
+          </button>
+        </div>
+      }
+    </div>
+  }
+</div>

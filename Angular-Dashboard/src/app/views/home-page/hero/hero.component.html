@@ -1,0 +1,153 @@
+<app-page-header title="Hero Banner" [breadcrumb]="[{ label: 'Home Page Management', url: '/home-page' }, { label: 'Hero Banner' }]">
+  <button class="btn btn-primary" [cModalToggle]="heroModal.id" (click)="openAdd()">
+    <svg cIcon name="cilPlus" class="me-1"></svg> Add Banner
+  </button>
+</app-page-header>
+
+<div class="card">
+  <div class="card-body p-0">
+    <table class="table table-striped align-middle mb-0">
+      <thead>
+        <tr>
+          <th>Banner</th>
+          <th>Heading</th>
+          <th>Duration</th>
+          <th>Status</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (b of banners; track b.id) {
+          <tr>
+            <td><img [src]="b.desktopImage" [alt]="b.heading" class="hero-thumb" /></td>
+            <td>
+              <div class="fw-medium">{{ b.heading }}</div>
+              <div class="small text-body-secondary">{{ b.subheading }}</div>
+            </td>
+            <td class="text-body-secondary small">{{ b.startDate }} – {{ b.endDate }}</td>
+            <td><app-status-badge [status]="b.status" /></td>
+            <td class="text-end">
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-secondary" (click)="move(b, 'up')" aria-label="Move up"><svg cIcon name="cilArrowTop" size="sm"></svg></button>
+                <button class="btn btn-outline-secondary" (click)="move(b, 'down')" aria-label="Move down"><svg cIcon name="cilArrowBottom" size="sm"></svg></button>
+                <button class="btn btn-outline-secondary" [cModalToggle]="previewModal.id" (click)="preview(b)">Preview</button>
+                <button class="btn btn-outline-secondary" [cModalToggle]="heroModal.id" (click)="openEdit(b)">Edit</button>
+                <button class="btn btn-outline-secondary" (click)="toggleStatus(b)">{{ b.status === 'active' ? 'Disable' : 'Enable' }}</button>
+                <button class="btn btn-outline-danger" (click)="remove(b)">Delete</button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="5"><app-empty-state title="No hero banners" message="Add your first homepage hero banner." /></td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<c-modal id="heroModal" #heroModal alignment="center" size="xl">
+  <c-modal-header>
+    <h5 cModalTitle>{{ editingId() ? 'Edit Hero Banner' : 'Add Hero Banner' }}</h5>
+    <button [cModalToggle]="heroModal.id" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body>
+    <form [formGroup]="form" class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Heading</label>
+        <input type="text" class="form-control" formControlName="heading" placeholder="LEGENDARY LOOKS. FOR EVERY LEGEND." />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Subheading</label>
+        <input type="text" class="form-control" formControlName="subheading" />
+      </div>
+      <div class="col-12">
+        <label class="form-label">Description</label>
+        <textarea class="form-control" rows="2" formControlName="description"></textarea>
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Primary Button Text</label>
+        <input type="text" class="form-control" formControlName="primaryButtonText" />
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Primary Button Link</label>
+        <input type="text" class="form-control" formControlName="primaryButtonLink" />
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Secondary Button Text</label>
+        <input type="text" class="form-control" formControlName="secondaryButtonText" />
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Secondary Button Link</label>
+        <input type="text" class="form-control" formControlName="secondaryButtonLink" />
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Start Date</label>
+        <input type="date" class="form-control" formControlName="startDate" />
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">End Date</label>
+        <input type="date" class="form-control" formControlName="endDate" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Status</label>
+        <select class="form-control" formControlName="status">
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Desktop Banner</label>
+        <app-image-uploader [multiple]="false" [images]="desktopImages()" (imagesChange)="desktopImages.set($event)" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Mobile Banner</label>
+        <app-image-uploader [multiple]="false" [images]="mobileImages()" (imagesChange)="mobileImages.set($event)" />
+      </div>
+    </form>
+  </c-modal-body>
+  <c-modal-footer>
+    <button [cModalToggle]="heroModal.id" cButton color="secondary">Cancel</button>
+    <button cButton color="primary" [cModalToggle]="heroModal.id" (click)="save()">Save Banner</button>
+  </c-modal-footer>
+</c-modal>
+
+<c-modal id="heroPreviewModal" #previewModal alignment="center" size="xl">
+  <c-modal-header>
+    <h5 cModalTitle>Banner Preview</h5>
+    <button [cModalToggle]="previewModal.id" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body class="p-0">
+    @if (previewBanner(); as b) {
+      <div class="hero-preview" [style.backgroundImage]="'url(' + b.desktopImage + ')'">
+        <div class="hero-preview-overlay">
+          <div class="text-warning text-uppercase small fw-semibold mb-2" style="letter-spacing:2px;">{{ b.subheading }}</div>
+          <h1 class="text-white fw-bold display-6">{{ b.heading }}</h1>
+          <p class="text-white-50">{{ b.description }}</p>
+          <div class="d-flex gap-2 mt-3">
+            <span class="btn btn-warning">{{ b.primaryButtonText }}</span>
+            @if (b.secondaryButtonText) { <span class="btn btn-outline-light">{{ b.secondaryButtonText }}</span> }
+          </div>
+        </div>
+      </div>
+    }
+  </c-modal-body>
+</c-modal>
+
+<style>
+  .hero-thumb { width: 80px; height: 40px; object-fit: cover; border-radius: 0.25rem; }
+  .hero-preview {
+    background-size: cover;
+    background-position: center;
+    min-height: 360px;
+    display: flex;
+    align-items: center;
+    padding: 2.5rem;
+    position: relative;
+  }
+  .hero-preview-overlay {
+    background: rgba(0,0,0,0.45);
+    padding: 2rem;
+    border-radius: 0.5rem;
+    max-width: 560px;
+  }
+</style>

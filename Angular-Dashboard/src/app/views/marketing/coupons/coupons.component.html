@@ -1,0 +1,116 @@
+<app-page-header title="Coupons" [breadcrumb]="[{ label: 'Marketing' }, { label: 'Coupons' }]">
+  <button class="btn btn-primary" [cModalToggle]="couponModal.id" (click)="openAdd()">
+    <svg cIcon name="cilPlus" class="me-1"></svg> Add Coupon
+  </button>
+</app-page-header>
+
+<div class="card">
+  <app-global-search (search)="onSearch($event)"></app-global-search>
+  <div class="card-body p-0">
+    <table class="table table-striped align-middle mb-0">
+      <thead>
+        <tr>
+          <th>Code</th>
+          <th>Discount</th>
+          <th class="text-end">Min Order</th>
+          <th class="text-end">Max Discount</th>
+          <th>Duration</th>
+          <th>Usage</th>
+          <th>Status</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (c of coupons; track c.id) {
+          <tr>
+            <td><span class="badge text-bg-dark font-monospace">{{ c.code }}</span></td>
+            <td>{{ discountLabel(c) }}</td>
+            <td class="text-end">₹{{ c.minOrder | number }}</td>
+            <td class="text-end">{{ c.maxDiscount != null ? ('₹' + (c.maxDiscount | number)) : '—' }}</td>
+            <td class="text-body-secondary small">{{ c.startDate }} – {{ c.endDate }}</td>
+            <td>
+              <div class="small mb-1">{{ c.usedCount }} / {{ c.usageLimit }}</div>
+              <div class="progress" style="height: 4px;">
+                <div class="progress-bar" [style.width.%]="(c.usedCount / c.usageLimit) * 100"></div>
+              </div>
+            </td>
+            <td><app-status-badge [status]="c.status" /></td>
+            <td class="text-end">
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-secondary" [cModalToggle]="couponModal.id" (click)="openEdit(c)">Edit</button>
+                <button class="btn btn-outline-secondary" (click)="toggleStatus(c)">
+                  {{ c.status === 'active' ? 'Disable' : 'Enable' }}
+                </button>
+                <button class="btn btn-outline-danger" (click)="remove(c)">Delete</button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="8"><app-empty-state title="No coupons found" message="Try a different search or add a new coupon." /></td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<c-modal id="couponModal" #couponModal alignment="center" size="lg">
+  <c-modal-header>
+    <h5 cModalTitle>{{ editingId() ? 'Edit Coupon' : 'Add Coupon' }}</h5>
+    <button [cModalToggle]="couponModal.id" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body>
+    <form [formGroup]="form" class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Coupon Code</label>
+        <input type="text" class="form-control text-uppercase" formControlName="code" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Status</label>
+        <select class="form-control" formControlName="status">
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+          <option value="expired">Expired</option>
+        </select>
+      </div>
+      <div class="col-12">
+        <label class="form-label d-block">Discount Type</label>
+        <div class="btn-group" role="group">
+          <input type="radio" class="btn-check" formControlName="discountType" value="percentage" id="dtPercentage" />
+          <label class="btn btn-outline-secondary" for="dtPercentage">Percentage</label>
+          <input type="radio" class="btn-check" formControlName="discountType" value="fixed" id="dtFixed" />
+          <label class="btn btn-outline-secondary" for="dtFixed">Fixed Amount</label>
+          <input type="radio" class="btn-check" formControlName="discountType" value="free-shipping" id="dtFreeShip" />
+          <label class="btn btn-outline-secondary" for="dtFreeShip">Free Shipping</label>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Discount Value</label>
+        <input type="number" class="form-control" formControlName="discountValue" [disabled]="form.value.discountType === 'free-shipping'" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Usage Limit</label>
+        <input type="number" class="form-control" formControlName="usageLimit" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Minimum Order</label>
+        <input type="number" class="form-control" formControlName="minOrder" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Maximum Discount</label>
+        <input type="number" class="form-control" formControlName="maxDiscount" placeholder="No limit" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Start Date</label>
+        <input type="date" class="form-control" formControlName="startDate" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">End Date</label>
+        <input type="date" class="form-control" formControlName="endDate" />
+      </div>
+    </form>
+  </c-modal-body>
+  <c-modal-footer>
+    <button [cModalToggle]="couponModal.id" cButton color="secondary">Cancel</button>
+    <button cButton color="primary" [cModalToggle]="couponModal.id" (click)="save()">Save Coupon</button>
+  </c-modal-footer>
+</c-modal>

@@ -24,6 +24,17 @@ import {
 
 import { IconDirective } from '@coreui/icons-angular';
 import { AuthService } from '../../../views/authentication/auth.service';
+import { TICKETS_MOCK } from '../../../core/mock-data/helpdesk.mock';
+import { ORDERS_MOCK } from '../../../core/mock-data/orders.mock';
+import { PRODUCTS_MOCK } from '../../../core/mock-data/products.mock';
+
+export interface HeaderNotification {
+  icon: string;
+  color: string;
+  message: string;
+  time: string;
+  link: string;
+}
 
 @Component({
   selector: 'app-default-header',
@@ -41,12 +52,23 @@ export class DefaultHeaderComponent extends HeaderComponent {
 
   public iduser: any = sessionStorage.getItem("iduser");
   public sidebarId = input('sidebar1');
-  public type = sessionStorage.getItem('type');
 
   readonly icons = computed(() => {
     const currentMode = this.colorMode();
     return this.colorModes.find(mode => mode.name === currentMode)?.icon ?? 'cilSun';
   });
+
+  readonly notifications: HeaderNotification[] = [
+    ...TICKETS_MOCK.filter(t => t.status === 'open').slice(0, 2).map(t => ({
+      icon: 'cilHeadphones', color: 'danger', message: `New ticket: ${t.subject}`, time: t.createdAt, link: '/helpdesk',
+    })),
+    ...ORDERS_MOCK.filter(o => o.status === 'pending').slice(0, 2).map(o => ({
+      icon: 'cilCart', color: 'warning', message: `New order ${o.id} from ${o.customerName}`, time: o.date, link: '/orders',
+    })),
+    ...PRODUCTS_MOCK.filter(p => p.stock > 0 && p.stock <= p.lowStockThreshold).slice(0, 2).map(p => ({
+      icon: 'cilBasket', color: 'info', message: `Low stock: ${p.name} (${p.stock} left)`, time: 'Today', link: '/inventory',
+    })),
+  ];
 
 
   constructor(private auth: AuthService,protected router: Router) {

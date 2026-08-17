@@ -7,15 +7,17 @@ import { ColorModeService } from '@coreui/angular';
 import { IconSetService } from '@coreui/icons-angular';
 import { iconSubset } from './layout/icons/icon-subset';
 import { ToastComponent } from './layout/toasts/toast.component';
+import { ConfirmDialogComponent } from './shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-root',
   template: `
     <router-outlet></router-outlet>
     <app-toast></app-toast>
+    <app-confirm-dialog></app-confirm-dialog>
   `,
   standalone: true,
-  imports: [RouterOutlet, ToastComponent] 
+  imports: [RouterOutlet, ToastComponent, ConfirmDialogComponent]
 })
 export class AppComponent implements OnInit {
   title = 'Clotchcy Admin';

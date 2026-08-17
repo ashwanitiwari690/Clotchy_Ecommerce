@@ -1,0 +1,100 @@
+<app-page-header title="Testimonials" [breadcrumb]="[{ label: 'Home Page Management', url: '/home-page' }, { label: 'Testimonials' }]">
+  <button class="btn btn-primary" [cModalToggle]="testModal.id" (click)="openAdd()">
+    <svg cIcon name="cilPlus" class="me-1"></svg> Add Testimonial
+  </button>
+</app-page-header>
+
+<div class="card">
+  <div class="card-body p-0">
+    <table class="table table-striped align-middle mb-0">
+      <thead>
+        <tr><th>Customer</th><th>Rating</th><th>Review</th><th>Date</th><th>Status</th><th class="text-end">Actions</th></tr>
+      </thead>
+      <tbody>
+        @for (t of testimonials; track t.id) {
+          <tr>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <img [src]="t.customerImage" [alt]="t.customerName" class="test-thumb" />
+                <span class="fw-medium">{{ t.customerName }}</span>
+              </div>
+            </td>
+            <td>
+              @for (s of stars; track s) {
+                <span [class]="s <= t.rating ? 'text-warning' : 'text-body-secondary'">★</span>
+              }
+            </td>
+            <td class="text-body-secondary text-truncate d-inline-block" style="max-width:260px;">{{ t.review }}</td>
+            <td class="text-body-secondary small">{{ t.date }}</td>
+            <td><app-status-badge [status]="t.status" /></td>
+            <td class="text-end">
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-secondary" (click)="move(t, 'up')"><svg cIcon name="cilArrowTop" size="sm"></svg></button>
+                <button class="btn btn-outline-secondary" (click)="move(t, 'down')"><svg cIcon name="cilArrowBottom" size="sm"></svg></button>
+                @if (t.status !== 'approved') { <button class="btn btn-outline-success" (click)="approve(t)">Approve</button> }
+                @if (t.status !== 'hidden') { <button class="btn btn-outline-secondary" (click)="hide(t)">Hide</button> }
+                <button class="btn btn-outline-secondary" [cModalToggle]="testModal.id" (click)="openEdit(t)">Edit</button>
+                <button class="btn btn-outline-danger" (click)="remove(t)">Delete</button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="6"><app-empty-state title="No testimonials yet" message="Add customer testimonials for the homepage." /></td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<c-modal id="testimonialModal" #testModal alignment="center" size="lg">
+  <c-modal-header>
+    <h5 cModalTitle>{{ editingId() ? 'Edit Testimonial' : 'Add Testimonial' }}</h5>
+    <button [cModalToggle]="testModal.id" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body>
+    <form [formGroup]="form" class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Customer Name</label>
+        <input type="text" class="form-control" formControlName="customerName" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Rating</label>
+        <select class="form-control" formControlName="rating">
+          <option [value]="5">5 Stars</option>
+          <option [value]="4">4 Stars</option>
+          <option [value]="3">3 Stars</option>
+          <option [value]="2">2 Stars</option>
+          <option [value]="1">1 Star</option>
+        </select>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Review</label>
+        <textarea class="form-control" rows="3" formControlName="review"></textarea>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Date</label>
+        <input type="date" class="form-control" formControlName="date" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Status</label>
+        <select class="form-control" formControlName="status">
+          <option value="approved">Approved</option>
+          <option value="pending">Pending</option>
+          <option value="hidden">Hidden</option>
+        </select>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Customer Image</label>
+        <app-image-uploader [multiple]="false" [images]="images()" (imagesChange)="images.set($event)" />
+      </div>
+    </form>
+  </c-modal-body>
+  <c-modal-footer>
+    <button [cModalToggle]="testModal.id" cButton color="secondary">Cancel</button>
+    <button cButton color="primary" [cModalToggle]="testModal.id" (click)="save()">Save Testimonial</button>
+  </c-modal-footer>
+</c-modal>
+
+<style>
+  .test-thumb { width: 36px; height: 36px; object-fit: cover; border-radius: 50%; }
+</style>

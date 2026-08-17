@@ -16,6 +16,12 @@ import {
 import { FormsModule } from '@angular/forms';
 import {PaginationComponent} from './components/pagination/pagination.component'
 import {GlobalSearchComponent} from './components/global-search/global-search.component'
+import { StatusBadgeComponent } from './components/status-badge/status-badge.component';
+import { StatCardComponent } from './components/stat-card/stat-card.component';
+import { PageHeaderComponent } from './components/page-header/page-header.component';
+import { EmptyStateComponent } from './components/empty-state/empty-state.component';
+import { ImageUploaderComponent } from './components/image-uploader/image-uploader.component';
+import { ChartCardComponent } from './components/chart-card/chart-card.component';
 
 @NgModule({
   imports: [
@@ -31,7 +37,13 @@ import {GlobalSearchComponent} from './components/global-search/global-search.co
     ModalFooterComponent,
     ModalModule,
     PaginationComponent,
-    GlobalSearchComponent
+    GlobalSearchComponent,
+    StatusBadgeComponent,
+    StatCardComponent,
+    PageHeaderComponent,
+    EmptyStateComponent,
+    ImageUploaderComponent,
+    ChartCardComponent
   ],
   exports: [
     ButtonDirective,
@@ -45,7 +57,13 @@ import {GlobalSearchComponent} from './components/global-search/global-search.co
     ModalModule,
     FormsModule,
     PaginationComponent,
-    GlobalSearchComponent
+    GlobalSearchComponent,
+    StatusBadgeComponent,
+    StatCardComponent,
+    PageHeaderComponent,
+    EmptyStateComponent,
+    ImageUploaderComponent,
+    ChartCardComponent
   ]
 })
 export class SharedUIModule { }

@@ -1,0 +1,89 @@
+<app-page-header title="Explore Our Collections" [breadcrumb]="[{ label: 'Home Page Management', url: '/home-page' }, { label: 'Explore Collections' }]">
+  <button class="btn btn-primary" [cModalToggle]="pickModal.id">
+    <svg cIcon name="cilPlus" class="me-1"></svg> Add Collection
+  </button>
+</app-page-header>
+
+<div class="card">
+  <div class="card-body p-0">
+    <table class="table table-striped align-middle mb-0">
+      <thead>
+        <tr><th>Collection</th><th>Short Description</th><th>Link</th><th class="text-end">Order</th><th>Status</th><th class="text-end">Actions</th></tr>
+      </thead>
+      <tbody>
+        @for (f of features; track f.id) {
+          <tr>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <img [src]="collectionImage(f.collectionId)" [alt]="collectionName(f.collectionId)" class="hcl-thumb" />
+                <span class="fw-medium">{{ collectionName(f.collectionId) }}</span>
+              </div>
+            </td>
+            <td class="text-body-secondary text-truncate d-inline-block" style="max-width:220px;">{{ f.shortDescription }}</td>
+            <td class="text-body-secondary">{{ f.link }}</td>
+            <td class="text-end">{{ f.displayOrder }}</td>
+            <td><app-status-badge [status]="f.status" /></td>
+            <td class="text-end">
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-secondary" (click)="move(f, 'up')"><svg cIcon name="cilArrowTop" size="sm"></svg></button>
+                <button class="btn btn-outline-secondary" (click)="move(f, 'down')"><svg cIcon name="cilArrowBottom" size="sm"></svg></button>
+                <button class="btn btn-outline-secondary" [cModalToggle]="editModal.id" (click)="openEdit(f)">Edit</button>
+                <button class="btn btn-outline-secondary" (click)="toggleStatus(f)">{{ f.status === 'active' ? 'Disable' : 'Enable' }}</button>
+                <button class="btn btn-outline-danger" (click)="remove(f)">Remove</button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="6"><app-empty-state title="No collections featured" message="Add collections to show on the homepage." /></td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<c-modal id="pickCollectionModal" #pickModal alignment="center" size="lg">
+  <c-modal-header>
+    <h5 cModalTitle>Add Collection to Homepage</h5>
+    <button [cModalToggle]="pickModal.id" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body>
+    <label class="form-label">Collection</label>
+    <select class="form-control mb-3" [(ngModel)]="pickedCollectionId" (ngModelChange)="onPick($event)">
+      <option value="">Select a collection</option>
+      @for (c of availableCollections; track c.id) { <option [value]="c.id">{{ c.name }}</option> }
+    </select>
+    @if (pickedCollectionId) {
+      <label class="form-label">Short Description</label>
+      <textarea class="form-control mb-3" rows="2" [(ngModel)]="pickedDescription"></textarea>
+      <label class="form-label">Link</label>
+      <input type="text" class="form-control" [(ngModel)]="pickedLink" />
+    }
+  </c-modal-body>
+  <c-modal-footer>
+    <button [cModalToggle]="pickModal.id" cButton color="secondary">Cancel</button>
+    <button cButton color="primary" [cModalToggle]="pickModal.id" [disabled]="!pickedCollectionId" (click)="addPicked()">Add to Homepage</button>
+  </c-modal-footer>
+</c-modal>
+
+<c-modal id="editCollectionFeatureModal" #editModal alignment="center" size="lg">
+  <c-modal-header>
+    <h5 cModalTitle>Edit Homepage Collection</h5>
+    <button [cModalToggle]="editModal.id" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body>
+    @if (editingFeature(); as f) {
+      <label class="form-label">Short Description</label>
+      <textarea class="form-control mb-3" rows="2" [(ngModel)]="f.shortDescription" [ngModelOptions]="{standalone: true}"></textarea>
+      <label class="form-label">Link</label>
+      <input type="text" class="form-control" [(ngModel)]="f.link" [ngModelOptions]="{standalone: true}" />
+    }
+  </c-modal-body>
+  <c-modal-footer>
+    <button [cModalToggle]="editModal.id" cButton color="secondary">Cancel</button>
+    <button cButton color="primary" [cModalToggle]="editModal.id" (click)="saveEdit()">Save</button>
+  </c-modal-footer>
+</c-modal>
+
+<style>
+  .hcl-thumb { width: 40px; height: 40px; object-fit: cover; border-radius: 0.25rem; }
+</style>

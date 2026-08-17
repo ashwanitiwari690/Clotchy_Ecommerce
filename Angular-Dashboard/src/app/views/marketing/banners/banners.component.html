@@ -1,0 +1,101 @@
+<app-page-header title="Banners" [breadcrumb]="[{ label: 'Marketing' }, { label: 'Banners' }]">
+  <button class="btn btn-primary" [cModalToggle]="bannerModal.id" (click)="openAdd()">
+    <svg cIcon name="cilPlus" class="me-1"></svg> Add Banner
+  </button>
+</app-page-header>
+
+<div class="card">
+  <app-global-search (search)="onSearch($event)"></app-global-search>
+  <div class="card-body p-0">
+    <table class="table table-striped align-middle mb-0">
+      <thead>
+        <tr>
+          <th>Banner</th>
+          <th>Title</th>
+          <th>Position</th>
+          <th>Link</th>
+          <th>Duration</th>
+          <th>Status</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (b of banners; track b.id) {
+          <tr>
+            <td><img [src]="b.image" [alt]="b.title" class="banner-thumb" /></td>
+            <td class="fw-medium">{{ b.title }}</td>
+            <td><span class="badge text-bg-info text-capitalize">{{ b.position }}</span></td>
+            <td class="text-truncate d-inline-block" style="max-width: 180px;">{{ b.link }}</td>
+            <td class="text-body-secondary small">{{ b.startDate }} – {{ b.endDate }}</td>
+            <td><app-status-badge [status]="b.status" /></td>
+            <td class="text-end">
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-secondary" [cModalToggle]="bannerModal.id" (click)="openEdit(b)">Edit</button>
+                <button class="btn btn-outline-secondary" (click)="toggleStatus(b)">
+                  {{ b.status === 'active' ? 'Disable' : 'Enable' }}
+                </button>
+                <button class="btn btn-outline-danger" (click)="remove(b)">Delete</button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="7"><app-empty-state title="No banners found" message="Try a different search or add a new banner." /></td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<c-modal id="bannerModal" #bannerModal alignment="center" size="lg">
+  <c-modal-header>
+    <h5 cModalTitle>{{ editingId() ? 'Edit Banner' : 'Add Banner' }}</h5>
+    <button [cModalToggle]="bannerModal.id" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body>
+    <form [formGroup]="form" class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Title</label>
+        <input type="text" class="form-control" formControlName="title" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Link URL</label>
+        <input type="text" class="form-control" formControlName="link" />
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Position</label>
+        <select class="form-control" formControlName="position">
+          <option value="top">Top</option>
+          <option value="sidebar">Sidebar</option>
+          <option value="popup">Popup</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Start Date</label>
+        <input type="date" class="form-control" formControlName="startDate" />
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">End Date</label>
+        <input type="date" class="form-control" formControlName="endDate" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Status</label>
+        <select class="form-control" formControlName="status">
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Banner Image</label>
+        <app-image-uploader [multiple]="false" [images]="images()" (imagesChange)="images.set($event)" />
+      </div>
+    </form>
+  </c-modal-body>
+  <c-modal-footer>
+    <button [cModalToggle]="bannerModal.id" cButton color="secondary">Cancel</button>
+    <button cButton color="primary" [cModalToggle]="bannerModal.id" (click)="save()">Save Banner</button>
+  </c-modal-footer>
+</c-modal>
+
+<style>
+  .banner-thumb { width: 64px; height: 32px; object-fit: cover; border-radius: 0.25rem; }
+</style>

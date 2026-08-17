@@ -1,0 +1,18 @@
+<app-page-header title="Customer Groups" [breadcrumb]="[{ label: 'Customers', url: '/customers' }, { label: 'Groups' }]" />
+
+<div class="card">
+  <div class="card-body p-0">
+    <table class="table table-striped align-middle mb-0">
+      <thead><tr><th>Group Name</th><th>Description</th><th class="text-end">Customers</th></tr></thead>
+      <tbody>
+        @for (g of groups; track g.id) {
+          <tr>
+            <td class="fw-medium">{{ g.name }}</td>
+            <td class="text-body-secondary">{{ g.description }}</td>
+            <td class="text-end">{{ g.customerCount }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

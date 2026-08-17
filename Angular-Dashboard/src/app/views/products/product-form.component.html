@@ -1,0 +1,223 @@
+<app-page-header [title]="isEdit ? 'Edit Product' : 'Add Product'" [breadcrumb]="[{ label: 'Catalog' }, { label: 'Products', url: '/products' }, { label: isEdit ? 'Edit' : 'Add' }]">
+  <button class="btn btn-outline-secondary" (click)="cancel()">Cancel</button>
+  <button class="btn btn-primary" (click)="save()">
+    <svg cIcon name="cilSave" class="me-1"></svg> Save Product
+  </button>
+</app-page-header>
+
+<form [formGroup]="form" class="d-flex flex-column gap-3">
+  <div class="card">
+    <div class="card-header fw-semibold">Basic Information</div>
+    <div class="card-body row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Product Name</label>
+        <input type="text" class="form-control" formControlName="name" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">SKU</label>
+        <input type="text" class="form-control" formControlName="sku" />
+      </div>
+      <div class="col-12">
+        <label class="form-label">Product Description</label>
+        <textarea class="form-control" rows="3" formControlName="description"></textarea>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Short Description</label>
+        <textarea class="form-control" rows="2" formControlName="shortDescription"></textarea>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Brand</label>
+        <select class="form-control" formControlName="brandId">
+          <option value="">No Brand</option>
+          @for (b of brands; track b.id) { <option [value]="b.id">{{ b.name }}</option> }
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Category</label>
+        <select class="form-control" formControlName="categoryId">
+          <option value="">Select category</option>
+          @for (c of categories; track c.id) { <option [value]="c.id">{{ c.name }}</option> }
+        </select>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Tags</label>
+        <input type="text" class="form-control" formControlName="tags" placeholder="Comma separated" />
+      </div>
+      <div class="col-12">
+        <label class="form-label d-block">Collections</label>
+        <div class="d-flex flex-wrap gap-3">
+          @for (col of collections; track col.id) {
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" [id]="'col-' + col.id" [checked]="isCollectionSelected(col.id)" (change)="toggleCollection(col.id)" />
+              <label class="form-check-label" [for]="'col-' + col.id">{{ col.name }}</label>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header fw-semibold">Pricing</div>
+    <div class="card-body row g-3">
+      <div class="col-md-3">
+        <label class="form-label">Price (₹)</label>
+        <input type="number" class="form-control" formControlName="price" />
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Sale Price (₹)</label>
+        <input type="number" class="form-control" formControlName="salePrice" />
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Cost Price (₹)</label>
+        <input type="number" class="form-control" formControlName="costPrice" />
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Tax (%)</label>
+        <input type="number" class="form-control" formControlName="tax" />
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Discount (%)</label>
+        <input type="number" class="form-control" formControlName="discount" />
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header fw-semibold">Inventory</div>
+    <div class="card-body row g-3">
+      <div class="col-md-3">
+        <label class="form-label">Stock Quantity</label>
+        <input type="number" class="form-control" formControlName="stock" />
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Low Stock Threshold</label>
+        <input type="number" class="form-control" formControlName="lowStockThreshold" />
+      </div>
+      <div class="col-md-3">
+        <label class="form-label">Availability</label>
+        <select class="form-control" formControlName="availability">
+          <option value="in-stock">In Stock</option>
+          <option value="out-of-stock">Out of Stock</option>
+          <option value="backorder">Backorder</option>
+        </select>
+      </div>
+      <div class="col-md-3 d-flex align-items-end">
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" role="switch" id="allowBackorder" formControlName="allowBackorder" />
+          <label class="form-check-label" for="allowBackorder">Allow Backorder</label>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header fw-semibold">Product Images</div>
+    <div class="card-body row g-3">
+      <div class="col-md-4">
+        <label class="form-label">Main Image</label>
+        <app-image-uploader [multiple]="false" [images]="mainImage()" (imagesChange)="mainImage.set($event)" />
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Thumbnail</label>
+        <app-image-uploader [multiple]="false" [images]="thumbnailImage()" (imagesChange)="thumbnailImage.set($event)" />
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Gallery Images</label>
+        <app-image-uploader [multiple]="true" [images]="galleryImages()" (imagesChange)="galleryImages.set($event)" />
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header fw-semibold">Product Variants</div>
+    <div class="card-body">
+      <div class="row g-2 align-items-end mb-3">
+        <div class="col-md-3">
+          <label class="form-label small">Size</label>
+          <input type="text" class="form-control" formControlName="variantSize" placeholder="e.g. M" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small">Color</label>
+          <input type="text" class="form-control" formControlName="variantColor" placeholder="e.g. Black" />
+        </div>
+        <div class="col-md-3">
+          <label class="form-label small">Material</label>
+          <input type="text" class="form-control" formControlName="variantMaterial" placeholder="e.g. Cotton" />
+        </div>
+        <div class="col-md-3">
+          <button type="button" class="btn btn-outline-primary w-100" (click)="addVariant()">
+            <svg cIcon name="cilPlus" class="me-1"></svg> Add Variant
+          </button>
+        </div>
+      </div>
+      <table class="table table-sm">
+        <thead><tr><th>Variant SKU</th><th>Size</th><th>Color</th><th>Material</th><th class="text-end">Price</th><th class="text-end">Stock</th><th></th></tr></thead>
+        <tbody>
+          @for (v of variants(); track v.id) {
+            <tr>
+              <td>{{ v.sku }}</td>
+              <td>{{ v.size || '—' }}</td>
+              <td>{{ v.color || '—' }}</td>
+              <td>{{ v.material || '—' }}</td>
+              <td class="text-end">₹{{ v.price }}</td>
+              <td class="text-end">{{ v.stock }}</td>
+              <td class="text-end"><button type="button" class="btn btn-sm btn-outline-danger" (click)="removeVariant(v.id)">×</button></td>
+            </tr>
+          } @empty {
+            <tr><td colspan="7" class="text-center text-body-secondary py-3">No variants added yet.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header fw-semibold">SEO</div>
+    <div class="card-body row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Meta Title</label>
+        <input type="text" class="form-control" formControlName="metaTitle" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">URL Slug</label>
+        <input type="text" class="form-control" formControlName="urlSlug" />
+      </div>
+      <div class="col-12">
+        <label class="form-label">Meta Description</label>
+        <textarea class="form-control" rows="2" formControlName="metaDescription"></textarea>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Keywords</label>
+        <input type="text" class="form-control" formControlName="keywords" />
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header fw-semibold">Product Status</div>
+    <div class="card-body row g-3">
+      <div class="col-md-4">
+        <label class="form-label">Status</label>
+        <select class="form-control" formControlName="status">
+          <option value="draft">Draft</option>
+          <option value="published">Published</option>
+          <option value="out-of-stock">Out of Stock</option>
+          <option value="archived">Archived</option>
+        </select>
+      </div>
+      <div class="col-md-4 d-flex align-items-end">
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" role="switch" id="featured" formControlName="featured" />
+          <label class="form-check-label" for="featured">Featured Product</label>
+        </div>
+      </div>
+      <div class="col-md-4 d-flex align-items-end">
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" role="switch" id="bestSeller" formControlName="bestSeller" />
+          <label class="form-check-label" for="bestSeller">Best Seller</label>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

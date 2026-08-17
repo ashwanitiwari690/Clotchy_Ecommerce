@@ -1,0 +1,73 @@
+<app-page-header title="Customer Report" [breadcrumb]="[{ label: 'Reports' }, { label: 'Customer Report' }]" />
+
+<c-row class="g-3">
+  <c-col xs="12">
+    <app-chart-card title="Top 5 Customers by Spend" [chart]="topCustomersChart" [height]="280" />
+  </c-col>
+</c-row>
+
+<c-row class="g-3 mt-1">
+  <c-col xs="12" xl="4">
+    <c-card class="h-100">
+      <c-card-header class="fw-semibold">New Customers</c-card-header>
+      <c-card-body class="p-0">
+        <table class="table table-striped align-middle mb-0">
+          <thead><tr><th>Customer</th><th>Registered</th><th>Status</th></tr></thead>
+          <tbody>
+            @for (c of newCustomers; track c.id) {
+              <tr>
+                <td><div class="d-flex align-items-center gap-2"><img [src]="c.avatar" class="rpt-avatar" [alt]="c.name" /><span class="text-truncate" style="max-width:120px;">{{ c.name }}</span></div></td>
+                <td class="text-body-secondary small">{{ c.registeredAt }}</td>
+                <td><app-status-badge [status]="c.status" /></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </c-card-body>
+    </c-card>
+  </c-col>
+
+  <c-col xs="12" xl="4">
+    <c-card class="h-100">
+      <c-card-header class="fw-semibold">Returning Customers</c-card-header>
+      <c-card-body class="p-0">
+        <table class="table table-striped align-middle mb-0">
+          <thead><tr><th>Customer</th><th class="text-end">Orders</th><th class="text-end">Spent</th></tr></thead>
+          <tbody>
+            @for (c of returningCustomers; track c.id) {
+              <tr>
+                <td class="text-truncate" style="max-width:120px;">{{ c.name }}</td>
+                <td class="text-end">{{ c.totalOrders }}</td>
+                <td class="text-end">{{ formatCurrency(c.totalSpent) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </c-card-body>
+    </c-card>
+  </c-col>
+
+  <c-col xs="12" xl="4">
+    <c-card class="h-100">
+      <c-card-header class="fw-semibold">Top Customers</c-card-header>
+      <c-card-body class="p-0">
+        <table class="table table-striped align-middle mb-0">
+          <thead><tr><th>Customer</th><th>Email</th><th class="text-end">Spent</th></tr></thead>
+          <tbody>
+            @for (c of topCustomers; track c.id) {
+              <tr>
+                <td class="text-truncate" style="max-width:100px;">{{ c.name }}</td>
+                <td class="text-body-secondary text-truncate" style="max-width:130px;">{{ c.email }}</td>
+                <td class="text-end fw-semibold">{{ formatCurrency(c.totalSpent) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </c-card-body>
+    </c-card>
+  </c-col>
+</c-row>
+
+<style>
+  .rpt-avatar { width: 28px; height: 28px; object-fit: cover; border-radius: 50%; }
+</style>

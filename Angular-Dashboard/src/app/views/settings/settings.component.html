@@ -1,0 +1,220 @@
+<app-page-header title="Store Settings" [breadcrumb]="[{ label: 'Settings' }]" />
+
+<div class="d-flex flex-wrap gap-2 mb-3">
+  @for (t of tabs; track t.id) {
+    <button type="button" class="btn btn-sm"
+      [class.btn-primary]="activeTab() === t.id"
+      [class.btn-outline-secondary]="activeTab() !== t.id"
+      (click)="selectTab(t.id)">
+      {{ t.label }}
+    </button>
+  }
+</div>
+
+@switch (activeTab()) {
+  @case ('general') {
+    <div class="card">
+      <div class="card-header fw-semibold">General</div>
+      <div class="card-body">
+        <form [formGroup]="generalForm" class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Store Name</label>
+            <input type="text" class="form-control" formControlName="storeName" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" formControlName="email" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Phone</label>
+            <input type="text" class="form-control" formControlName="phone" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Address</label>
+            <textarea class="form-control" rows="1" formControlName="address"></textarea>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Logo</label>
+            <app-image-uploader [multiple]="false" [images]="logoImages()" (imagesChange)="logoImages.set($event)" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Favicon</label>
+            <app-image-uploader [multiple]="false" [images]="faviconImages()" (imagesChange)="faviconImages.set($event)" />
+          </div>
+        </form>
+      </div>
+      <div class="card-footer text-end">
+        <button class="btn btn-primary" (click)="saveGeneral()">Save Changes</button>
+      </div>
+    </div>
+  }
+
+  @case ('shipping') {
+    <div class="card">
+      <div class="card-header fw-semibold">Shipping</div>
+      <div class="card-body">
+        <label class="form-label">Shipping Methods</label>
+        <table class="table table-sm">
+          <thead><tr><th>Method Name</th><th style="width:140px;">Charge (₹)</th><th></th></tr></thead>
+          <tbody>
+            @for (m of shippingMethods(); track $index) {
+              <tr>
+                <td><input type="text" class="form-control form-control-sm" [ngModel]="m.name" (ngModelChange)="updateShippingMethod($index, 'name', $event)" [ngModelOptions]="{standalone: true}" /></td>
+                <td><input type="number" class="form-control form-control-sm" [ngModel]="m.charge" (ngModelChange)="updateShippingMethod($index, 'charge', $event)" [ngModelOptions]="{standalone: true}" /></td>
+                <td><button class="btn btn-sm btn-outline-danger" (click)="removeShippingMethod($index)">×</button></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+        <button class="btn btn-sm btn-outline-secondary mb-3" (click)="addShippingMethod()">Add Method</button>
+        <form [formGroup]="shippingForm">
+          <label class="form-label">Free Shipping Threshold (₹)</label>
+          <input type="number" class="form-control" style="max-width:220px;" formControlName="freeShippingThreshold" />
+        </form>
+      </div>
+      <div class="card-footer text-end">
+        <button class="btn btn-primary" (click)="saveShipping()">Save Changes</button>
+      </div>
+    </div>
+  }
+
+  @case ('payment') {
+    <div class="card">
+      <div class="card-header fw-semibold">Payment</div>
+      <div class="card-body">
+        <label class="form-label d-block">Payment Methods</label>
+        <div class="d-flex flex-wrap gap-3 mb-3">
+          @for (opt of paymentOptions; track opt) {
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" [id]="'pm-' + opt" [checked]="checkedPaymentMethods().has(opt)" (change)="togglePaymentMethod(opt)" />
+              <label class="form-check-label" [for]="'pm-' + opt">{{ opt }}</label>
+            </div>
+          }
+        </div>
+        <form [formGroup]="paymentForm" class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Currency</label>
+            <input type="text" class="form-control" formControlName="currency" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Tax Rate (%)</label>
+            <input type="number" class="form-control" formControlName="taxRate" />
+          </div>
+        </form>
+      </div>
+      <div class="card-footer text-end">
+        <button class="btn btn-primary" (click)="savePayment()">Save Changes</button>
+      </div>
+    </div>
+  }
+
+  @case ('tax') {
+    <div class="card">
+      <div class="card-header fw-semibold">Tax</div>
+      <div class="card-body">
+        <form [formGroup]="taxForm" class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Tax Name</label>
+            <input type="text" class="form-control" formControlName="taxName" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Tax Rate (%)</label>
+            <input type="number" class="form-control" formControlName="taxRate" />
+          </div>
+          <div class="col-12">
+            <div class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" role="switch" id="pricesIncludeTax" formControlName="pricesIncludeTax" />
+              <label class="form-check-label" for="pricesIncludeTax">Prices Include Tax</label>
+            </div>
+          </div>
+        </form>
+      </div>
+      <div class="card-footer text-end">
+        <button class="btn btn-primary" (click)="saveTax()">Save Changes</button>
+      </div>
+    </div>
+  }
+
+  @case ('notifications') {
+    <div class="card">
+      <div class="card-header fw-semibold">Notifications</div>
+      <div class="card-body">
+        <form [formGroup]="notificationsForm" class="d-flex flex-column gap-3">
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="emailNotifications" formControlName="emailNotifications" />
+            <label class="form-check-label" for="emailNotifications">Email Notifications</label>
+          </div>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="orderNotifications" formControlName="orderNotifications" />
+            <label class="form-check-label" for="orderNotifications">Order Notifications</label>
+          </div>
+          <div class="form-check form-switch">
+            <input class="form-check-input" type="checkbox" role="switch" id="customerNotifications" formControlName="customerNotifications" />
+            <label class="form-check-label" for="customerNotifications">Customer Notifications</label>
+          </div>
+        </form>
+      </div>
+      <div class="card-footer text-end">
+        <button class="btn btn-primary" (click)="saveNotifications()">Save Changes</button>
+      </div>
+    </div>
+  }
+
+  @case ('social') {
+    <div class="card">
+      <div class="card-header fw-semibold">Social Media</div>
+      <div class="card-body">
+        <form [formGroup]="socialForm" class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Instagram</label>
+            <input type="text" class="form-control" formControlName="instagram" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Facebook</label>
+            <input type="text" class="form-control" formControlName="facebook" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">YouTube</label>
+            <input type="text" class="form-control" formControlName="youtube" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Twitter / X</label>
+            <input type="text" class="form-control" formControlName="twitter" />
+          </div>
+        </form>
+      </div>
+      <div class="card-footer text-end">
+        <button class="btn btn-primary" (click)="saveSocial()">Save Changes</button>
+      </div>
+    </div>
+  }
+
+  @case ('profile') {
+    <div class="card">
+      <div class="card-header fw-semibold">Admin Profile</div>
+      <div class="card-body">
+        <form [formGroup]="profileForm" class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">Name</label>
+            <input type="text" class="form-control" formControlName="name" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" formControlName="email" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Phone</label>
+            <input type="text" class="form-control" formControlName="phone" />
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">Avatar</label>
+            <app-image-uploader [multiple]="false" [images]="avatarImages()" (imagesChange)="avatarImages.set($event)" />
+          </div>
+        </form>
+      </div>
+      <div class="card-footer text-end">
+        <button class="btn btn-primary" (click)="saveProfile()">Save Changes</button>
+      </div>
+    </div>
+  }
+}

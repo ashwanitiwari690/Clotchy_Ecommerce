@@ -1,0 +1,114 @@
+<app-page-header title="Categories" [breadcrumb]="[{ label: 'Catalog' }, { label: 'Categories' }]">
+  <button class="btn btn-primary" [cModalToggle]="catModal.id" (click)="openAdd()">
+    <svg cIcon name="cilPlus" class="me-1"></svg> Add Category
+  </button>
+</app-page-header>
+
+<div class="card">
+  <app-global-search (search)="onSearch($event)"></app-global-search>
+  <div class="card-body p-0">
+    <table class="table table-striped align-middle mb-0">
+      <thead>
+        <tr>
+          <th>Category</th>
+          <th>Slug</th>
+          <th>Parent</th>
+          <th class="text-end">Products</th>
+          <th>Status</th>
+          <th class="text-end">Sort Order</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (cat of categories; track cat.id) {
+          <tr>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <img [src]="cat.image" [alt]="cat.name" class="cat-thumb" />
+                <span class="fw-medium">{{ cat.name }}</span>
+              </div>
+            </td>
+            <td class="text-body-secondary">{{ cat.slug }}</td>
+            <td>{{ parentName(cat) }}</td>
+            <td class="text-end">{{ productCount(cat.id) }}</td>
+            <td><app-status-badge [status]="cat.status" /></td>
+            <td class="text-end">
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-secondary" (click)="move(cat, 'up')" aria-label="Move up">
+                  <svg cIcon name="cilArrowTop" size="sm"></svg>
+                </button>
+                <button class="btn btn-outline-secondary" (click)="move(cat, 'down')" aria-label="Move down">
+                  <svg cIcon name="cilArrowBottom" size="sm"></svg>
+                </button>
+              </div>
+            </td>
+            <td class="text-end">
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-secondary" [cModalToggle]="catModal.id" (click)="openEdit(cat)">Edit</button>
+                <button class="btn btn-outline-secondary" (click)="toggleStatus(cat)">
+                  {{ cat.status === 'active' ? 'Disable' : 'Enable' }}
+                </button>
+                <button class="btn btn-outline-danger" (click)="remove(cat)">Delete</button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="7"><app-empty-state title="No categories found" message="Try a different search or add a new category." /></td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<c-modal id="categoryModal" #catModal alignment="center" size="lg">
+  <c-modal-header>
+    <h5 cModalTitle>{{ editingId() ? 'Edit Category' : 'Add Category' }}</h5>
+    <button [cModalToggle]="catModal.id" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body>
+    <form [formGroup]="form" class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Category Name</label>
+        <input type="text" class="form-control" formControlName="name" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Slug</label>
+        <input type="text" class="form-control" formControlName="slug" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Parent Category</label>
+        <select class="form-control" formControlName="parentId">
+          <option value="">None (Top Level)</option>
+          @for (p of parentOptions; track p.id) {
+            <option [value]="p.id">{{ p.name }}</option>
+          }
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Status</label>
+        <select class="form-control" formControlName="status">
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Description</label>
+        <textarea class="form-control" rows="3" formControlName="description"></textarea>
+      </div>
+    </form>
+  </c-modal-body>
+  <c-modal-footer>
+    <button [cModalToggle]="catModal.id" cButton color="secondary">Cancel</button>
+    <button cButton color="primary" [cModalToggle]="catModal.id" (click)="save()">Save Category</button>
+  </c-modal-footer>
+</c-modal>
+
+<style>
+  .cat-thumb {
+    width: 36px;
+    height: 36px;
+    object-fit: cover;
+    border-radius: 0.375rem;
+  }
+</style>
+

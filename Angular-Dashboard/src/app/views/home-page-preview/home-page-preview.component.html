@@ -1,0 +1,165 @@
+<div class="clotchy-storefront">
+
+  <div class="preview-bar">
+    <span>Homepage Preview — this is a mock of the customer-facing Clotchy homepage, built from your admin content.</span>
+    <a routerLink="/home-page">Back to Admin</a>
+  </div>
+
+  <!-- Header -->
+  <header class="storefront-header">
+    <div class="container-fluid px-4 d-flex align-items-center justify-content-between">
+      <div class="brand">CLOTCHY<span class="dot">.</span></div>
+      <nav class="storefront-nav d-none d-md-flex">
+        <a>Shop</a>
+        <a>Collections</a>
+        <a>Best Sellers</a>
+        <a>About</a>
+      </nav>
+      <div class="storefront-icons">
+        <span>Search</span>
+        <span>Account</span>
+        <span>Cart (0)</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  @if (hero; as h) {
+    <section class="hero-section" [style.backgroundImage]="'linear-gradient(180deg, rgba(0,0,0,.35), rgba(0,0,0,.75)), url(' + h.desktopImage + ')'">
+      <div class="hero-content">
+        <div class="hero-subheading">{{ h.subheading }}</div>
+        <h1 class="hero-heading">{{ h.heading }}</h1>
+        <p class="hero-description">{{ h.description }}</p>
+        <div class="hero-actions">
+          <span class="btn-gold">{{ h.primaryButtonText }}</span>
+          @if (h.secondaryButtonText) { <span class="btn-outline-gold">{{ h.secondaryButtonText }}</span> }
+        </div>
+      </div>
+    </section>
+  }
+
+  <!-- Shop By Category -->
+  @if (categories.length) {
+    <section class="section">
+      <h2 class="section-title">Shop By Category</h2>
+      <div class="category-grid">
+        @for (c of categories; track c!.id) {
+          <div class="category-card">
+            <img [src]="c!.image" [alt]="c!.name" />
+            <div class="category-name">{{ c!.name }}</div>
+          </div>
+        }
+      </div>
+    </section>
+  }
+
+  <!-- Explore Our Collections -->
+  @if (collections.length) {
+    <section class="section section-dark-alt">
+      <h2 class="section-title">Explore Our Collections</h2>
+      <div class="collection-grid">
+        @for (item of collections; track item.collection!.id) {
+          <div class="collection-card">
+            <img [src]="item.collection!.image" [alt]="item.collection!.name" />
+            <div class="collection-overlay">
+              <div class="collection-name">{{ item.collection!.name }}</div>
+              <div class="collection-desc">{{ item.feature.shortDescription }}</div>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+  }
+
+  <!-- Best Sellers -->
+  @if (bestSellers.length) {
+    <section class="section">
+      <h2 class="section-title">Best Sellers</h2>
+      <div class="product-grid">
+        @for (p of bestSellers; track p!.id) {
+          <div class="product-card">
+            <div class="product-image-wrap">
+              <img [src]="p!.mainImage" [alt]="p!.name" />
+            </div>
+            <div class="product-name">{{ p!.name }}</div>
+            <div class="product-price">
+              <span class="price-current">₹{{ (p!.salePrice ?? p!.price) | number }}</span>
+              @if (p!.salePrice) { <span class="price-original">₹{{ p!.price | number }}</span> }
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+  }
+
+  <!-- Promotional Section -->
+  @if (promotion; as promo) {
+    <section class="promo-section" [style.backgroundImage]="'linear-gradient(120deg, rgba(0,0,0,.6), rgba(0,0,0,.2)), url(' + promo.bannerImage + ')'">
+      <div class="promo-content">
+        @if (promo.discount) { <div class="promo-discount">{{ promo.discount }}</div> }
+        <h2 class="promo-title">{{ promo.title }}</h2>
+        <p class="promo-description">{{ promo.description }}</p>
+        <span class="btn-gold">{{ promo.buttonText }}</span>
+      </div>
+    </section>
+  }
+
+  <!-- Testimonials -->
+  @if (testimonials.length) {
+    <section class="section section-dark-alt">
+      <h2 class="section-title">Customer Testimonials</h2>
+      <div class="testimonial-grid">
+        @for (t of testimonials; track t.id) {
+          <div class="testimonial-card">
+            <div class="testimonial-stars">
+              @for (s of stars(t.rating); track s) { <span>★</span> }
+            </div>
+            <p class="testimonial-review">"{{ t.review }}"</p>
+            <div class="testimonial-author">
+              <img [src]="t.customerImage" [alt]="t.customerName" />
+              <span>{{ t.customerName }}</span>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+  }
+
+  <!-- Community -->
+  @if (communityImages.length) {
+    <section class="section">
+      <h2 class="section-title">Clotchy Community</h2>
+      <p class="section-subtitle">Tag @clotchy to be featured</p>
+      <div class="community-grid">
+        @for (img of communityImages; track img.id) {
+          <div class="community-item">
+            <img [src]="img.image" [alt]="img.title" />
+          </div>
+        }
+      </div>
+    </section>
+  }
+
+  <!-- Newsletter -->
+  @if (newsletterSvc.value.status === 'active') {
+    <section class="newsletter-section" [style.backgroundImage]="'linear-gradient(rgba(0,0,0,.7), rgba(0,0,0,.7)), url(' + newsletterSvc.value.backgroundImage + ')'">
+      <h2 class="newsletter-title">{{ newsletterSvc.value.title }}</h2>
+      <p class="newsletter-description">{{ newsletterSvc.value.description }}</p>
+      <div class="newsletter-form">
+        <input type="email" [placeholder]="newsletterSvc.value.placeholderText" disabled />
+        <span class="btn-gold">{{ newsletterSvc.value.buttonText }}</span>
+      </div>
+    </section>
+  }
+
+  <!-- Footer -->
+  <footer class="storefront-footer">
+    <div class="footer-brand">CLOTCHY<span class="dot">.</span></div>
+    <p>Premium fashion essentials for every legend.</p>
+    <div class="footer-links">
+      <span>Shop</span><span>Collections</span><span>Support</span><span>About</span>
+    </div>
+    <div class="footer-copy">© 2026 Clotchy. All rights reserved.</div>
+  </footer>
+
+</div>
