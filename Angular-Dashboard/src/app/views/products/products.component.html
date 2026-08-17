@@ -8,9 +8,6 @@
   <div class="card-body border-bottom">
     <div class="row g-2 align-items-center">
       <div class="col-md-4">
-        <app-global-search (search)="onSearch($event)"></app-global-search>
-      </div>
-      <div class="col-md-4">
         <select class="form-control" [(ngModel)]="categoryFilter">
           <option value="">All Categories</option>
           @for (c of categories; track c!.id) {
@@ -26,6 +23,9 @@
           <option value="out-of-stock">Out of Stock</option>
           <option value="archived">Archived</option>
         </select>
+      </div>
+      <div class="col-md-4">
+        <app-global-search (search)="onSearch($event)"></app-global-search>
       </div>
     </div>
   </div>
