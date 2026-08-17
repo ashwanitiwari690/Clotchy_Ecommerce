@@ -9,7 +9,7 @@
       <a routerLink="/products" routerLinkActive="active">SHOP</a>
       <a routerLink="/collections" routerLinkActive="active">COLLECTIONS</a>
       <a routerLink="/about" routerLinkActive="active">ABOUT US</a>
-      <a routerLink="/products" [queryParams]="{collection:'Warrior'}">WARRIOR</a>
+      <!-- <a routerLink="/products" [queryParams]="{collection:'Warrior'}">WARRIOR</a> -->
       <a routerLink="/track-order" routerLinkActive="active">TRACK ORDER</a>
       <a routerLink="/contact" routerLinkActive="active">CONTACT</a>
     </nav>
@@ -48,7 +48,7 @@
     <a routerLink="/products" (click)="closeMenu()">SHOP</a>
     <a routerLink="/collections" (click)="closeMenu()">COLLECTIONS</a>
     <a routerLink="/about" (click)="closeMenu()">ABOUT US</a>
-    <a routerLink="/products" [queryParams]="{collection:'Warrior'}" (click)="closeMenu()">WARRIOR</a>
+    <!-- <a routerLink="/products" [queryParams]="{collection:'Warrior'}" (click)="closeMenu()">WARRIOR</a> -->
     <a routerLink="/track-order" (click)="closeMenu()">TRACK ORDER</a>
     <a routerLink="/contact" (click)="closeMenu()">CONTACT</a>
     <a routerLink="/cart" (click)="closeMenu()">CART ({{ cart.count() }})</a>
