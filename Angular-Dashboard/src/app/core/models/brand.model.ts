@@ -8,6 +8,8 @@ export interface Brand {
   status: EntityStatus;
 }
 
+
+
 export interface ProductAttribute {
   id: string;
   name: string;
