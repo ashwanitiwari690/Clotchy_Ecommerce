@@ -10,12 +10,6 @@
   <ng-scrollbar pointerEventsMethod="scrollbar" visibility="hover">
     <c-sidebar-nav [navItems]="navItems" dropdownMode="close" compact />
   </ng-scrollbar>
-
-  @if (userType == 2) {
-  <c-sidebar-footer class="border-top d-none d-lg-flex" toggle="unfoldable" style="cursor: pointer;">
-    <span class="colordata"><svg cIcon name="cibHipchat" class="nav-icon"></svg> You Stuck? Contact Me</span>
-  </c-sidebar-footer>
-  }
 </c-sidebar>
 
 <!--main-->

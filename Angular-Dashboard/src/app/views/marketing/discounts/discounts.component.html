@@ -1,0 +1,115 @@
+<app-page-header title="Discounts" [breadcrumb]="[{ label: 'Marketing' }, { label: 'Discounts' }]">
+  <button class="btn btn-primary" [cModalToggle]="discountModal.id" (click)="openAdd()">
+    <svg cIcon name="cilPlus" class="me-1"></svg> Add Discount
+  </button>
+</app-page-header>
+
+<div class="card">
+  <app-global-search (search)="onSearch($event)"></app-global-search>
+  <div class="card-body p-0">
+    <table class="table table-striped align-middle mb-0">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Discount</th>
+          <th>Applies To</th>
+          <th>Duration</th>
+          <th>Status</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (d of discounts; track d.id) {
+          <tr>
+            <td class="fw-medium">{{ d.name }}</td>
+            <td>{{ valueLabel(d) }}</td>
+            <td><span class="badge text-bg-light border">{{ d.appliesTo === 'all' ? 'All Products' : (d.appliesTo === 'category' ? 'Category: ' : 'Product: ') + d.targetName }}</span></td>
+            <td class="text-body-secondary small">{{ d.startDate }} – {{ d.endDate }}</td>
+            <td><app-status-badge [status]="d.status" /></td>
+            <td class="text-end">
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-secondary" [cModalToggle]="discountModal.id" (click)="openEdit(d)">Edit</button>
+                <button class="btn btn-outline-secondary" (click)="toggleStatus(d)">
+                  {{ d.status === 'active' ? 'Disable' : 'Enable' }}
+                </button>
+                <button class="btn btn-outline-danger" (click)="remove(d)">Delete</button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="6"><app-empty-state title="No discounts found" message="Try a different search or add a new discount." /></td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<c-modal id="discountModal" #discountModal alignment="center" size="lg">
+  <c-modal-header>
+    <h5 cModalTitle>{{ editingId() ? 'Edit Discount' : 'Add Discount' }}</h5>
+    <button [cModalToggle]="discountModal.id" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body>
+    <form [formGroup]="form" class="row g-3">
+      <div class="col-12">
+        <label class="form-label">Discount Name</label>
+        <input type="text" class="form-control" formControlName="name" />
+      </div>
+      <div class="col-12">
+        <label class="form-label d-block">Type</label>
+        <div class="btn-group" role="group">
+          <input type="radio" class="btn-check" formControlName="type" value="percentage" id="discTypePercentage" />
+          <label class="btn btn-outline-secondary" for="discTypePercentage">Percentage</label>
+          <input type="radio" class="btn-check" formControlName="type" value="fixed" id="discTypeFixed" />
+          <label class="btn btn-outline-secondary" for="discTypeFixed">Fixed Amount</label>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Value</label>
+        <input type="number" class="form-control" formControlName="value" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Applies To</label>
+        <select class="form-control" formControlName="appliesTo">
+          <option value="all">All Products</option>
+          <option value="category">Specific Category</option>
+          <option value="product">Specific Product</option>
+        </select>
+      </div>
+      @if (form.value.appliesTo === 'category') {
+        <div class="col-12">
+          <label class="form-label">Category</label>
+          <select class="form-control" formControlName="targetName">
+            @for (c of categories; track c.id) {
+              <option [value]="c.name">{{ c.name }}</option>
+            }
+          </select>
+        </div>
+      } @else if (form.value.appliesTo === 'product') {
+        <div class="col-12">
+          <label class="form-label">Product Name</label>
+          <input type="text" class="form-control" formControlName="targetName" />
+        </div>
+      }
+      <div class="col-md-6">
+        <label class="form-label">Start Date</label>
+        <input type="date" class="form-control" formControlName="startDate" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">End Date</label>
+        <input type="date" class="form-control" formControlName="endDate" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Status</label>
+        <select class="form-control" formControlName="status">
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+      </div>
+    </form>
+  </c-modal-body>
+  <c-modal-footer>
+    <button [cModalToggle]="discountModal.id" cButton color="secondary">Cancel</button>
+    <button cButton color="primary" [cModalToggle]="discountModal.id" (click)="save()">Save Discount</button>
+  </c-modal-footer>
+</c-modal>

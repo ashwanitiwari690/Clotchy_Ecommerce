@@ -1,0 +1,63 @@
+<app-page-header title="Shop By Category" [breadcrumb]="[{ label: 'Home Page Management', url: '/home-page' }, { label: 'Shop By Category' }]">
+  <button class="btn btn-primary" [cModalToggle]="pickModal.id">
+    <svg cIcon name="cilPlus" class="me-1"></svg> Add Category
+  </button>
+</app-page-header>
+
+<div class="card">
+  <div class="card-body p-0">
+    <table class="table table-striped align-middle mb-0">
+      <thead>
+        <tr><th>Category</th><th class="text-end">Products</th><th class="text-end">Display Order</th><th>Status</th><th class="text-end">Actions</th></tr>
+      </thead>
+      <tbody>
+        @for (f of features; track f.id) {
+          <tr>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <img [src]="categoryImage(f.categoryId)" [alt]="categoryName(f.categoryId)" class="hc-thumb" />
+                <span class="fw-medium">{{ categoryName(f.categoryId) }}</span>
+              </div>
+            </td>
+            <td class="text-end">{{ productCount(f.categoryId) }}</td>
+            <td class="text-end">{{ f.displayOrder }}</td>
+            <td><app-status-badge [status]="f.status" /></td>
+            <td class="text-end">
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-secondary" (click)="move(f, 'up')"><svg cIcon name="cilArrowTop" size="sm"></svg></button>
+                <button class="btn btn-outline-secondary" (click)="move(f, 'down')"><svg cIcon name="cilArrowBottom" size="sm"></svg></button>
+                <button class="btn btn-outline-secondary" (click)="toggleStatus(f)">{{ f.status === 'active' ? 'Disable' : 'Enable' }}</button>
+                <button class="btn btn-outline-danger" (click)="remove(f)">Remove</button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="5"><app-empty-state title="No categories featured" message="Add categories to show on the homepage." /></td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<c-modal id="pickCategoryModal" #pickModal alignment="center" size="lg">
+  <c-modal-header>
+    <h5 cModalTitle>Select Category</h5>
+    <button [cModalToggle]="pickModal.id" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body>
+    <div class="list-group">
+      @for (c of availableCategories; track c.id) {
+        <button type="button" class="list-group-item list-group-item-action d-flex align-items-center gap-2" [cModalToggle]="pickModal.id" (click)="add(c.id)">
+          <img [src]="c.image" [alt]="c.name" class="hc-thumb" />
+          {{ c.name }}
+        </button>
+      } @empty {
+        <div class="text-body-secondary small p-2">All categories are already featured.</div>
+      }
+    </div>
+  </c-modal-body>
+</c-modal>
+
+<style>
+  .hc-thumb { width: 32px; height: 32px; object-fit: cover; border-radius: 0.25rem; }
+</style>

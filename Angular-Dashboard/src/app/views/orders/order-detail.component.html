@@ -1,0 +1,86 @@
+@if (order(); as o) {
+  <app-page-header [title]="'Order ' + o.id" [breadcrumb]="[{ label: 'Sales' }, { label: 'Orders', url: '/orders' }, { label: o.id }]" />
+
+  <div class="row g-3">
+    <div class="col-lg-8">
+      <div class="card mb-3">
+        <div class="card-header fw-semibold">Customer Information</div>
+        <div class="card-body">
+          <dl class="row small mb-0">
+            <dt class="col-3">Name</dt><dd class="col-9">{{ o.customerName }}</dd>
+            <dt class="col-3">Email</dt><dd class="col-9">{{ o.email }}</dd>
+            <dt class="col-3">Phone</dt><dd class="col-9">{{ o.phone }}</dd>
+            <dt class="col-3">Address</dt><dd class="col-9">{{ o.address }}</dd>
+          </dl>
+        </div>
+      </div>
+
+      <div class="card mb-3">
+        <div class="card-header fw-semibold">Products</div>
+        <div class="card-body p-0">
+          <table class="table align-middle mb-0">
+            <thead>
+              <tr><th>Image</th><th>Product</th><th>Variant</th><th class="text-end">Qty</th><th class="text-end">Price</th><th class="text-end">Total</th></tr>
+            </thead>
+            <tbody>
+              @for (item of o.items; track item.productId) {
+                <tr>
+                  <td><img [src]="item.image" [alt]="item.productName" class="order-item-thumb" /></td>
+                  <td>{{ item.productName }}</td>
+                  <td class="text-body-secondary">{{ item.variant || '—' }}</td>
+                  <td class="text-end">{{ item.quantity }}</td>
+                  <td class="text-end">{{ formatCurrency(item.price) }}</td>
+                  <td class="text-end fw-semibold">{{ formatCurrency(item.price * item.quantity) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header fw-semibold">Order Summary</div>
+        <div class="card-body">
+          <dl class="row small mb-0">
+            <dt class="col-9 text-end">Subtotal</dt><dd class="col-3 text-end">{{ formatCurrency(o.subtotal) }}</dd>
+            <dt class="col-9 text-end">Discount</dt><dd class="col-3 text-end">-{{ formatCurrency(o.discount) }}</dd>
+            <dt class="col-9 text-end">Shipping</dt><dd class="col-3 text-end">{{ formatCurrency(o.shipping) }}</dd>
+            <dt class="col-9 text-end">Tax</dt><dd class="col-3 text-end">{{ formatCurrency(o.tax) }}</dd>
+            <dt class="col-9 text-end fw-bold border-top pt-2">Grand Total</dt><dd class="col-3 text-end fw-bold border-top pt-2">{{ formatCurrency(o.total) }}</dd>
+          </dl>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-lg-4">
+      <div class="card mb-3">
+        <div class="card-header fw-semibold">Order Information</div>
+        <div class="card-body">
+          <dl class="row small mb-0">
+            <dt class="col-5">Order ID</dt><dd class="col-7">{{ o.id }}</dd>
+            <dt class="col-5">Date</dt><dd class="col-7">{{ o.date }}</dd>
+            <dt class="col-5">Payment</dt><dd class="col-7">{{ o.paymentMethod }}</dd>
+            <dt class="col-5">Payment Status</dt><dd class="col-7"><app-status-badge [status]="o.paymentStatus" /></dd>
+          </dl>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-header fw-semibold">Update Order Status</div>
+        <div class="card-body">
+          <select class="form-control" [ngModel]="o.status" (ngModelChange)="updateStatus($event)">
+            @for (s of statuses; track s) {
+              <option [value]="s">{{ s }}</option>
+            }
+          </select>
+          <div class="mt-2"><app-status-badge [status]="o.status" /></div>
+        </div>
+      </div>
+    </div>
+  </div>
+} @else {
+  <app-empty-state title="Order not found" message="This order may have been removed." actionLabel="Back to Orders" (action)="goBack()" />
+}
+
+<style>
+  .order-item-thumb { width: 44px; height: 44px; object-fit: cover; border-radius: 0.375rem; }
+</style>

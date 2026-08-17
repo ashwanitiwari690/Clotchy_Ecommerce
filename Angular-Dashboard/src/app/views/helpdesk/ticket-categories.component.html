@@ -1,0 +1,20 @@
+<app-page-header title="Support Categories" [breadcrumb]="[{ label: 'Support' }, { label: 'Tickets', url: '/helpdesk' }, { label: 'Categories' }]" />
+
+<div class="card" style="max-width: 480px;">
+  <div class="card-body">
+    <div class="input-group mb-3">
+      <input type="text" class="form-control" [(ngModel)]="newCategory" placeholder="New category name" (keyup.enter)="addCategory()" />
+      <button class="btn btn-primary" (click)="addCategory()">Add</button>
+    </div>
+    <ul class="list-group">
+      @for (c of categories(); track c) {
+        <li class="list-group-item d-flex justify-content-between align-items-center">
+          {{ c }}
+          <button class="btn btn-sm btn-outline-danger" (click)="removeCategory(c)">×</button>
+        </li>
+      } @empty {
+        <li class="list-group-item text-body-secondary">No categories yet.</li>
+      }
+    </ul>
+  </div>
+</div>

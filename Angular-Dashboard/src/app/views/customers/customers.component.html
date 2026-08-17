@@ -1,0 +1,50 @@
+<app-page-header title="Customers" [breadcrumb]="[{ label: 'Customers' }]">
+  <a class="btn btn-outline-secondary" routerLink="/customers/groups">Customer Groups</a>
+  <a class="btn btn-outline-secondary" routerLink="/customers/addresses">Customer Addresses</a>
+</app-page-header>
+
+<div class="card">
+  <app-global-search (search)="onSearch($event)"></app-global-search>
+  <div class="card-body p-0">
+    <table class="table table-striped align-middle mb-0">
+      <thead>
+        <tr>
+          <th>Customer</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Registered</th>
+          <th class="text-end">Orders</th>
+          <th class="text-end">Total Spent</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (c of paged; track c.id) {
+          <tr>
+            <td>
+              <a [routerLink]="['/customers', c.id]" class="d-flex align-items-center gap-2 text-decoration-none">
+                <img [src]="c.avatar" [alt]="c.name" class="cust-thumb" />
+                <span class="fw-medium">{{ c.name }}</span>
+              </a>
+            </td>
+            <td>{{ c.email }}</td>
+            <td>{{ c.phone }}</td>
+            <td class="text-body-secondary small">{{ c.registeredAt }}</td>
+            <td class="text-end">{{ c.totalOrders }}</td>
+            <td class="text-end">{{ formatCurrency(c.totalSpent) }}</td>
+            <td><app-status-badge [status]="c.status" /></td>
+          </tr>
+        } @empty {
+          <tr><td colspan="7"><app-empty-state title="No customers found" message="Try a different search." /></td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+  <div class="card-body d-flex justify-content-end">
+    <app-pagination [totalItems]="filtered.length" [pageSize]="pageSize" [currentPage]="currentPage()" (pageChange)="onPageChange($event)" />
+  </div>
+</div>
+
+<style>
+  .cust-thumb { width: 32px; height: 32px; object-fit: cover; border-radius: 50%; }
+</style>

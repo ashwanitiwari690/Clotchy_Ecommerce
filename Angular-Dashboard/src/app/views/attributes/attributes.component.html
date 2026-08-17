@@ -1,0 +1,64 @@
+<app-page-header title="Product Attributes" [breadcrumb]="[{ label: 'Catalog' }, { label: 'Product Attributes' }]">
+  <button class="btn btn-primary" [cModalToggle]="attrModal.id" (click)="openAdd()">
+    <svg cIcon name="cilPlus" class="me-1"></svg> Add Attribute
+  </button>
+</app-page-header>
+
+<div class="card">
+  <app-global-search (search)="onSearch($event)"></app-global-search>
+  <div class="card-body p-0">
+    <table class="table table-striped align-middle mb-0">
+      <thead>
+        <tr>
+          <th>Attribute Name</th>
+          <th>Values</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (attr of attributes; track attr.id) {
+          <tr>
+            <td class="fw-medium">{{ attr.name }}</td>
+            <td>
+              @for (v of attr.values; track v) {
+                <span class="badge text-bg-light border me-1">{{ v }}</span>
+              }
+            </td>
+            <td class="text-end">
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-secondary" [cModalToggle]="attrModal.id" (click)="openEdit(attr)">Edit</button>
+                <button class="btn btn-outline-danger" (click)="remove(attr)">Delete</button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="3"><app-empty-state title="No attributes found" message="Try a different search or add a new attribute." /></td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<c-modal id="attributeModal" #attrModal alignment="center" size="lg">
+  <c-modal-header>
+    <h5 cModalTitle>{{ editingId() ? 'Edit Attribute' : 'Add Attribute' }}</h5>
+    <button [cModalToggle]="attrModal.id" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body>
+    <form [formGroup]="form" class="row g-3">
+      <div class="col-12">
+        <label class="form-label">Attribute Name</label>
+        <input type="text" class="form-control" formControlName="name" placeholder="e.g. Size, Color, Material" />
+      </div>
+      <div class="col-12">
+        <label class="form-label">Values</label>
+        <input type="text" class="form-control" formControlName="valuesText" placeholder="Comma separated, e.g. S, M, L, XL" />
+        <div class="form-text">Separate each value with a comma.</div>
+      </div>
+    </form>
+  </c-modal-body>
+  <c-modal-footer>
+    <button [cModalToggle]="attrModal.id" cButton color="secondary">Cancel</button>
+    <button cButton color="primary" [cModalToggle]="attrModal.id" (click)="save()">Save Attribute</button>
+  </c-modal-footer>
+</c-modal>

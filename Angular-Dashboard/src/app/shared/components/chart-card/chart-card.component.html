@@ -1,0 +1,27 @@
+<div class="card h-100">
+  <div class="card-header d-flex flex-wrap align-items-center justify-content-between gap-2">
+    <div>
+      <div class="fw-semibold">{{ title }}</div>
+      @if (subtitle) {
+        <div class="small text-body-secondary">{{ subtitle }}</div>
+      }
+    </div>
+    @if (periods.length) {
+      <div class="btn-group btn-group-sm" role="group">
+        @for (p of periods; track p) {
+          <button
+            type="button"
+            class="btn btn-outline-secondary"
+            [class.active]="p === activePeriod"
+            (click)="periodChange.emit(p)"
+          >
+            {{ p }}
+          </button>
+        }
+      </div>
+    }
+  </div>
+  <div class="card-body">
+    <c-chart [data]="chart.data" [type]="chart.type" [options]="chart.options" [height]="height"></c-chart>
+  </div>
+</div>

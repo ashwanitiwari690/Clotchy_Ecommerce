@@ -1,0 +1,114 @@
+<app-page-header title="Collections" [breadcrumb]="[{ label: 'Catalog' }, { label: 'Collections' }]">
+  <button class="btn btn-primary" [cModalToggle]="colModal.id" (click)="openAdd()">
+    <svg cIcon name="cilPlus" class="me-1"></svg> Add Collection
+  </button>
+</app-page-header>
+
+<div class="card">
+  <app-global-search (search)="onSearch($event)"></app-global-search>
+  <div class="card-body p-0">
+    <table class="table table-striped align-middle mb-0">
+      <thead>
+        <tr>
+          <th>Collection</th>
+          <th>Description</th>
+          <th class="text-end">Products</th>
+          <th>Duration</th>
+          <th>Status</th>
+          <th>Featured</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (col of collections; track col.id) {
+          <tr>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <img [src]="col.image" [alt]="col.name" class="col-thumb" />
+                <span class="fw-medium">{{ col.name }}</span>
+              </div>
+            </td>
+            <td class="text-body-secondary text-truncate d-inline-block" style="max-width: 220px;">{{ col.description }}</td>
+            <td class="text-end">{{ productCount(col.id) }}</td>
+            <td class="text-body-secondary small">{{ col.startDate }} – {{ col.endDate }}</td>
+            <td><app-status-badge [status]="col.status" /></td>
+            <td>
+              @if (col.featured) {
+                <svg cIcon name="cilStar" class="text-warning"></svg>
+              } @else {
+                <span class="text-body-secondary">—</span>
+              }
+            </td>
+            <td class="text-end">
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-secondary" [cModalToggle]="colModal.id" (click)="openEdit(col)">Edit</button>
+                <button class="btn btn-outline-secondary" (click)="toggleStatus(col)">
+                  {{ col.status === 'active' ? 'Disable' : 'Enable' }}
+                </button>
+                <button class="btn btn-outline-danger" (click)="remove(col)">Delete</button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="7"><app-empty-state title="No collections found" message="Try a different search or add a new collection." /></td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<c-modal id="collectionModal" #colModal alignment="center" size="lg">
+  <c-modal-header>
+    <h5 cModalTitle>{{ editingId() ? 'Edit Collection' : 'Add Collection' }}</h5>
+    <button [cModalToggle]="colModal.id" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body>
+    <form [formGroup]="form" class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Collection Name</label>
+        <input type="text" class="form-control" formControlName="name" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Slug</label>
+        <input type="text" class="form-control" formControlName="slug" />
+      </div>
+      <div class="col-12">
+        <label class="form-label">Description</label>
+        <textarea class="form-control" rows="2" formControlName="description"></textarea>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Start Date</label>
+        <input type="date" class="form-control" formControlName="startDate" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">End Date</label>
+        <input type="date" class="form-control" formControlName="endDate" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Status</label>
+        <select class="form-control" formControlName="status">
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+      </div>
+      <div class="col-md-6 d-flex align-items-end">
+        <div class="form-check form-switch">
+          <input class="form-check-input" type="checkbox" role="switch" id="collectionFeatured" formControlName="featured" />
+          <label class="form-check-label" for="collectionFeatured">Featured Collection</label>
+        </div>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Collection Image</label>
+        <app-image-uploader [multiple]="false" [images]="imageItems()" (imagesChange)="imageItems.set($event)" />
+      </div>
+    </form>
+  </c-modal-body>
+  <c-modal-footer>
+    <button [cModalToggle]="colModal.id" cButton color="secondary">Cancel</button>
+    <button cButton color="primary" [cModalToggle]="colModal.id" (click)="save()">Save Collection</button>
+  </c-modal-footer>
+</c-modal>
+
+<style>
+  .col-thumb { width: 40px; height: 40px; object-fit: cover; border-radius: 0.375rem; }
+</style>

@@ -1,0 +1,49 @@
+<app-page-header title="Featured Products" [breadcrumb]="[{ label: 'Marketing' }, { label: 'Featured Products' }]" />
+
+<div class="card">
+  <div class="card-body border-bottom d-flex align-items-center justify-content-between">
+    <span class="small text-body-secondary">{{ featuredCount }} product(s) currently featured. Featured products can appear in homepage promotions and marketing placements.</span>
+  </div>
+  <app-global-search (search)="onSearch($event)"></app-global-search>
+  <div class="card-body p-0">
+    <table class="table table-striped align-middle mb-0">
+      <thead>
+        <tr>
+          <th>Product</th>
+          <th>SKU</th>
+          <th>Category</th>
+          <th class="text-end">Price</th>
+          <th class="text-end">Stock</th>
+          <th class="text-end">Featured</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (p of products; track p.id) {
+          <tr>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <img [src]="p.thumbnail" [alt]="p.name" class="fp-thumb" />
+                <span class="text-truncate" style="max-width: 200px;">{{ p.name }}</span>
+              </div>
+            </td>
+            <td class="text-body-secondary">{{ p.sku }}</td>
+            <td>{{ categoryName(p.categoryId) }}</td>
+            <td class="text-end">₹{{ p.price | number }}</td>
+            <td class="text-end">{{ p.stock }}</td>
+            <td class="text-end">
+              <div class="form-check form-switch d-inline-block">
+                <input class="form-check-input" type="checkbox" role="switch" [checked]="p.featured" (change)="toggleFeatured(p)" />
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="6"><app-empty-state title="No products found" message="Try a different search." /></td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<style>
+  .fp-thumb { width: 36px; height: 36px; object-fit: cover; border-radius: 0.375rem; }
+</style>

@@ -1,0 +1,180 @@
+@if (customer(); as c) {
+  <app-page-header [title]="c.name" [breadcrumb]="[{ label: 'Customers', url: '/customers' }, { label: c.name }]" />
+
+  <div class="card mb-3">
+    <div class="card-body d-flex align-items-center gap-3">
+      <img [src]="c.avatar" [alt]="c.name" class="detail-avatar" />
+      <div>
+        <div class="fw-semibold fs-5">{{ c.name }}</div>
+        <div class="text-body-secondary small">{{ c.email }} · {{ c.phone }}</div>
+      </div>
+      <div class="ms-auto text-end">
+        <app-status-badge [status]="c.status" />
+        <div class="small text-body-secondary mt-1">Member since {{ c.registeredAt }}</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex flex-wrap gap-2 mb-3">
+    @for (t of tabs; track t.id) {
+      <button type="button" class="btn btn-sm"
+        [class.btn-primary]="activeTab() === t.id"
+        [class.btn-outline-secondary]="activeTab() !== t.id"
+        (click)="selectTab(t.id)">
+        {{ t.label }}
+      </button>
+    }
+  </div>
+
+  @switch (activeTab()) {
+    @case ('profile') {
+      <div class="card">
+        <div class="card-body">
+          <dl class="row small mb-0">
+            <dt class="col-3">Name</dt><dd class="col-9">{{ c.name }}</dd>
+            <dt class="col-3">Email</dt><dd class="col-9">{{ c.email }}</dd>
+            <dt class="col-3">Phone</dt><dd class="col-9">{{ c.phone }}</dd>
+            <dt class="col-3">Registered</dt><dd class="col-9">{{ c.registeredAt }}</dd>
+            <dt class="col-3">Total Orders</dt><dd class="col-9">{{ c.totalOrders }}</dd>
+            <dt class="col-3">Total Spent</dt><dd class="col-9">{{ formatCurrency(c.totalSpent) }}</dd>
+            <dt class="col-3">Status</dt><dd class="col-9"><app-status-badge [status]="c.status" /></dd>
+          </dl>
+        </div>
+      </div>
+    }
+
+    @case ('orders') {
+      <div class="card">
+        <div class="card-body p-0">
+          <table class="table table-striped align-middle mb-0">
+            <thead><tr><th>Order ID</th><th>Date</th><th class="text-end">Total</th><th>Status</th></tr></thead>
+            <tbody>
+              @for (o of orders; track o.id) {
+                <tr>
+                  <td><a [routerLink]="['/orders', o.id]">{{ o.id }}</a></td>
+                  <td class="text-body-secondary small">{{ o.date }}</td>
+                  <td class="text-end">{{ formatCurrency(o.total) }}</td>
+                  <td><app-status-badge [status]="o.status" /></td>
+                </tr>
+              } @empty {
+                <tr><td colspan="4"><app-empty-state title="No orders yet" /></td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+
+    @case ('addresses') {
+      <div class="row g-3">
+        @for (a of c.addresses; track a.id) {
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-body">
+                <div class="d-flex justify-content-between">
+                  <span class="fw-semibold">{{ a.label }}</span>
+                  @if (a.isDefault) { <span class="badge text-bg-primary">Default</span> }
+                </div>
+                <div class="text-body-secondary small mt-1">{{ a.line1 }}, {{ a.city }}, {{ a.state }} {{ a.zip }}, {{ a.country }}</div>
+              </div>
+            </div>
+          </div>
+        } @empty {
+          <div class="col-12"><app-empty-state title="No addresses saved" /></div>
+        }
+      </div>
+    }
+
+    @case ('wishlist') {
+      <div class="row g-3">
+        @for (p of wishlistProducts; track p!.id) {
+          <div class="col-md-3">
+            <div class="card">
+              <img [src]="p!.thumbnail" [alt]="p!.name" class="card-img-top" style="height:140px;object-fit:cover;" />
+              <div class="card-body p-2">
+                <div class="small text-truncate">{{ p!.name }}</div>
+                <div class="fw-semibold small">₹{{ p!.price | number }}</div>
+              </div>
+            </div>
+          </div>
+        } @empty {
+          <div class="col-12"><app-empty-state title="Wishlist is empty" /></div>
+        }
+      </div>
+    }
+
+    @case ('reviews') {
+      <div class="card">
+        <div class="card-body p-0">
+          <table class="table table-striped align-middle mb-0">
+            <thead><tr><th>Product</th><th>Rating</th><th>Review</th><th>Date</th><th>Status</th></tr></thead>
+            <tbody>
+              @for (r of reviews; track r.id) {
+                <tr>
+                  <td>{{ r.productName }}</td>
+                  <td>{{ r.rating }} / 5</td>
+                  <td class="text-body-secondary text-truncate d-inline-block" style="max-width:240px;">{{ r.comment }}</td>
+                  <td class="text-body-secondary small">{{ r.date }}</td>
+                  <td><app-status-badge [status]="r.status" /></td>
+                </tr>
+              } @empty {
+                <tr><td colspan="5"><app-empty-state title="No reviews yet" /></td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+
+    @case ('tickets') {
+      <div class="card">
+        <div class="card-body p-0">
+          <table class="table table-striped align-middle mb-0">
+            <thead><tr><th>Ticket ID</th><th>Subject</th><th>Priority</th><th>Status</th></tr></thead>
+            <tbody>
+              @for (t of tickets; track t.id) {
+                <tr>
+                  <td><a [routerLink]="['/helpdesk', t.id]">{{ t.id }}</a></td>
+                  <td>{{ t.subject }}</td>
+                  <td><app-status-badge [status]="t.priority" /></td>
+                  <td><app-status-badge [status]="t.status" /></td>
+                </tr>
+              } @empty {
+                <tr><td colspan="4"><app-empty-state title="No support tickets" /></td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+
+    @case ('history') {
+      <div class="card">
+        <div class="card-body p-0">
+          <table class="table table-striped align-middle mb-0">
+            <thead><tr><th>Product</th><th>Order</th><th>Date</th><th class="text-end">Qty</th><th class="text-end">Price</th></tr></thead>
+            <tbody>
+              @for (h of purchaseHistory; track h.orderId + h.productId) {
+                <tr>
+                  <td>{{ h.productName }}</td>
+                  <td><a [routerLink]="['/orders', h.orderId]">{{ h.orderId }}</a></td>
+                  <td class="text-body-secondary small">{{ h.date }}</td>
+                  <td class="text-end">{{ h.quantity }}</td>
+                  <td class="text-end">{{ formatCurrency(h.price) }}</td>
+                </tr>
+              } @empty {
+                <tr><td colspan="5"><app-empty-state title="No purchase history" /></td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    }
+  }
+} @else {
+  <app-empty-state title="Customer not found" message="This customer may have been removed." />
+}
+
+<style>
+  .detail-avatar { width: 64px; height: 64px; object-fit: cover; border-radius: 50%; }
+</style>

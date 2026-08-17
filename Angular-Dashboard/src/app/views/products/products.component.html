@@ -1,0 +1,140 @@
+<app-page-header title="Products" [breadcrumb]="[{ label: 'Catalog' }, { label: 'Products' }]">
+  <button class="btn btn-primary" routerLink="/products/add">
+    <svg cIcon name="cilPlus" class="me-1"></svg> Add Product
+  </button>
+</app-page-header>
+
+<div class="card">
+  <div class="card-body border-bottom">
+    <div class="row g-2 align-items-center">
+      <div class="col-md-4">
+        <app-global-search (search)="onSearch($event)"></app-global-search>
+      </div>
+      <div class="col-md-4">
+        <select class="form-control" [(ngModel)]="categoryFilter">
+          <option value="">All Categories</option>
+          @for (c of categories; track c!.id) {
+            <option [value]="c!.id">{{ c!.name }}</option>
+          }
+        </select>
+      </div>
+      <div class="col-md-4">
+        <select class="form-control" [(ngModel)]="statusFilter">
+          <option value="">All Statuses</option>
+          <option value="draft">Draft</option>
+          <option value="published">Published</option>
+          <option value="out-of-stock">Out of Stock</option>
+          <option value="archived">Archived</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  @if (selectedIds().size) {
+    <div class="card-body border-bottom bg-body-tertiary d-flex align-items-center gap-2 py-2">
+      <span class="small fw-medium">{{ selectedIds().size }} selected</span>
+      <button class="btn btn-sm btn-outline-secondary" (click)="bulkSetStatus('published')">Enable</button>
+      <button class="btn btn-sm btn-outline-secondary" (click)="bulkSetStatus('draft')">Disable</button>
+      <button class="btn btn-sm btn-outline-danger" (click)="bulkDelete()">Delete Selected</button>
+    </div>
+  }
+
+  <div class="card-body p-0">
+    <table class="table table-striped align-middle mb-0">
+      <thead>
+        <tr>
+          <th><input type="checkbox" class="form-check-input" (change)="toggleSelectAll()" /></th>
+          <th>Product</th>
+          <th>SKU</th>
+          <th>Category</th>
+          <th>Brand</th>
+          <th class="text-end">Price</th>
+          <th class="text-end">Sale Price</th>
+          <th class="text-end">Stock</th>
+          <th>Status</th>
+          <th>Featured</th>
+          <th>Created</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (p of paged; track p.id) {
+          <tr>
+            <td><input type="checkbox" class="form-check-input" [checked]="isSelected(p.id)" (change)="toggleSelect(p.id)" /></td>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <img [src]="p.thumbnail" [alt]="p.name" class="prod-thumb" />
+                <span class="text-truncate" style="max-width: 180px;">{{ p.name }}</span>
+              </div>
+            </td>
+            <td class="text-body-secondary">{{ p.sku }}</td>
+            <td>{{ categoryName(p.categoryId) }}</td>
+            <td>{{ brandName(p.brandId) }}</td>
+            <td class="text-end">₹{{ p.price | number }}</td>
+            <td class="text-end">{{ p.salePrice ? ('₹' + (p.salePrice | number)) : '—' }}</td>
+            <td class="text-end">{{ p.stock }}</td>
+            <td><app-status-badge [status]="p.status" /></td>
+            <td>
+              <button class="btn btn-sm p-0" (click)="toggleFeatured(p)" [title]="p.featured ? 'Unmark featured' : 'Mark featured'">
+                <svg cIcon name="cilStar" [class]="p.featured ? 'text-warning' : 'text-body-secondary'"></svg>
+              </button>
+            </td>
+            <td class="text-body-secondary">{{ p.createdAt }}</td>
+            <td class="text-end">
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-secondary" (click)="view(p)" [cModalToggle]="previewModal.id">View</button>
+                <button class="btn btn-outline-secondary" [routerLink]="['/products/edit', p.id]">Edit</button>
+                <button class="btn btn-outline-secondary" (click)="duplicate(p)">Duplicate</button>
+                <button class="btn btn-outline-secondary" (click)="toggleStatus(p)">
+                  {{ p.status === 'published' ? 'Disable' : 'Enable' }}
+                </button>
+                <button class="btn btn-outline-danger" (click)="remove(p)">Delete</button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="11"><app-empty-state title="No products found" message="Try adjusting your filters or add a new product." actionLabel="Add Product" (action)="undefined" /></td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card-body d-flex justify-content-end">
+    <app-pagination [totalItems]="filtered.length" [pageSize]="pageSize" [currentPage]="currentPage()" (pageChange)="onPageChange($event)" />
+  </div>
+</div>
+
+<c-modal id="productPreviewModal" #previewModal alignment="center" size="lg">
+  <c-modal-header>
+    <h5 cModalTitle>{{ previewProduct()?.name }}</h5>
+    <button [cModalToggle]="previewModal.id" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body>
+    @if (previewProduct(); as p) {
+      <div class="row g-3">
+        <div class="col-md-5">
+          <img [src]="p.mainImage" [alt]="p.name" class="w-100 rounded" />
+        </div>
+        <div class="col-md-7">
+          <p class="text-body-secondary">{{ p.shortDescription }}</p>
+          <dl class="row small mb-0">
+            <dt class="col-5">SKU</dt><dd class="col-7">{{ p.sku }}</dd>
+            <dt class="col-5">Category</dt><dd class="col-7">{{ categoryName(p.categoryId) }}</dd>
+            <dt class="col-5">Brand</dt><dd class="col-7">{{ brandName(p.brandId) }}</dd>
+            <dt class="col-5">Price</dt><dd class="col-7">₹{{ p.price | number }}@if (p.salePrice) { <span> (Sale: ₹{{ p.salePrice | number }})</span> }</dd>
+            <dt class="col-5">Stock</dt><dd class="col-7">{{ p.stock }}</dd>
+            <dt class="col-5">Rating</dt><dd class="col-7">{{ p.rating }} ({{ p.reviewCount }} reviews)</dd>
+            <dt class="col-5">Status</dt><dd class="col-7"><app-status-badge [status]="p.status" /></dd>
+          </dl>
+        </div>
+      </div>
+    }
+  </c-modal-body>
+  <c-modal-footer>
+    <button [cModalToggle]="previewModal.id" cButton color="secondary">Close</button>
+  </c-modal-footer>
+</c-modal>
+
+<style>
+  .prod-thumb { width: 40px; height: 40px; object-fit: cover; border-radius: 0.375rem; }
+</style>

@@ -1,0 +1,69 @@
+<app-page-header title="Support Tickets" [breadcrumb]="[{ label: 'Support' }, { label: 'Tickets' }]">
+  <button class="btn btn-outline-secondary" routerLink="/helpdesk/categories">Support Categories</button>
+</app-page-header>
+
+<div class="card">
+  <div class="card-body border-bottom">
+    <div class="row g-2">
+      <div class="col-md-4">
+        <app-global-search (search)="onSearch($event)"></app-global-search>
+      </div>
+      <div class="col-md-4">
+        <select class="form-control" [(ngModel)]="statusFilter">
+          <option value="">All Statuses</option>
+          <option value="open">Open</option>
+          <option value="in-progress">In Progress</option>
+          <option value="waiting-customer">Waiting for Customer</option>
+          <option value="resolved">Resolved</option>
+          <option value="closed">Closed</option>
+        </select>
+      </div>
+      <div class="col-md-4">
+        <select class="form-control" [(ngModel)]="priorityFilter">
+          <option value="">All Priorities</option>
+          <option value="low">Low</option>
+          <option value="medium">Medium</option>
+          <option value="high">High</option>
+          <option value="urgent">Urgent</option>
+        </select>
+      </div>
+    </div>
+  </div>
+  <div class="card-body p-0">
+    <table class="table table-striped align-middle mb-0">
+      <thead>
+        <tr>
+          <th>Ticket ID</th>
+          <th>Customer</th>
+          <th>Subject</th>
+          <th>Category</th>
+          <th>Priority</th>
+          <th>Assigned Admin</th>
+          <th>Created</th>
+          <th>Last Updated</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (t of tickets; track t.id) {
+          <tr>
+            <td><a [routerLink]="['/helpdesk', t.id]" class="fw-medium">{{ t.id }}</a></td>
+            <td>
+              <div>{{ t.customerName }}</div>
+              <div class="small text-body-secondary">{{ t.customerEmail }}</div>
+            </td>
+            <td>{{ t.subject }}</td>
+            <td>{{ t.category }}</td>
+            <td><app-status-badge [status]="t.priority" /></td>
+            <td>{{ t.assignedAdmin }}</td>
+            <td class="text-body-secondary small">{{ t.createdAt }}</td>
+            <td class="text-body-secondary small">{{ t.updatedAt }}</td>
+            <td><app-status-badge [status]="t.status" /></td>
+          </tr>
+        } @empty {
+          <tr><td colspan="9"><app-empty-state title="No tickets found" message="Try a different search or filter." /></td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,0 +1,83 @@
+<app-page-header title="FAQ" [breadcrumb]="[{ label: 'Support' }, { label: 'FAQ' }]">
+  <button class="btn btn-primary" [cModalToggle]="faqModal.id" (click)="openAdd()">
+    <svg cIcon name="cilPlus" class="me-1"></svg> Add FAQ
+  </button>
+</app-page-header>
+
+<div class="card">
+  <app-global-search (search)="onSearch($event)"></app-global-search>
+  <div class="card-body p-0">
+    <table class="table table-striped align-middle mb-0">
+      <thead>
+        <tr>
+          <th>Question</th>
+          <th>Answer</th>
+          <th>Category</th>
+          <th>Status</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (f of faqs; track f.id) {
+          <tr>
+            <td class="fw-medium">{{ f.question }}</td>
+            <td class="text-body-secondary text-truncate d-inline-block" style="max-width: 260px;">{{ f.answer }}</td>
+            <td>{{ f.category }}</td>
+            <td><app-status-badge [status]="f.status" /></td>
+            <td class="text-end">
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-secondary" (click)="move(f, 'up')" aria-label="Move up">
+                  <svg cIcon name="cilArrowTop" size="sm"></svg>
+                </button>
+                <button class="btn btn-outline-secondary" (click)="move(f, 'down')" aria-label="Move down">
+                  <svg cIcon name="cilArrowBottom" size="sm"></svg>
+                </button>
+                <button class="btn btn-outline-secondary" [cModalToggle]="faqModal.id" (click)="openEdit(f)">Edit</button>
+                <button class="btn btn-outline-secondary" (click)="toggleStatus(f)">
+                  {{ f.status === 'active' ? 'Disable' : 'Enable' }}
+                </button>
+                <button class="btn btn-outline-danger" (click)="remove(f)">Delete</button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="5"><app-empty-state title="No FAQs found" message="Try a different search or add a new FAQ." /></td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<c-modal id="faqModal" #faqModal alignment="center" size="lg">
+  <c-modal-header>
+    <h5 cModalTitle>{{ editingId() ? 'Edit FAQ' : 'Add FAQ' }}</h5>
+    <button [cModalToggle]="faqModal.id" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body>
+    <form [formGroup]="form" class="row g-3">
+      <div class="col-12">
+        <label class="form-label">Question</label>
+        <input type="text" class="form-control" formControlName="question" />
+      </div>
+      <div class="col-12">
+        <label class="form-label">Answer</label>
+        <textarea class="form-control" rows="3" formControlName="answer"></textarea>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Category</label>
+        <input type="text" class="form-control" formControlName="category" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Status</label>
+        <select class="form-control" formControlName="status">
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+      </div>
+    </form>
+  </c-modal-body>
+  <c-modal-footer>
+    <button [cModalToggle]="faqModal.id" cButton color="secondary">Cancel</button>
+    <button cButton color="primary" [cModalToggle]="faqModal.id" (click)="save()">Save FAQ</button>
+  </c-modal-footer>
+</c-modal>

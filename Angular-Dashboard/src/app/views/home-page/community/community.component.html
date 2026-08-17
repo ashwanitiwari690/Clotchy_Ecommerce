@@ -1,0 +1,71 @@
+<app-page-header title="Clotchy Community" [breadcrumb]="[{ label: 'Home Page Management', url: '/home-page' }, { label: 'Community' }]">
+  <button class="btn btn-primary" [cModalToggle]="commModal.id" (click)="openAdd()">
+    <svg cIcon name="cilPlus" class="me-1"></svg> Add Image
+  </button>
+</app-page-header>
+
+<div class="row g-3">
+  @for (img of images$; track img.id) {
+    <div class="col-md-3">
+      <div class="card h-100">
+        <img [src]="img.image" [alt]="img.title" class="card-img-top" style="height:180px;object-fit:cover;" />
+        <div class="card-body">
+          <div class="fw-medium text-truncate">{{ img.title }}</div>
+          <div class="small text-body-secondary text-truncate">{{ img.description }}</div>
+          <div class="mt-2"><app-status-badge [status]="img.status" /></div>
+        </div>
+        <div class="card-footer d-flex justify-content-between p-2">
+          <div class="btn-group btn-group-sm">
+            <button class="btn btn-outline-secondary" (click)="move(img, 'up')"><svg cIcon name="cilArrowTop" size="sm"></svg></button>
+            <button class="btn btn-outline-secondary" (click)="move(img, 'down')"><svg cIcon name="cilArrowBottom" size="sm"></svg></button>
+          </div>
+          <div class="btn-group btn-group-sm">
+            <button class="btn btn-outline-secondary" [cModalToggle]="commModal.id" (click)="openEdit(img)">Edit</button>
+            <button class="btn btn-outline-secondary" (click)="toggleStatus(img)">{{ img.status === 'active' ? 'Hide' : 'Show' }}</button>
+            <button class="btn btn-outline-danger" (click)="remove(img)">×</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  } @empty {
+    <div class="col-12"><app-empty-state title="No community images" message="Add images to showcase the Clotchy community." /></div>
+  }
+</div>
+
+<c-modal id="communityModal" #commModal alignment="center" size="lg">
+  <c-modal-header>
+    <h5 cModalTitle>{{ editingId() ? 'Edit Community Image' : 'Add Community Image' }}</h5>
+    <button [cModalToggle]="commModal.id" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body>
+    <form [formGroup]="form" class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Title</label>
+        <input type="text" class="form-control" formControlName="title" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Status</label>
+        <select class="form-control" formControlName="status">
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Description</label>
+        <input type="text" class="form-control" formControlName="description" />
+      </div>
+      <div class="col-12">
+        <label class="form-label">Social Media URL</label>
+        <input type="text" class="form-control" formControlName="socialUrl" />
+      </div>
+      <div class="col-12">
+        <label class="form-label">Image</label>
+        <app-image-uploader [multiple]="false" [images]="images()" (imagesChange)="images.set($event)" />
+      </div>
+    </form>
+  </c-modal-body>
+  <c-modal-footer>
+    <button [cModalToggle]="commModal.id" cButton color="secondary">Cancel</button>
+    <button cButton color="primary" [cModalToggle]="commModal.id" (click)="save()">Save Image</button>
+  </c-modal-footer>
+</c-modal>

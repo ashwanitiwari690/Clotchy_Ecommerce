@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ChartData, ChartDataset, ChartOptions, ChartType, PluginOptionsByType, ScaleOptions, TooltipLabelStyle } from 'chart.js';
 import { DeepPartial } from './utils';
 import { getStyle } from '@coreui/utils';
+import { OrderStatusBucket } from './dashboard-kpi.service';
 
 export interface IChartProps {
   data?: ChartData;
@@ -13,6 +14,8 @@ export interface IChartProps {
 
   [propName: string]: any;
 }
+
+export type SalesPeriod = 'Today' | 'Week' | 'Month' | 'Year';
 
 @Injectable({
   providedIn: 'any'
@@ -28,102 +31,63 @@ export class DashboardChartsData {
     return Math.floor(Math.random() * (max - min + 1) + min);
   }
 
-  initMainChart(period: string = 'Month') {
-    const brandSuccess = getStyle('--cui-success') ?? '#4dbd74';
+  initMainChart(period: SalesPeriod = 'Month') {
+    const brandPrimary = getStyle('--cui-primary') ?? '#d3a04e';
+    const brandPrimaryBg = `rgba(${getStyle('--cui-primary-rgb')}, .12)`;
     const brandInfo = getStyle('--cui-info') ?? '#20a8d8';
-    const brandInfoBg = `rgba(${getStyle('--cui-info-rgb')}, .1)`
-    const brandDanger = getStyle('--cui-danger') ?? '#f86c6b';
-
-    // mainChart
-    this.mainChart['elements'] = period === 'Month' ? 12 : 27;
-    this.mainChart['Data1'] = [];
-    this.mainChart['Data2'] = [];
-    this.mainChart['Data3'] = [];
-
-    // generate random values for mainChart
-    for (let i = 0; i <= this.mainChart['elements']; i++) {
-      this.mainChart['Data1'].push(this.random(50, 240));
-      this.mainChart['Data2'].push(this.random(20, 160));
-      this.mainChart['Data3'].push(65);
-    }
 
     let labels: string[] = [];
-    if (period === 'Month') {
-      labels = [
-        'January',
-        'February',
-        'March',
-        'April',
-        'May',
-        'June',
-        'July',
-        'August',
-        'September',
-        'October',
-        'November',
-        'December'
-      ];
-    } else {
-      /* tslint:disable:max-line-length */
-      const week = [
-        'Monday',
-        'Tuesday',
-        'Wednesday',
-        'Thursday',
-        'Friday',
-        'Saturday',
-        'Sunday'
-      ];
-      labels = week.concat(week, week, week);
+    let elements = 12;
+
+    switch (period) {
+      case 'Today':
+        labels = Array.from({ length: 12 }, (_, i) => `${(i * 2).toString().padStart(2, '0')}:00`);
+        elements = 12;
+        break;
+      case 'Week':
+        labels = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+        elements = 7;
+        break;
+      case 'Year':
+        const currentYear = new Date().getFullYear();
+        labels = Array.from({ length: 5 }, (_, i) => `${currentYear - 4 + i}`);
+        elements = 5;
+        break;
+      case 'Month':
+      default:
+        labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        elements = 12;
+        break;
     }
 
-    const colors = [
-      {
-        // brandInfo
-        backgroundColor: brandInfoBg,
-        borderColor: brandInfo,
-        pointHoverBackgroundColor: brandInfo,
-        borderWidth: 2,
-        fill: true
-      },
-      {
-        // brandSuccess
-        backgroundColor: 'transparent',
-        borderColor: brandSuccess || '#4dbd74',
-        pointHoverBackgroundColor: '#fff'
-      },
-      {
-        // brandDanger
-        backgroundColor: 'transparent',
-        borderColor: brandDanger || '#f86c6b',
-        pointHoverBackgroundColor: brandDanger,
-        borderWidth: 1,
-        borderDash: [8, 5]
-      }
-    ];
+    this.mainChart['elements'] = elements;
+    this.mainChart['Data1'] = Array.from({ length: elements }, () => this.random(20000, 95000));
+    this.mainChart['Data2'] = Array.from({ length: elements }, () => this.random(80, 320));
 
     const datasets: ChartDataset[] = [
       {
         data: this.mainChart['Data1'],
-        label: 'Current',
-        ...colors[0]
+        label: 'Revenue (₹)',
+        backgroundColor: brandPrimaryBg,
+        borderColor: brandPrimary,
+        pointHoverBackgroundColor: brandPrimary,
+        borderWidth: 2,
+        fill: true,
+        yAxisID: 'y',
       },
       {
         data: this.mainChart['Data2'],
-        label: 'Previous',
-        ...colors[1]
+        label: 'Orders',
+        backgroundColor: 'transparent',
+        borderColor: brandInfo,
+        pointHoverBackgroundColor: '#fff',
+        borderDash: [6, 4],
+        yAxisID: 'y1',
       },
-      {
-        data: this.mainChart['Data3'],
-        label: 'BEP',
-        ...colors[2]
-      }
     ];
 
     const plugins: DeepPartial<PluginOptionsByType<any>> = {
-      legend: {
-        display: false
-      },
+      legend: { display: true, position: 'bottom' as const },
       tooltip: {
         callbacks: {
           labelColor: (context) => ({ backgroundColor: context.dataset.borderColor } as TooltipLabelStyle)
@@ -131,31 +95,42 @@ export class DashboardChartsData {
       }
     };
 
-    const scales = this.getScales();
+    const colorBorderTranslucent = getStyle('--cui-border-color-translucent');
+    const colorBody = getStyle('--cui-body-color');
 
     const options: ChartOptions = {
       maintainAspectRatio: false,
       plugins,
-      scales,
-      elements: {
-        line: {
-          tension: 0.4
+      scales: {
+        x: {
+          grid: { color: colorBorderTranslucent, drawOnChartArea: false },
+          ticks: { color: colorBody },
         },
-        point: {
-          radius: 0,
-          hitRadius: 10,
-          hoverRadius: 4,
-          hoverBorderWidth: 3
-        }
+        y: {
+          type: 'linear',
+          position: 'left',
+          border: { color: colorBorderTranslucent },
+          grid: { color: colorBorderTranslucent },
+          beginAtZero: true,
+          ticks: { color: colorBody, maxTicksLimit: 5 },
+        },
+        y1: {
+          type: 'linear',
+          position: 'right',
+          beginAtZero: true,
+          grid: { drawOnChartArea: false },
+          ticks: { color: colorBody, maxTicksLimit: 5 },
+        },
+      },
+      elements: {
+        line: { tension: 0.4 },
+        point: { radius: 0, hitRadius: 10, hoverRadius: 4, hoverBorderWidth: 3 }
       }
     };
 
     this.mainChart.type = 'line';
     this.mainChart.options = options;
-    this.mainChart.data = {
-      datasets,
-      labels
-    };
+    this.mainChart.data = { datasets, labels };
   }
 
   getScales() {
@@ -164,30 +139,65 @@ export class DashboardChartsData {
 
     const scales: ScaleOptions<any> = {
       x: {
-        grid: {
-          color: colorBorderTranslucent,
-          drawOnChartArea: false
-        },
-        ticks: {
-          color: colorBody
-        }
+        grid: { color: colorBorderTranslucent, drawOnChartArea: false },
+        ticks: { color: colorBody }
       },
       y: {
-        border: {
-          color: colorBorderTranslucent
-        },
-        grid: {
-          color: colorBorderTranslucent
-        },
-        max: 250,
+        border: { color: colorBorderTranslucent },
+        grid: { color: colorBorderTranslucent },
         beginAtZero: true,
-        ticks: {
-          color: colorBody,
-          maxTicksLimit: 5,
-          stepSize: Math.ceil(250 / 5)
-        }
+        ticks: { color: colorBody, maxTicksLimit: 5 }
+      },
+      y1: {
+        grid: { drawOnChartArea: false },
+        ticks: { color: colorBody, maxTicksLimit: 5 }
       }
     };
     return scales;
+  }
+
+  buildOrderStatusChart(buckets: OrderStatusBucket[]): IChartProps {
+    return {
+      type: 'doughnut',
+      data: {
+        labels: buckets.map(b => b.label),
+        datasets: [{
+          data: buckets.map(b => b.value),
+          backgroundColor: buckets.map(b => b.color),
+          hoverBackgroundColor: buckets.map(b => b.color),
+        }],
+      },
+      options: {
+        maintainAspectRatio: false,
+        plugins: { legend: { position: 'bottom' } },
+      },
+    };
+  }
+
+  buildRevenueByCategoryChart(data: { label: string; value: number }[]): IChartProps {
+    const brandPrimary = getStyle('--cui-primary') ?? '#d3a04e';
+    const colorBorderTranslucent = getStyle('--cui-border-color-translucent');
+    const colorBody = getStyle('--cui-body-color');
+
+    return {
+      type: 'bar',
+      data: {
+        labels: data.map(d => d.label),
+        datasets: [{
+          label: 'Revenue (₹)',
+          data: data.map(d => d.value),
+          backgroundColor: brandPrimary,
+          borderRadius: 4,
+        }],
+      },
+      options: {
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: colorBody } },
+          y: { grid: { color: colorBorderTranslucent }, ticks: { color: colorBody }, beginAtZero: true },
+        },
+      },
+    };
   }
 }

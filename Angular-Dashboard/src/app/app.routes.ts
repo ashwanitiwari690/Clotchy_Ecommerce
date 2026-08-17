@@ -34,6 +34,11 @@ export const routes: Routes = [
     ]
   },
   {
+    path: 'home-page-preview',
+    canActivate: [AuthGaurd],
+    loadComponent: () => import('./views/home-page-preview/home-page-preview.component').then((m) => m.HomePagePreviewComponent)
+  },
+  {
     path: '',
     canActivate: [AuthGaurd],
     runGuardsAndResolvers: 'always',
@@ -44,36 +49,96 @@ export const routes: Routes = [
         loadChildren: () => import('./views/dashboard/routes').then((m) => m.routes)
       },
       {
-        path: 'knowledge',
-        loadChildren: () => import('./views/knowledge-base/routes').then((m) => m.routes)
+        path: 'products',
+        loadChildren: () => import('./views/products/routes').then((m) => m.routes)
       },
       {
-        path: 'base',
-        loadChildren: () => import('./views/base/routes').then((m) => m.routes)
+        path: 'categories',
+        loadChildren: () => import('./views/categories/routes').then((m) => m.routes)
       },
       {
-        path: 'buttons',
-        loadChildren: () => import('./views/buttons/routes').then((m) => m.routes)
+        path: 'collections',
+        loadChildren: () => import('./views/collections/routes').then((m) => m.routes)
       },
       {
-        path: 'forms',
-        loadChildren: () => import('./views/forms/routes').then((m) => m.routes)
+        path: 'brands',
+        loadChildren: () => import('./views/brands/routes').then((m) => m.routes)
       },
       {
-        path: 'icons',
-        loadChildren: () => import('./views/icons/routes').then((m) => m.routes)
+        path: 'attributes',
+        loadChildren: () => import('./views/attributes/routes').then((m) => m.routes)
       },
       {
-        path: 'notifications',
-        loadChildren: () => import('./views/notifications/routes').then((m) => m.routes)
+        path: 'reviews',
+        loadChildren: () => import('./views/reviews/routes').then((m) => m.routes)
       },
       {
-        path: 'widgets',
-        loadChildren: () => import('./views/widgets/routes').then((m) => m.routes)
+        path: 'inventory',
+        loadChildren: () => import('./views/inventory/routes').then((m) => m.routes)
       },
       {
-        path: 'charts',
-        loadChildren: () => import('./views/charts/routes').then((m) => m.routes)
+        path: 'orders',
+        loadChildren: () => import('./views/orders/routes').then((m) => m.routes)
+      },
+      {
+        path: 'customers',
+        loadChildren: () => import('./views/customers/routes').then((m) => m.routes)
+      },
+      {
+        path: 'home-page',
+        loadChildren: () => import('./views/home-page/routes').then((m) => m.routes)
+      },
+      {
+        path: 'marketing/coupons',
+        loadChildren: () => import('./views/marketing/coupons/routes').then((m) => m.routes)
+      },
+      {
+        path: 'marketing/discounts',
+        loadChildren: () => import('./views/marketing/discounts/routes').then((m) => m.routes)
+      },
+      {
+        path: 'marketing/banners',
+        loadChildren: () => import('./views/marketing/banners/routes').then((m) => m.routes)
+      },
+      {
+        path: 'marketing/featured-products',
+        loadChildren: () => import('./views/marketing/featured-products/routes').then((m) => m.routes)
+      },
+      {
+        path: 'helpdesk',
+        loadChildren: () => import('./views/helpdesk/routes').then((m) => m.routes)
+      },
+      {
+        path: 'contact-messages',
+        loadChildren: () => import('./views/contact-messages/routes').then((m) => m.routes)
+      },
+      {
+        path: 'faq',
+        loadChildren: () => import('./views/faq/routes').then((m) => m.routes)
+      },
+      {
+        path: 'reports/sales',
+        loadChildren: () => import('./views/reports/sales/routes').then((m) => m.routes)
+      },
+      {
+        path: 'reports/products',
+        loadChildren: () => import('./views/reports/products/routes').then((m) => m.routes)
+      },
+      {
+        path: 'reports/customers',
+        loadChildren: () => import('./views/reports/customers/routes').then((m) => m.routes)
+      },
+      {
+        path: 'reports/orders',
+        loadChildren: () => import('./views/reports/orders/routes').then((m) => m.routes)
+      },
+      {
+        path: 'reports/inventory',
+        loadChildren: () => import('./views/reports/inventory/routes').then((m) => m.routes)
+      },
+      {
+        path: 'settings',
+        loadChildren: () => import('./views/settings/routes').then((m) => m.routes)
       }
     ]
   },

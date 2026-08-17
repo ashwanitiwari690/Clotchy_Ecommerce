@@ -1,0 +1,21 @@
+<app-page-header title="Customer Addresses" [breadcrumb]="[{ label: 'Customers', url: '/customers' }, { label: 'Addresses' }]" />
+
+<div class="card">
+  <div class="card-body p-0">
+    <table class="table table-striped align-middle mb-0">
+      <thead><tr><th>Customer</th><th>Label</th><th>Address</th><th>Default</th></tr></thead>
+      <tbody>
+        @for (r of rows; track r.address.id) {
+          <tr>
+            <td>{{ r.customer.name }}</td>
+            <td>{{ r.address.label }}</td>
+            <td class="text-body-secondary">{{ r.address.line1 }}, {{ r.address.city }}, {{ r.address.state }} {{ r.address.zip }}, {{ r.address.country }}</td>
+            <td>@if (r.address.isDefault) { <span class="badge text-bg-primary">Default</span> }</td>
+          </tr>
+        } @empty {
+          <tr><td colspan="4"><app-empty-state title="No addresses found" /></td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

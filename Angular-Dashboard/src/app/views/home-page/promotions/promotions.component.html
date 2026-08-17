@@ -1,0 +1,96 @@
+<app-page-header title="Promotional Sections" [breadcrumb]="[{ label: 'Home Page Management', url: '/home-page' }, { label: 'Promotions' }]">
+  <button class="btn btn-primary" [cModalToggle]="promoModal.id" (click)="openAdd()">
+    <svg cIcon name="cilPlus" class="me-1"></svg> Add Promotion
+  </button>
+</app-page-header>
+
+<div class="card">
+  <div class="card-body p-0">
+    <table class="table table-striped align-middle mb-0">
+      <thead>
+        <tr><th>Banner</th><th>Title</th><th>Discount</th><th>Duration</th><th>Status</th><th class="text-end">Actions</th></tr>
+      </thead>
+      <tbody>
+        @for (p of promotions; track p.id) {
+          <tr>
+            <td><img [src]="p.bannerImage" [alt]="p.title" class="promo-thumb" /></td>
+            <td>
+              <div class="fw-medium">{{ p.title }}</div>
+              <div class="small text-body-secondary text-truncate d-inline-block" style="max-width:220px;">{{ p.description }}</div>
+            </td>
+            <td>{{ p.discount || '—' }}</td>
+            <td class="text-body-secondary small">{{ p.startDate }} – {{ p.endDate }}</td>
+            <td><app-status-badge [status]="p.status" /></td>
+            <td class="text-end">
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-secondary" [cModalToggle]="promoModal.id" (click)="openEdit(p)">Edit</button>
+                <button class="btn btn-outline-secondary" (click)="toggleStatus(p)">{{ p.status === 'active' ? 'Disable' : 'Enable' }}</button>
+                <button class="btn btn-outline-danger" (click)="remove(p)">Delete</button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="6"><app-empty-state title="No promotions yet" message="Add a promotional section for the homepage." /></td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<c-modal id="promotionModal" #promoModal alignment="center" size="lg">
+  <c-modal-header>
+    <h5 cModalTitle>{{ editingId() ? 'Edit Promotion' : 'Add Promotion' }}</h5>
+    <button [cModalToggle]="promoModal.id" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body>
+    <form [formGroup]="form" class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Promotion Title</label>
+        <input type="text" class="form-control" formControlName="title" placeholder="e.g. Summer Sale" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Discount</label>
+        <input type="text" class="form-control" formControlName="discount" placeholder="e.g. 50%" />
+      </div>
+      <div class="col-12">
+        <label class="form-label">Description</label>
+        <textarea class="form-control" rows="2" formControlName="description"></textarea>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Button Text</label>
+        <input type="text" class="form-control" formControlName="buttonText" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Button URL</label>
+        <input type="text" class="form-control" formControlName="buttonUrl" />
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Start Date</label>
+        <input type="date" class="form-control" formControlName="startDate" />
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">End Date</label>
+        <input type="date" class="form-control" formControlName="endDate" />
+      </div>
+      <div class="col-md-4">
+        <label class="form-label">Status</label>
+        <select class="form-control" formControlName="status">
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Banner Image</label>
+        <app-image-uploader [multiple]="false" [images]="images()" (imagesChange)="images.set($event)" />
+      </div>
+    </form>
+  </c-modal-body>
+  <c-modal-footer>
+    <button [cModalToggle]="promoModal.id" cButton color="secondary">Cancel</button>
+    <button cButton color="primary" [cModalToggle]="promoModal.id" (click)="save()">Save Promotion</button>
+  </c-modal-footer>
+</c-modal>
+
+<style>
+  .promo-thumb { width: 80px; height: 36px; object-fit: cover; border-radius: 0.25rem; }
+</style>
