@@ -3,10 +3,9 @@ import { DecimalPipe } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { SharedUIModule } from '../../shared/shared-ui.module';
 import { CustomerService } from './customer.service';
-import { ORDERS_MOCK } from '../../core/mock-data/orders.mock';
 import { REVIEWS_MOCK } from '../../core/mock-data/reviews.mock';
 import { TICKETS_MOCK } from '../../core/mock-data/helpdesk.mock';
-import { getProductById } from '../../core/mock-data/products.mock';
+import { ProductService } from '../products/product.service';
 
 type TabId = 'profile' | 'orders' | 'addresses' | 'wishlist' | 'reviews' | 'tickets' | 'history';
 
@@ -19,9 +18,14 @@ type TabId = 'profile' | 'orders' | 'addresses' | 'wishlist' | 'reviews' | 'tick
 export class CustomerDetailComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly svc = inject(CustomerService);
+  private readonly productSvc = inject(ProductService);
 
   readonly customerId = this.route.snapshot.paramMap.get('id')!;
-  customer = signal(this.svc.getById(this.customerId));
+  customer = signal<ReturnType<CustomerService['getById']>>(undefined);
+
+  constructor() {
+    this.svc.getByIdAsync(this.customerId).subscribe((customer) => this.customer.set(customer));
+  }
 
   activeTab = signal<TabId>('profile');
 
@@ -36,7 +40,7 @@ export class CustomerDetailComponent {
   ];
 
   get orders() {
-    return ORDERS_MOCK.filter((o) => o.customerId === this.customerId).sort((a, b) => b.date.localeCompare(a.date));
+    return [...(this.customer()?.orders ?? [])].sort((a, b) => b.date.localeCompare(a.date));
   }
 
   get reviews() {
@@ -50,7 +54,7 @@ export class CustomerDetailComponent {
   get wishlistProducts() {
     const c = this.customer();
     if (!c) return [];
-    return c.wishlistProductIds.map((id) => getProductById(id)).filter((p) => !!p);
+    return c.wishlistProductIds.map((id) => this.productSvc.getById(id)).filter((p) => !!p);
   }
 
   get purchaseHistory() {

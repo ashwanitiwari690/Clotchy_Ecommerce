@@ -47,7 +47,6 @@
           <th>Product</th>
           <th>SKU</th>
           <th>Category</th>
-          <th>Brand</th>
           <th class="text-end">Price</th>
           <th class="text-end">Sale Price</th>
           <th class="text-end">Stock</th>
@@ -69,7 +68,6 @@
             </td>
             <td class="text-body-secondary">{{ p.sku }}</td>
             <td>{{ categoryName(p.categoryId) }}</td>
-            <td>{{ brandName(p.brandId) }}</td>
             <td class="text-end">₹{{ p.price | number }}</td>
             <td class="text-end">{{ p.salePrice ? ('₹' + (p.salePrice | number)) : '—' }}</td>
             <td class="text-end">{{ p.stock }}</td>
@@ -120,7 +118,6 @@
           <dl class="row small mb-0">
             <dt class="col-5">SKU</dt><dd class="col-7">{{ p.sku }}</dd>
             <dt class="col-5">Category</dt><dd class="col-7">{{ categoryName(p.categoryId) }}</dd>
-            <dt class="col-5">Brand</dt><dd class="col-7">{{ brandName(p.brandId) }}</dd>
             <dt class="col-5">Price</dt><dd class="col-7">₹{{ p.price | number }}@if (p.salePrice) { <span> (Sale: ₹{{ p.salePrice | number }})</span> }</dd>
             <dt class="col-5">Stock</dt><dd class="col-7">{{ p.stock }}</dd>
             <dt class="col-5">Rating</dt><dd class="col-7">{{ p.rating }} ({{ p.reviewCount }} reviews)</dd>

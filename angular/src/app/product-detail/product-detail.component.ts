@@ -1,9 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { toSignal } from '@angular/core/rxjs-interop';
-import { map } from 'rxjs';
-import { PRODUCTS } from '../data';
+import { CatalogService } from '../catalog.service';
 import { CartService } from '../cart.service';
+import { Product } from '../models';
 
 @Component({
   selector: 'app-product-detail',
@@ -11,29 +10,36 @@ import { CartService } from '../cart.service';
   imports: [RouterLink],
   templateUrl: './product-detail.component.html',
   styleUrl: './product-detail.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ProductDetailComponent {
-  private readonly id = toSignal(
-    this.route.paramMap.pipe(map(params => Number(params.get('id')))),
-    { requireSync: true },
-  );
-
-  readonly product = computed(() => PRODUCTS.find(p => p.id === this.id()));
+  readonly product = signal<Product | undefined>(undefined);
+  readonly loading = signal(true);
 
   selectedSize = signal('');
   selectedColor = signal('');
   quantity = signal(1);
   added = signal(false);
 
-  constructor(private route: ActivatedRoute, public cart: CartService) {
-    const applyDefaults = (product: ReturnType<typeof this.product>) => {
-      this.selectedSize.set(product?.sizes[0] ?? '');
-      this.selectedColor.set(product?.colors[0] ?? '');
-      this.quantity.set(1);
-    };
-    applyDefaults(this.product());
-    this.route.paramMap.subscribe(() => applyDefaults(this.product()));
+  constructor(private route: ActivatedRoute, private catalog: CatalogService, public cart: CartService) {
+    this.route.paramMap.subscribe((params) => {
+      const id = params.get('id');
+      if (!id) return;
+      this.loading.set(true);
+      this.catalog.getProduct(id).subscribe({
+        next: (product) => {
+          this.product.set(product);
+          this.selectedSize.set(product.sizes[0] ?? '');
+          this.selectedColor.set(product.colors[0] ?? '');
+          this.quantity.set(1);
+          this.loading.set(false);
+        },
+        error: () => {
+          this.product.set(undefined);
+          this.loading.set(false);
+        },
+      });
+    });
   }
 
   addToCart(): void {
@@ -45,6 +51,6 @@ export class ProductDetailComponent {
   }
 
   changeQuantity(delta: number): void {
-    this.quantity.update(q => Math.max(1, q + delta));
+    this.quantity.update((q) => Math.max(1, q + delta));
   }
 }

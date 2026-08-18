@@ -1,39 +1,70 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { TitleCasePipe } from '@angular/common';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { environment } from '../../environments/environment';
+
+interface TrackedOrder {
+  id: string;
+  orderNumber: string;
+  status: string;
+  date: string;
+  total: number;
+}
 
 interface TrackingStep {
   label: string;
-  date: string;
   done: boolean;
 }
+
+const STEP_LABELS = ['Order Placed', 'Order Confirmed', 'Shipped', 'Out for Delivery', 'Delivered'];
+
+// Maps the backend's 10-value status enum onto the 5 display steps below.
+const STEP_INDEX_FOR_STATUS: Record<string, number> = {
+  pending: 0,
+  confirmed: 1,
+  processing: 1,
+  packed: 1,
+  shipped: 2,
+  'out-for-delivery': 3,
+  delivered: 4,
+};
+
+const TERMINAL_ISSUE_STATUSES = new Set(['cancelled', 'returned', 'refunded']);
 
 @Component({
   selector: 'app-track-order',
   standalone: true,
-  imports: [],
+  imports: [TitleCasePipe],
   templateUrl: './track-order.component.html',
   styleUrl: './track-order.component.scss',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TrackOrderComponent {
   orderId = signal('');
   phone = signal('');
   error = signal('');
-  tracked = signal(false);
+  loading = signal(false);
+  order = signal<TrackedOrder | null>(null);
 
-  // No Orders API exists yet - this always shows the same illustrative dummy
-  // timeline once both fields are filled, so the page/UX is ready to wire up
-  // to a real endpoint once order tracking is built.
-  readonly steps: TrackingStep[] = [
-    { label: 'Order Placed', date: '12 Aug, 10:42 AM', done: true },
-    { label: 'Order Confirmed', date: '12 Aug, 11:05 AM', done: true },
-    { label: 'Shipped', date: '13 Aug, 06:20 PM', done: true },
-    { label: 'Out for Delivery', date: '15 Aug, 09:10 AM', done: false },
-    { label: 'Delivered', date: 'Expected 15 Aug', done: false },
-  ];
+  constructor(private http: HttpClient) {}
 
-  onOrderIdInput(e: Event): void { this.orderId.set((e.target as HTMLInputElement).value); }
+  onOrderIdInput(e: Event): void {
+    this.orderId.set((e.target as HTMLInputElement).value.trim().toUpperCase());
+  }
+
   onPhoneInput(e: Event): void {
     this.phone.set((e.target as HTMLInputElement).value.replace(/\D/g, '').slice(0, 10));
+  }
+
+  get steps(): TrackingStep[] {
+    const order = this.order();
+    if (!order) return [];
+    const displayIdx = STEP_INDEX_FOR_STATUS[order.status] ?? -1;
+    return STEP_LABELS.map((label, i) => ({ label, done: displayIdx >= i }));
+  }
+
+  get hasTerminalIssue(): boolean {
+    return TERMINAL_ISSUE_STATUSES.has(this.order()?.status ?? '');
   }
 
   track(): void {
@@ -46,12 +77,27 @@ export class TrackOrderComponent {
       return;
     }
     this.error.set('');
-    this.tracked.set(true);
+    this.loading.set(true);
+    this.http
+      .get<{ success: boolean; data: TrackedOrder }>(`${environment.apiUrl}/orders/track`, {
+        params: { orderNumber: this.orderId(), phone: this.phone() },
+      })
+      .subscribe({
+        next: (res) => {
+          this.loading.set(false);
+          this.order.set(res.data);
+        },
+        error: (err: HttpErrorResponse) => {
+          this.loading.set(false);
+          this.error.set(err.error?.message ?? 'No order found matching those details.');
+        },
+      });
   }
 
   reset(): void {
     this.orderId.set('');
     this.phone.set('');
-    this.tracked.set(false);
+    this.order.set(null);
+    this.error.set('');
   }
 }

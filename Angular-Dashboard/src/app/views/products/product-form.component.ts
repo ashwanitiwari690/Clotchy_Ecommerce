@@ -4,9 +4,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { IconDirective } from '@coreui/icons-angular';
 import { SharedUIModule } from '../../shared/shared-ui.module';
 import { ProductService } from './product.service';
-import { CATEGORIES_MOCK } from '../../core/mock-data/categories.mock';
-import { COLLECTIONS_MOCK } from '../../core/mock-data/collections.mock';
-import { BRANDS_MOCK, ATTRIBUTES_MOCK } from '../../core/mock-data/brands.mock';
+import { CategoryService } from '../categories/category.service';
+import { CollectionService } from '../collections/collection.service';
 import { placeholderImage } from '../../core/models/common.model';
 import { ToastService } from '../../layout/toasts/toast.service';
 import { UploadedImage } from '../../shared/components/image-uploader/image-uploader.component';
@@ -19,15 +18,15 @@ import { UploadedImage } from '../../shared/components/image-uploader/image-uplo
 })
 export class ProductFormComponent {
   private readonly svc = inject(ProductService);
+  private readonly categorySvc = inject(CategoryService);
+  private readonly collectionSvc = inject(CollectionService);
   private readonly fb = inject(FormBuilder);
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly toast = inject(ToastService);
 
-  readonly categories = CATEGORIES_MOCK;
-  readonly collections = COLLECTIONS_MOCK;
-  readonly brands = BRANDS_MOCK;
-  readonly attributes = ATTRIBUTES_MOCK;
+  get categories() { return this.categorySvc.all; }
+  get collections() { return this.collectionSvc.all; }
 
   readonly productId = this.route.snapshot.paramMap.get('id');
   readonly isEdit = !!this.productId;
@@ -41,7 +40,6 @@ export class ProductFormComponent {
     sku: ['', Validators.required],
     description: [''],
     shortDescription: [''],
-    brandId: [''],
     categoryId: ['', Validators.required],
     collectionIds: this.fb.nonNullable.control<string[]>([]),
     tags: [''],
@@ -75,14 +73,14 @@ export class ProductFormComponent {
 
   constructor() {
     if (this.productId) {
-      const product = this.svc.getById(this.productId);
-      if (product) {
+      // Fetched directly rather than read from the cached list, since this page
+      // can be opened via a direct link before the product list has loaded.
+      this.svc.getByIdAsync(this.productId).subscribe((product) => {
         this.form.reset({
           name: product.name,
           sku: product.sku,
           description: product.description,
           shortDescription: product.shortDescription,
-          brandId: product.brandId ?? '',
           categoryId: product.categoryId,
           collectionIds: product.collectionIds,
           tags: product.tags.join(', '),
@@ -110,7 +108,7 @@ export class ProductFormComponent {
         this.thumbnailImage.set([{ url: product.thumbnail, name: product.name }]);
         this.galleryImages.set(product.gallery.map((url, i) => ({ url, name: `${product.name} ${i + 1}` })));
         this.variants.set(product.variants);
-      }
+      });
     }
   }
 
@@ -161,7 +159,7 @@ export class ProductFormComponent {
       sku: raw.sku,
       description: raw.description,
       shortDescription: raw.shortDescription,
-      brandId: raw.brandId || null,
+      brandId: null,
       categoryId: raw.categoryId,
       collectionIds: raw.collectionIds,
       tags: raw.tags.split(',').map((t) => t.trim()).filter(Boolean),

@@ -1,6 +1,7 @@
 import { ApplicationConfig } from '@angular/core';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
+import { CredentialsInterceptor } from './core/interceptors/credentials.interceptor';
 import {
   provideRouter,
   withEnabledBlockingInitialNavigation,
@@ -32,6 +33,7 @@ export const appConfig: ApplicationConfig = {
 
     IconSetService,
 
-    AuthService
+    AuthService,
+    { provide: HTTP_INTERCEPTORS, useClass: CredentialsInterceptor, multi: true }
   ]
 };

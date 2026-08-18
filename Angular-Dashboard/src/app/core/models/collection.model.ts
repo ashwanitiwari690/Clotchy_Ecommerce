@@ -10,4 +10,6 @@ export interface Collection {
   endDate: string;
   status: EntityStatus;
   featured: boolean;
+  /** Populated by the API on read; ignored on write. */
+  productCount?: number;
 }

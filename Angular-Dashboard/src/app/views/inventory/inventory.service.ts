@@ -1,40 +1,94 @@
-import { Injectable, signal } from '@angular/core';
-import { InventoryItem, InventoryMovement } from '../../core/models/inventory.model';
-import { INVENTORY_MOCK } from '../../core/mock-data/inventory.mock';
-import { generateId } from '../../core/models/common.model';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject, signal } from '@angular/core';
+import { Observable, map } from 'rxjs';
+import { InventoryMovement } from '../../core/models/inventory.model';
+import { environment } from '../../../environments/environment';
+
+export interface InventoryRow {
+  productId: string;
+  productName: string;
+  sku: string;
+  thumbnail: string;
+  categoryName: string;
+  availableStock: number;
+  reservedStock: number;
+  lowStockThreshold: number;
+  history: InventoryMovement[];
+}
+
+interface ApiEnvelope<T> {
+  success: boolean;
+  data: T;
+}
+
+interface InventoryApiRow {
+  productId: string;
+  productName: string;
+  sku: string;
+  categoryName: string | null;
+  thumbnail?: string | null;
+  availableStock: number;
+  reservedStock: number;
+  lowStockThreshold: number;
+}
+
+interface MovementApi {
+  id: string;
+  type: string;
+  quantity: number;
+  note: string | null;
+  createdAt: string;
+}
+
+const toMovement = (m: MovementApi): InventoryMovement => ({
+  id: m.id,
+  date: m.createdAt.slice(0, 10),
+  type: m.type as InventoryMovement['type'],
+  quantity: m.quantity,
+  note: m.note ?? '',
+});
+
+const toRow = (r: InventoryApiRow): InventoryRow => ({
+  productId: r.productId,
+  productName: r.productName,
+  sku: r.sku,
+  thumbnail: r.thumbnail ?? '',
+  categoryName: r.categoryName ?? '—',
+  availableStock: r.availableStock,
+  reservedStock: r.reservedStock,
+  lowStockThreshold: r.lowStockThreshold,
+  history: [],
+});
 
 @Injectable({ providedIn: 'root' })
 export class InventoryService {
-  private readonly items = signal<InventoryItem[]>([...INVENTORY_MOCK]);
+  private readonly http = inject(HttpClient);
+  private readonly baseUrl = `${environment.ECOMMERCE_API}inventory`;
+  private readonly rows = signal<InventoryRow[]>([]);
 
-  get all(): InventoryItem[] {
-    return this.items();
+  constructor() {
+    this.refresh();
   }
 
-  getByProductId(productId: string): InventoryItem | undefined {
-    return this.items().find((i) => i.productId === productId);
+  refresh(): void {
+    this.http.get<ApiEnvelope<InventoryApiRow[]>>(this.baseUrl).subscribe((res) => this.rows.set(res.data.map(toRow)));
+  }
+
+  get all(): InventoryRow[] {
+    return this.rows();
+  }
+
+  getHistory(productId: string): Observable<InventoryMovement[]> {
+    return this.http
+      .get<ApiEnvelope<InventoryApiRow & { history: MovementApi[] }>>(`${this.baseUrl}/${productId}`)
+      .pipe(map((res) => res.data.history.map(toMovement)));
   }
 
   adjustStock(productId: string, delta: number, note: string): void {
-    this.items.update((list) => list.map((item) => {
-      if (item.productId !== productId) return item;
-      const movement: InventoryMovement = {
-        id: generateId('mv'),
-        date: new Date().toISOString().slice(0, 10),
-        type: 'adjustment',
-        quantity: delta,
-        note: note || 'Manual stock adjustment.',
-      };
-      return {
-        ...item,
-        availableStock: Math.max(0, item.availableStock + delta),
-        history: [movement, ...item.history],
-      };
-    }));
+    this.http.post(`${this.baseUrl}/${productId}/adjust`, { delta, note }).subscribe(() => this.refresh());
   }
 
   bulkUpdate(updates: { productId: string; availableStock: number }[]): void {
-    const map = new Map(updates.map((u) => [u.productId, u.availableStock]));
-    this.items.update((list) => list.map((item) => (map.has(item.productId) ? { ...item, availableStock: map.get(item.productId)! } : item)));
+    this.http.patch(`${this.baseUrl}/bulk`, updates).subscribe(() => this.refresh());
   }
 }

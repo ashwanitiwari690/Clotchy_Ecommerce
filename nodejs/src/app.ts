@@ -1,3 +1,4 @@
+import path from "path";
 import express from "express";
 import helmet from "helmet";
 import cors from "cors";
@@ -5,11 +6,9 @@ import cookieParser from "cookie-parser";
 import compression from "compression";
 import hpp from "hpp";
 import pinoHttp from "pino-http";
-import { env } from "./config/env";
 import { logger } from "./utils/logger";
 import { apiLimiter } from "./middlewares/rateLimit.middleware";
 import { notFoundHandler, errorHandler } from "./middlewares/error.middleware";
-import { ApiError } from "./utils/ApiError";
 import routes from "./routes";
 
 const app = express();
@@ -17,23 +16,11 @@ const app = express();
 app.disable("x-powered-by");
 app.set("trust proxy", 1);
 
-const allowedOrigins = env.CORS_ORIGIN.split(",").map((origin) => origin.trim());
-
 app.use(helmet());
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      // No origin (e.g. curl/Postman/server-to-server) is allowed through;
-      // browser requests always send an Origin header for cross-origin calls.
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(ApiError.forbidden("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  }),
-);
+// Reflects whatever Origin the request sends (no allowlist) so the API is
+// reachable from any port/host during development, instead of erroring out
+// whenever a local dev server isn't running on one of a fixed set of ports.
+app.use(cors({ origin: true, credentials: true }));
 app.use(compression());
 app.use(hpp());
 app.use(express.json({ limit: "10kb" }));
@@ -45,6 +32,18 @@ app.use(
     // Skip logging noisy, high-frequency health checks (e.g. load balancer pings).
     autoLogging: { ignore: (req) => req.url === "/api/v1/health" },
   }),
+);
+
+// Uploaded images are requested cross-origin by the storefront/admin apps (different
+// ports = different origins); helmet's default same-origin Cross-Origin-Resource-Policy
+// would otherwise silently block <img> tags from loading them.
+app.use(
+  "/uploads",
+  (_req, res, next) => {
+    res.set("Cross-Origin-Resource-Policy", "cross-origin");
+    next();
+  },
+  express.static(path.join(process.cwd(), "uploads")),
 );
 
 app.use("/api/v1", apiLimiter, routes);

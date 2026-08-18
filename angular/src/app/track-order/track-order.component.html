@@ -3,10 +3,10 @@
 </section>
 
 <section class="container track-body">
-  @if (!tracked()) {
+  @if (!order()) {
     <div class="login-box">
       <label>Order ID</label>
-      <input type="text" [value]="orderId()" placeholder="e.g. CLTCH10234" (input)="onOrderIdInput($event)">
+      <input type="text" [value]="orderId()" placeholder="e.g. CLT-ABC123" (input)="onOrderIdInput($event)">
 
       <label>Registered Mobile Number</label>
       <div class="phone-field">
@@ -15,26 +15,29 @@
       </div>
 
       @if (error()) { <small class="error">{{ error() }}</small> }
-      <button class="primary-btn" (click)="track()">TRACK ORDER</button>
+      <button class="primary-btn" [disabled]="loading()" (click)="track()">{{ loading() ? 'SEARCHING…' : 'TRACK ORDER' }}</button>
     </div>
   } @else {
     <div class="login-box result-box">
       <div class="result-head">
-        <div><span class="label">ORDER ID</span><strong>{{ orderId() }}</strong></div>
+        <div><span class="label">ORDER ID</span><strong>{{ order()!.orderNumber }}</strong></div>
         <button class="change-btn" (click)="reset()">TRACK ANOTHER ORDER</button>
       </div>
 
-      <div class="timeline">
-        @for (step of steps; track step.label) {
-          <div class="timeline-step" [class.done]="step.done">
-            <div class="dot"></div>
-            <div>
-              <strong>{{ step.label }}</strong>
-              <span>{{ step.date }}</span>
+      @if (hasTerminalIssue) {
+        <p class="status-note">Current status: <strong>{{ order()!.status | titlecase }}</strong></p>
+      } @else {
+        <div class="timeline">
+          @for (step of steps; track step.label) {
+            <div class="timeline-step" [class.done]="step.done">
+              <div class="dot"></div>
+              <div>
+                <strong>{{ step.label }}</strong>
+              </div>
             </div>
-          </div>
-        }
-      </div>
+          }
+        </div>
+      }
     </div>
   }
 </section>

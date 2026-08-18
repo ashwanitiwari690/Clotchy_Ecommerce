@@ -9,9 +9,9 @@ import { HomePromotionService } from '../home-page/promotions/home-promotion.ser
 import { TestimonialService } from '../home-page/testimonials/testimonial.service';
 import { CommunityService } from '../home-page/community/community.service';
 import { NewsletterService } from '../home-page/newsletter/newsletter.service';
-import { getCategoryById } from '../../core/mock-data/categories.mock';
-import { getCollectionById } from '../../core/mock-data/collections.mock';
-import { getProductById } from '../../core/mock-data/products.mock';
+import { CategoryService } from '../categories/category.service';
+import { CollectionService } from '../collections/collection.service';
+import { ProductService } from '../products/product.service';
 
 @Component({
   selector: 'app-home-page-preview',
@@ -29,6 +29,9 @@ export class HomePagePreviewComponent {
   private readonly testimonialSvc = inject(TestimonialService);
   private readonly communitySvc = inject(CommunityService);
   readonly newsletterSvc = inject(NewsletterService);
+  private readonly categoryLookup = inject(CategoryService);
+  private readonly collectionLookup = inject(CollectionService);
+  private readonly productLookup = inject(ProductService);
 
   get hero() {
     return [...this.heroSvc.all].filter((b) => b.status === 'active').sort((a, b) => a.displayOrder - b.displayOrder)[0];
@@ -38,7 +41,7 @@ export class HomePagePreviewComponent {
     return [...this.categorySvc.all]
       .filter((f) => f.status === 'active')
       .sort((a, b) => a.displayOrder - b.displayOrder)
-      .map((f) => getCategoryById(f.categoryId))
+      .map((f) => this.categoryLookup.getById(f.categoryId))
       .filter((c) => !!c);
   }
 
@@ -46,7 +49,7 @@ export class HomePagePreviewComponent {
     return [...this.collectionSvc.all]
       .filter((f) => f.status === 'active')
       .sort((a, b) => a.displayOrder - b.displayOrder)
-      .map((f) => ({ feature: f, collection: getCollectionById(f.collectionId) }))
+      .map((f) => ({ feature: f, collection: this.collectionLookup.getById(f.collectionId) }))
       .filter((x) => !!x.collection);
   }
 
@@ -54,7 +57,7 @@ export class HomePagePreviewComponent {
     return [...this.bestSellerSvc.all]
       .filter((f) => f.status === 'active')
       .sort((a, b) => a.displayOrder - b.displayOrder)
-      .map((f) => getProductById(f.productId))
+      .map((f) => this.productLookup.getById(f.productId))
       .filter((p) => !!p);
   }
 

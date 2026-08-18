@@ -25,21 +25,14 @@
         <label class="form-label">Short Description</label>
         <textarea class="form-control" rows="2" formControlName="shortDescription"></textarea>
       </div>
-      <div class="col-md-4">
-        <label class="form-label">Brand</label>
-        <select class="form-control" formControlName="brandId">
-          <option value="">No Brand</option>
-          @for (b of brands; track b.id) { <option [value]="b.id">{{ b.name }}</option> }
-        </select>
-      </div>
-      <div class="col-md-4">
+      <div class="col-md-6">
         <label class="form-label">Category</label>
         <select class="form-control" formControlName="categoryId">
           <option value="">Select category</option>
           @for (c of categories; track c.id) { <option [value]="c.id">{{ c.name }}</option> }
         </select>
       </div>
-      <div class="col-md-4">
+      <div class="col-md-6">
         <label class="form-label">Tags</label>
         <input type="text" class="form-control" formControlName="tags" placeholder="Comma separated" />
       </div>

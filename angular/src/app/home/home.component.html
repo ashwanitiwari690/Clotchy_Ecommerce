@@ -1,12 +1,14 @@
-<section class="hero">
+<section class="hero" [style.background-image]="home()?.hero?.desktopImage ? 'url(' + home()!.hero!.desktopImage + ')' : null">
   <div class="hero-overlay"></div>
   <div class="container hero-content">
-    <span class="eyebrow">PREMIUM APPAREL • BUILT FOR BOLD LIVING</span>
-    <h1>LEGENDARY LOOKS.<br><em>FOR EVERY LEGEND.</em></h1>
-    <p>Premium apparel inspired by courage, culture & individuality.</p>
+    <span class="eyebrow">{{ home()?.hero?.subheading ?? 'PREMIUM APPAREL • BUILT FOR BOLD LIVING' }}</span>
+    <h1>{{ home()?.hero?.heading ?? 'LEGENDARY LOOKS. FOR EVERY LEGEND.' }}</h1>
+    <p>{{ home()?.hero?.description ?? 'Premium apparel inspired by courage, culture & individuality.' }}</p>
     <div class="hero-actions">
-      <a routerLink="/products" class="btn btn-gold">SHOP NOW <span>→</span></a>
-      <a routerLink="/products" [queryParams]="{sort:'new'}" class="btn btn-outline">NEW ARRIVALS</a>
+      <a [href]="home()?.hero?.primaryButtonLink ?? '/products'" class="btn btn-gold">{{ home()?.hero?.primaryButtonText ?? 'SHOP NOW' }} <span>→</span></a>
+      @if (home()?.hero?.secondaryButtonText) {
+        <a [href]="home()!.hero!.secondaryButtonLink ?? '/products'" class="btn btn-outline">{{ home()!.hero!.secondaryButtonText }}</a>
+      }
     </div>
   </div>
   <div class="hero-stat"><strong>4.8/5</strong><span>1,543+ VERIFIED REVIEWS</span></div>
@@ -15,9 +17,9 @@
 <section class="section category-section">
   <div class="section-heading"><span></span><h2>SHOP BY CATEGORY</h2><span></span></div>
   <div class="container category-grid">
-    @for (cat of categories; track cat.name) {
+    @for (cat of home()?.categories ?? []; track cat.id) {
       <a class="category-card" routerLink="/products" [queryParams]="{category: cat.name}">
-        <div class="category-icon">{{ cat.icon }}</div>
+        @if (cat.image) { <img class="category-image" [src]="cat.image" [alt]="cat.name" loading="lazy"> }
         <strong>{{ cat.name }}</strong>
       </a>
     }
@@ -27,11 +29,11 @@
 <section class="section collections" id="collections">
   <div class="section-heading"><span></span><h2>EXPLORE OUR COLLECTIONS</h2><span></span></div>
   <div class="container collection-grid">
-    @for (collection of collections; track collection.name) {
+    @for (collection of home()?.collections ?? []; track collection.id) {
       <a class="collection-card" routerLink="/products" [queryParams]="{collection: collection.name}">
         <img [src]="collection.image" [alt]="collection.name" loading="lazy">
         <div class="collection-overlay">
-          <small>{{ collection.subtitle }}</small>
+          <small>{{ collection.shortDescription }}</small>
           <h3>{{ collection.name }}</h3>
           <span class="mini-btn">SHOP NOW →</span>
         </div>
@@ -45,7 +47,7 @@
     <div class="section-heading"><span></span><h2>BEST SELLERS</h2><span></span></div>
     <div class="section-top"><p>Our most-loved pieces, picked by the community.</p><a routerLink="/products">VIEW ALL PRODUCTS →</a></div>
     <div class="product-grid">
-      @for (product of products; track product.id) {
+      @for (product of home()?.bestSellers ?? []; track product.id) {
         <app-product-card [product]="product" />
       }
     </div>
@@ -86,13 +88,7 @@
   <div class="community-title"><span></span><h2>JOIN THE CLOTCHCY COMMUNITY</h2><span></span></div>
   <div class="community-content">
     <div class="community-photos">
-      @for (img of [
-        'https://images.unsplash.com/photo-1529139574466-a303027c1d8b?auto=format&fit=crop&w=500&q=80',
-        'https://images.unsplash.com/photo-1523381294911-8d3cead13475?auto=format&fit=crop&w=500&q=80',
-        'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=500&q=80',
-        'https://images.unsplash.com/photo-1551488831-00ddcb6c6bd3?auto=format&fit=crop&w=500&q=80',
-        'https://images.unsplash.com/photo-1525507119028-ed4c629a60a3?auto=format&fit=crop&w=500&q=80'
-      ]; track img) { <img [src]="img" alt="Community style" loading="lazy"> }
+      @for (img of home()?.community ?? []; track img.id) { <img [src]="img.image" [alt]="img.title ?? 'Community style'" loading="lazy"> }
     </div>
     <div class="newsletter"><small>GET ₹100 OFF YOUR FIRST ORDER</small><h3>Join the Clotchcy family!</h3><div><input placeholder="Enter your email"><button>SUBSCRIBE</button></div></div>
   </div>

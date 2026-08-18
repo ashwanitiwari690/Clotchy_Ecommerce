@@ -1,0 +1,126 @@
+<section class="page-head">
+  <div class="container"><span>HOME / CART / CHECKOUT</span><h1>CHECKOUT</h1></div>
+</section>
+
+<section class="container checkout-body">
+  @if (placedOrder(); as order) {
+    <div class="confirm-box">
+      <div class="check">✓</div>
+      <h2>Order placed!</h2>
+      <p>Your order <strong>{{ order.orderNumber }}</strong> has been confirmed.</p>
+      <p class="total">Total paid on delivery: ₹{{ order.total.toLocaleString('en-IN') }}</p>
+      <div class="actions">
+        <a routerLink="/track-order" class="primary-btn">TRACK YOUR ORDER</a>
+        <a routerLink="/products">CONTINUE SHOPPING →</a>
+      </div>
+    </div>
+  } @else if (cart.items().length === 0) {
+    <div class="empty-cart"><div>🛒</div><h2>Your cart is empty</h2><p>Add something before checking out.</p><a routerLink="/products">EXPLORE PRODUCTS →</a></div>
+  } @else {
+    <div class="checkout-layout">
+      <div class="checkout-main">
+        <div class="block">
+          <div class="block-header">
+            <h2>Shipping Address</h2>
+            @if (!loadingAddress()) {
+              <button type="button" class="toggle-btn" (click)="toggleAddressForm()">
+                {{ editingAddress() ? 'CLOSE ✕' : (address() ? 'EDIT ✎' : 'ADD +') }}
+              </button>
+            }
+          </div>
+          @if (loadingAddress()) {
+            <p class="muted">Loading your address…</p>
+          } @else if (editingAddress()) {
+            <div class="address-form">
+              <button type="button" class="locate-btn" [disabled]="locating()" (click)="useCurrentLocation()">
+                {{ locating() ? '📍 DETECTING YOUR LOCATION…' : '📍 USE MY CURRENT LOCATION' }}
+              </button>
+              @if (locateError()) { <small class="error">{{ locateError() }}</small> }
+
+              <label>Recipient Full Name</label>
+              <input type="text" [value]="fullName()" placeholder="Full name" (input)="onFullNameInput($event)">
+
+              <label>Recipient Mobile Number</label>
+              <div class="phone-field">
+                <span class="prefix">+91</span>
+                <input type="tel" inputmode="numeric" maxlength="10" [value]="addrPhone()" placeholder="10-digit mobile number" (input)="onAddrPhoneInput($event)">
+              </div>
+
+              <label>Address Line 1</label>
+              <input type="text" [value]="line1()" placeholder="House no., building, street" (input)="onLine1Input($event)">
+
+              <label>Address Line 2 (optional)</label>
+              <input type="text" [value]="line2()" placeholder="Landmark, area" (input)="onLine2Input($event)">
+
+              <div class="field-row">
+                <div>
+                  <label>City</label>
+                  <input type="text" [value]="city()" placeholder="City" (input)="onCityInput($event)">
+                </div>
+                <div>
+                  <label>State</label>
+                  <input type="text" [value]="state()" placeholder="State" (input)="onStateInput($event)">
+                </div>
+              </div>
+
+              <div class="field-row">
+                <div>
+                  <label>Pincode</label>
+                  <input type="tel" inputmode="numeric" maxlength="6" [value]="pincode()" placeholder="6-digit pincode" (input)="onPincodeInput($event)">
+                </div>
+                <div>
+                  <label>Country</label>
+                  <input type="text" [value]="country()" placeholder="Country" (input)="onCountryInput($event)">
+                </div>
+              </div>
+
+              @if (addressFormError()) { <small class="error">{{ addressFormError() }}</small> }
+
+              <div class="form-actions">
+                <button type="button" class="primary-btn" [disabled]="savingAddress()" (click)="saveAddressForm()">{{ savingAddress() ? 'SAVING…' : 'SAVE ADDRESS' }}</button>
+                <button type="button" class="ghost-btn" (click)="cancelEditAddress()">CANCEL</button>
+              </div>
+            </div>
+          } @else if (address(); as addr) {
+            <div class="address-card">
+              <strong>{{ addr.fullName }}</strong>
+              <p>{{ addr.line1 }}@if (addr.line2) {, {{ addr.line2 }}}</p>
+              <p>{{ addr.city }}, {{ addr.state }} - {{ addr.pincode }}</p>
+              <p>{{ addr.country }} · +91 {{ addr.phone }}</p>
+            </div>
+          } @else {
+            <div class="address-card missing">
+              <p>You don't have a saved shipping address yet.</p>
+            </div>
+          }
+        </div>
+
+        <div class="block">
+          <h2>Order Items</h2>
+          @for (item of cart.items(); track item.id + item.selectedSize + item.selectedColor) {
+            <div class="line-item">
+              <img [src]="item.image" [alt]="item.name" loading="lazy">
+              <div class="line-info"><strong>{{ item.name }}</strong><span>{{ item.selectedColor }} · {{ item.selectedSize }} · Qty {{ item.quantity }}</span></div>
+              <strong>₹{{ (item.price * item.quantity).toLocaleString('en-IN') }}</strong>
+            </div>
+          }
+        </div>
+      </div>
+
+      <aside class="summary">
+        <h2>ORDER SUMMARY</h2>
+        <div><span>Subtotal</span><strong>₹{{ cart.subtotal().toLocaleString('en-IN') }}</strong></div>
+        <div><span>Shipping</span><strong>{{ cart.shipping() ? '₹' + cart.shipping() : 'FREE' }}</strong></div>
+        <hr>
+        <div class="total"><span>TOTAL</span><strong>₹{{ cart.total().toLocaleString('en-IN') }}</strong></div>
+
+        @if (error()) { <small class="error">{{ error() }}</small> }
+
+        <button class="checkout" [disabled]="!address() || placing()" (click)="placeOrder()">
+          {{ placing() ? 'PLACING ORDER…' : 'PLACE ORDER (COD) →' }}
+        </button>
+        <div class="secure">🔒 Cash on delivery · Secure checkout</div>
+      </aside>
+    </div>
+  }
+</section>

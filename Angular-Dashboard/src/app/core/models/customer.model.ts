@@ -22,6 +22,8 @@ export interface Customer {
   status: 'active' | 'inactive' | 'blocked';
   addresses: CustomerAddress[];
   wishlistProductIds: string[];
+  /** Only populated on the customer-detail read, not the list. */
+  orders?: import('./order.model').Order[];
 }
 
 export interface CustomerGroup {
