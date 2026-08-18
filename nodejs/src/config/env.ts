@@ -5,9 +5,6 @@ const envSchema = z.object({
   NODE_ENV: z.enum(["development", "production", "test"]).default("development"),
   PORT: z.coerce.number().default(5000),
   DATABASE_URL: z.string().min(1, "DATABASE_URL is required"),
-  // Comma-separated list, e.g. "http://localhost:4200,http://localhost:4300"
-  // (storefront + admin panel run as separate Angular apps on separate ports).
-  CORS_ORIGIN: z.string().min(1, "CORS_ORIGIN is required"),
   // No refresh token: the access token itself is the persistent session,
   // held in an httpOnly cookie until it expires or the user logs out.
   ACCESS_TOKEN_SECRET: z.string().min(32, "ACCESS_TOKEN_SECRET must be at least 32 characters"),

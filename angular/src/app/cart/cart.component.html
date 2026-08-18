@@ -17,7 +17,7 @@
       <aside class="summary">
         <h2>ORDER SUMMARY</h2><div><span>Subtotal</span><strong>₹{{ cart.subtotal().toLocaleString('en-IN') }}</strong></div><div><span>Shipping</span><strong>{{ cart.shipping() ? '₹' + cart.shipping() : 'FREE' }}</strong></div>
         <small>Free shipping on orders above ₹999.</small><hr><div class="total"><span>TOTAL</span><strong>₹{{ cart.total().toLocaleString('en-IN') }}</strong></div>
-        <button class="checkout">PROCEED TO CHECKOUT →</button>
+        <a routerLink="/checkout" class="checkout">PROCEED TO CHECKOUT →</a>
         <div class="secure">🔒 Secure checkout · UPI · Cards · NetBanking</div>
       </aside>
     </div>

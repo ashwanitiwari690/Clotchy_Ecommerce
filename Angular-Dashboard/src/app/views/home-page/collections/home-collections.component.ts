@@ -3,7 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { IconDirective } from '@coreui/icons-angular';
 import { SharedUIModule } from '../../../shared/shared-ui.module';
 import { HomeCollectionService } from './home-collection.service';
-import { COLLECTIONS_MOCK, getCollectionById } from '../../../core/mock-data/collections.mock';
+import { CollectionService } from '../../collections/collection.service';
 import { HomeCollectionFeature } from '../../../core/models/homepage.model';
 import { ToastService } from '../../../layout/toasts/toast.service';
 
@@ -15,6 +15,7 @@ import { ToastService } from '../../../layout/toasts/toast.service';
 })
 export class HomeCollectionsComponent {
   private readonly svc = inject(HomeCollectionService);
+  private readonly collectionSvc = inject(CollectionService);
   private readonly toast = inject(ToastService);
 
   pickedCollectionId = '';
@@ -28,15 +29,15 @@ export class HomeCollectionsComponent {
 
   get availableCollections() {
     const featuredIds = new Set(this.svc.all.map((f) => f.collectionId));
-    return COLLECTIONS_MOCK.filter((c) => !featuredIds.has(c.id));
+    return this.collectionSvc.all.filter((c) => !featuredIds.has(c.id));
   }
 
-  collectionName(id: string): string { return getCollectionById(id)?.name ?? '—'; }
-  collectionImage(id: string): string { return getCollectionById(id)?.image ?? ''; }
+  collectionName(id: string): string { return this.collectionSvc.getById(id)?.name ?? '—'; }
+  collectionImage(id: string): string { return this.collectionSvc.getById(id)?.image ?? ''; }
 
   onPick(id: string): void {
     this.pickedCollectionId = id;
-    const col = getCollectionById(id);
+    const col = this.collectionSvc.getById(id);
     this.pickedDescription = col?.description ?? '';
     this.pickedLink = `/collections/${col?.slug ?? ''}`;
   }

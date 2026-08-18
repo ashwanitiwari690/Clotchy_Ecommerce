@@ -20,6 +20,27 @@ export const authenticate = (req: Request, _res: Response, next: NextFunction) =
   }
 };
 
+// Same token resolution as `authenticate`, but never rejects the request when a
+// token is missing or invalid - it just leaves `req.user` unset. Lets a single
+// route serve different data to the public vs. a logged-in admin (e.g. the
+// product list showing drafts only to admins).
+export const optionalAuthenticate = (req: Request, _res: Response, next: NextFunction) => {
+  const header = req.headers.authorization;
+  const token = header?.startsWith("Bearer ") ? header.slice("Bearer ".length) : req.cookies?.[ACCESS_COOKIE_NAME];
+
+  if (!token) {
+    return next();
+  }
+
+  try {
+    const payload = verifyAccessToken(token);
+    req.user = { id: payload.sub, role: payload.role };
+  } catch {
+    // Ignore invalid/expired tokens on optional routes - treat as anonymous.
+  }
+  next();
+};
+
 export const authorize = (...roles: string[]) => (req: Request, _res: Response, next: NextFunction) => {
   if (!req.user) {
     return next(ApiError.unauthorized());

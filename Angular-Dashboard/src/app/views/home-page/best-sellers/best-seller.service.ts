@@ -1,11 +1,14 @@
-import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
 import { BestSellerFeature } from '../../../core/models/homepage.model';
-import { BEST_SELLER_FEATURES_MOCK } from '../../../core/mock-data/home-page.mock';
-import { MockCrudStore } from '../../../core/services/mock-crud-store';
+import { HttpCrudStore } from '../../../core/services/http-crud-store';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class BestSellerService {
-  private readonly store = new MockCrudStore<BestSellerFeature>(BEST_SELLER_FEATURES_MOCK, 'bsf');
+  private readonly http = inject(HttpClient);
+  private readonly baseUrl = `${environment.ECOMMERCE_API}home/best-sellers`;
+  private readonly store = new HttpCrudStore<BestSellerFeature>(this.http, this.baseUrl);
 
   get all(): BestSellerFeature[] { return this.store.all; }
 
@@ -23,13 +26,6 @@ export class BestSellerService {
   }
 
   move(id: string, direction: 'up' | 'down'): void {
-    const sorted = [...this.store.all].sort((a, b) => a.displayOrder - b.displayOrder);
-    const idx = sorted.findIndex((f) => f.id === id);
-    const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
-    if (idx < 0 || swapIdx < 0 || swapIdx >= sorted.length) return;
-    const tmp = sorted[idx].displayOrder;
-    sorted[idx] = { ...sorted[idx], displayOrder: sorted[swapIdx].displayOrder };
-    sorted[swapIdx] = { ...sorted[swapIdx], displayOrder: tmp };
-    this.store.replaceAll(sorted);
+    this.http.post(`${this.baseUrl}/${id}/move`, { direction }).subscribe(() => this.store.refresh());
   }
 }

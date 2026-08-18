@@ -20,7 +20,11 @@ export class OrderDetailComponent {
 
   readonly orderId = this.route.snapshot.paramMap.get('id')!;
   readonly statuses = ORDER_STATUSES;
-  order = signal<Order | undefined>(this.svc.getById(this.orderId));
+  order = signal<Order | undefined>(undefined);
+
+  constructor() {
+    this.svc.getByIdAsync(this.orderId).subscribe((order) => this.order.set(order));
+  }
 
   updateStatus(status: string): void {
     this.svc.setStatus(this.orderId, status as OrderStatus).subscribe((updated) => {

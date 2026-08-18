@@ -4,9 +4,8 @@ import { RouterLink } from '@angular/router';
 import { IconDirective } from '@coreui/icons-angular';
 import { SharedUIModule } from '../../shared/shared-ui.module';
 import { ProductService } from './product.service';
+import { CategoryService } from '../categories/category.service';
 import { Product } from '../../core/models/product.model';
-import { getCategoryById } from '../../core/mock-data/categories.mock';
-import { getBrandById } from '../../core/mock-data/brands.mock';
 import { ToastService } from '../../layout/toasts/toast.service';
 import { ConfirmDialogService } from '../../shared/components/confirm-dialog/confirm-dialog.service';
 
@@ -18,6 +17,7 @@ import { ConfirmDialogService } from '../../shared/components/confirm-dialog/con
 })
 export class ProductsComponent {
   private readonly svc = inject(ProductService);
+  private readonly categorySvc = inject(CategoryService);
   private readonly toast = inject(ToastService);
   private readonly confirm = inject(ConfirmDialogService);
 
@@ -30,7 +30,7 @@ export class ProductsComponent {
   previewProduct = signal<Product | null>(null);
 
   get categories() {
-    return [...new Map(this.svc.all.map((p) => [p.categoryId, getCategoryById(p.categoryId)])).values()].filter(Boolean);
+    return this.categorySvc.all;
   }
 
   get filtered(): Product[] {
@@ -48,8 +48,7 @@ export class ProductsComponent {
     return this.filtered.slice(start, start + this.pageSize);
   }
 
-  categoryName(id: string): string { return getCategoryById(id)?.name ?? '—'; }
-  brandName(id: string | null): string { return getBrandById(id)?.name ?? '—'; }
+  categoryName(id: string): string { return this.categorySvc.getById(id)?.name ?? '—'; }
 
   onSearch(value: string): void { this.search = value; this.currentPage.set(1); }
   onPageChange(page: number): void { this.currentPage.set(page); }

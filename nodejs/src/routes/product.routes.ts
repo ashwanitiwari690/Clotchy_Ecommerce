@@ -6,14 +6,14 @@ import {
   updateProduct,
   deleteProduct,
 } from "../controllers/product.controller";
-import { authenticate, authorize } from "../middlewares/auth.middleware";
+import { authenticate, authorize, optionalAuthenticate } from "../middlewares/auth.middleware";
 import { validate } from "../middlewares/validate.middleware";
 import { createProductSchema, updateProductSchema } from "../validators/product.validator";
 
 const router = Router();
 
-router.get("/", listProducts);
-router.get("/:id", getProduct);
+router.get("/", optionalAuthenticate, listProducts);
+router.get("/:id", optionalAuthenticate, getProduct);
 
 router.post("/", authenticate, authorize("ADMIN"), validate(createProductSchema), createProduct);
 router.patch("/:id", authenticate, authorize("ADMIN"), validate(updateProductSchema), updateProduct);

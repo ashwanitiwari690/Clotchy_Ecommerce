@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { CATEGORIES, COLLECTIONS, PRODUCTS } from '../data';
+import { CatalogService, HomeData } from '../catalog.service';
 import { ProductCardComponent } from '../product-card/product-card.component';
 
 @Component({
@@ -12,7 +12,9 @@ import { ProductCardComponent } from '../product-card/product-card.component';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomeComponent {
-  categories = CATEGORIES;
-  collections = COLLECTIONS;
-  products = PRODUCTS.slice(0, 6);
+  readonly home = signal<HomeData | null>(null);
+
+  constructor(private catalog: CatalogService) {
+    this.catalog.getHome().subscribe((data) => this.home.set(data));
+  }
 }

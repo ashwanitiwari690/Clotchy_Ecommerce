@@ -2,8 +2,7 @@ import { Component, inject } from '@angular/core';
 import { IconDirective } from '@coreui/icons-angular';
 import { SharedUIModule } from '../../../shared/shared-ui.module';
 import { HomeCategoryService } from './home-category.service';
-import { CATEGORIES_MOCK, getCategoryById } from '../../../core/mock-data/categories.mock';
-import { PRODUCTS_MOCK } from '../../../core/mock-data/products.mock';
+import { CategoryService } from '../../categories/category.service';
 import { HomeCategoryFeature } from '../../../core/models/homepage.model';
 import { ToastService } from '../../../layout/toasts/toast.service';
 
@@ -15,6 +14,7 @@ import { ToastService } from '../../../layout/toasts/toast.service';
 })
 export class HomeCategoriesComponent {
   private readonly svc = inject(HomeCategoryService);
+  private readonly categorySvc = inject(CategoryService);
   private readonly toast = inject(ToastService);
 
   get features(): HomeCategoryFeature[] {
@@ -23,12 +23,12 @@ export class HomeCategoriesComponent {
 
   get availableCategories() {
     const featuredIds = new Set(this.svc.all.map((f) => f.categoryId));
-    return CATEGORIES_MOCK.filter((c) => !featuredIds.has(c.id));
+    return this.categorySvc.all.filter((c) => !featuredIds.has(c.id));
   }
 
-  categoryName(id: string): string { return getCategoryById(id)?.name ?? '—'; }
-  categoryImage(id: string): string { return getCategoryById(id)?.image ?? ''; }
-  productCount(id: string): number { return PRODUCTS_MOCK.filter((p) => p.categoryId === id).length; }
+  categoryName(id: string): string { return this.categorySvc.getById(id)?.name ?? '—'; }
+  categoryImage(id: string): string { return this.categorySvc.getById(id)?.image ?? ''; }
+  productCount(id: string): number { return this.categorySvc.productCount(id); }
 
   add(categoryId: string): void {
     this.svc.add(categoryId);

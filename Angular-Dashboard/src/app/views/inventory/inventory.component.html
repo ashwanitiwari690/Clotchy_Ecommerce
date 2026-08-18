@@ -22,20 +22,20 @@
         </tr>
       </thead>
       <tbody>
-        @for (row of rows; track row.item.productId) {
+        @for (row of rows; track row.productId) {
           <tr>
             <td>
               <div class="d-flex align-items-center gap-2">
-                <img [src]="row.product.thumbnail" [alt]="row.product.name" class="inv-thumb" />
-                <span class="text-truncate" style="max-width: 180px;">{{ row.product.name }}</span>
+                <img [src]="row.thumbnail" [alt]="row.productName" class="inv-thumb" />
+                <span class="text-truncate" style="max-width: 180px;">{{ row.productName }}</span>
               </div>
             </td>
-            <td class="text-body-secondary">{{ row.product.sku }}</td>
+            <td class="text-body-secondary">{{ row.sku }}</td>
             <td>{{ row.categoryName }}</td>
-            <td class="text-end">{{ row.item.availableStock }}</td>
-            <td class="text-end">{{ row.item.reservedStock }}</td>
+            <td class="text-end">{{ row.availableStock }}</td>
+            <td class="text-end">{{ row.reservedStock }}</td>
             <td class="text-end">{{ row.total }}</td>
-            <td class="text-end">{{ row.item.lowStockThreshold }}</td>
+            <td class="text-end">{{ row.lowStockThreshold }}</td>
             <td><app-status-badge [status]="row.status" /></td>
             <td class="text-end">
               <div class="btn-group btn-group-sm">
@@ -58,7 +58,7 @@
 
 <c-modal id="adjustStockModal" #adjModal alignment="center">
   <c-modal-header>
-    <h5 cModalTitle>Adjust Stock — {{ selectedRow()?.product?.name }}</h5>
+    <h5 cModalTitle>Adjust Stock — {{ selectedRow()?.productName }}</h5>
     <button [cModalToggle]="adjModal.id" cButtonClose></button>
   </c-modal-header>
   <c-modal-body>
@@ -80,7 +80,7 @@
 
 <c-modal id="stockHistoryModal" #histModal alignment="center" size="lg">
   <c-modal-header>
-    <h5 cModalTitle>Stock History — {{ selectedRow()?.product?.name }}</h5>
+    <h5 cModalTitle>Stock History — {{ selectedRow()?.productName }}</h5>
     <button [cModalToggle]="histModal.id" cButtonClose></button>
   </c-modal-header>
   <c-modal-body>
@@ -89,7 +89,7 @@
         <tr><th>Date</th><th>Type</th><th class="text-end">Quantity</th><th>Note</th></tr>
       </thead>
       <tbody>
-        @for (mv of selectedRow()?.item?.history ?? []; track mv.id) {
+        @for (mv of selectedRow()?.history ?? []; track mv.id) {
           <tr>
             <td>{{ mv.date }}</td>
             <td><app-status-badge [status]="mv.type" /></td>

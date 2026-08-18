@@ -3,8 +3,8 @@ import { DecimalPipe } from '@angular/common';
 import { IconDirective } from '@coreui/icons-angular';
 import { SharedUIModule } from '../../../shared/shared-ui.module';
 import { BestSellerService } from './best-seller.service';
-import { PRODUCTS_MOCK, getProductById } from '../../../core/mock-data/products.mock';
-import { getCategoryById } from '../../../core/mock-data/categories.mock';
+import { ProductService } from '../../products/product.service';
+import { CategoryService } from '../../categories/category.service';
 import { BestSellerFeature } from '../../../core/models/homepage.model';
 import { ToastService } from '../../../layout/toasts/toast.service';
 
@@ -16,6 +16,8 @@ import { ToastService } from '../../../layout/toasts/toast.service';
 })
 export class BestSellersComponent {
   private readonly svc = inject(BestSellerService);
+  private readonly productSvc = inject(ProductService);
+  private readonly categorySvc = inject(CategoryService);
   private readonly toast = inject(ToastService);
 
   autoSelect = signal(false);
@@ -26,11 +28,11 @@ export class BestSellersComponent {
 
   get availableProducts() {
     const featuredIds = new Set(this.svc.all.map((f) => f.productId));
-    return PRODUCTS_MOCK.filter((p) => !featuredIds.has(p.id));
+    return this.productSvc.all.filter((p) => !featuredIds.has(p.id));
   }
 
-  product(id: string) { return getProductById(id); }
-  categoryName(id: string): string { return getCategoryById(id)?.name ?? '—'; }
+  product(id: string) { return this.productSvc.getById(id); }
+  categoryName(id: string): string { return this.categorySvc.getById(id)?.name ?? '—'; }
 
   add(productId: string): void {
     this.svc.add(productId);

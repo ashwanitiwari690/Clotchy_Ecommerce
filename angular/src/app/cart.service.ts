@@ -1,8 +1,24 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject, signal, computed } from '@angular/core';
+import { Observable, map, tap } from 'rxjs';
 import { CartItem, Product } from './models';
+import { environment } from '../environments/environment';
+
+export interface PlacedOrder {
+  id: string;
+  orderNumber: string;
+  total: number;
+  status: string;
+}
+
+interface ApiEnvelope<T> {
+  success: boolean;
+  data: T;
+}
 
 @Injectable({ providedIn: 'root' })
 export class CartService {
+  private readonly http = inject(HttpClient);
   private readonly storageKey = 'clotchcy-cart';
   readonly items = signal<CartItem[]>(this.read());
 
@@ -23,7 +39,7 @@ export class CartService {
     this.save(next);
   }
 
-  updateQuantity(id: number, quantity: number, size: string, color: string): void {
+  updateQuantity(id: string, quantity: number, size: string, color: string): void {
     const next = this.items()
       .map(item => item.id === id && item.selectedSize === size && item.selectedColor === color
         ? { ...item, quantity: Math.max(1, quantity) } : item);
@@ -36,6 +52,25 @@ export class CartService {
 
   clear(): void {
     this.save([]);
+  }
+
+  // Places the current cart as a real order (requires a logged-in user with a
+  // saved shipping address - server rejects otherwise) and empties the cart on
+  // success. Prices are recomputed server-side from the product catalog, never
+  // trusted from the client.
+  checkout(): Observable<PlacedOrder> {
+    const payload = {
+      items: this.items().map((item) => ({
+        productId: item.id,
+        quantity: item.quantity,
+        size: item.selectedSize || undefined,
+        color: item.selectedColor || undefined,
+      })),
+    };
+    return this.http.post<ApiEnvelope<PlacedOrder>>(`${environment.apiUrl}/orders`, payload).pipe(
+      map((res) => res.data),
+      tap(() => this.clear()),
+    );
   }
 
   private save(items: CartItem[]): void {

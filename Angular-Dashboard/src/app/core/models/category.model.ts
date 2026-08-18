@@ -9,4 +9,6 @@ export interface Category {
   sortOrder: number;
   status: EntityStatus;
   description?: string;
+  /** Populated by the API on read; ignored on write. */
+  productCount?: number;
 }

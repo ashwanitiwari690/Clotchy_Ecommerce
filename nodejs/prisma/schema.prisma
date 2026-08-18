@@ -19,10 +19,14 @@ model User {
   email        String?  @unique
   passwordHash String
   role         Role     @default(USER)
+  status       String   @default("active")
+  avatar       String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  address Address?
+  address  Address?
+  orders   Order[]
+  wishlist WishlistItem[]
 
   @@map("users")
 }
@@ -61,28 +65,257 @@ model OtpVerification {
 }
 
 model Category {
-  id        String    @id @default(uuid())
-  name      String    @unique
-  slug      String    @unique
-  products  Product[]
-  createdAt DateTime  @default(now())
+  id          String     @id @default(uuid())
+  name        String     @unique
+  slug        String     @unique
+  description String?
+  image       String?
+  sortOrder   Int        @default(0)
+  status      String     @default("active")
+  parentId    String?
+  parent      Category?  @relation("CategoryParent", fields: [parentId], references: [id], onDelete: SetNull)
+  children    Category[] @relation("CategoryParent")
+  products    Product[]
+  homeFeature HomeCategoryFeature?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
 
+  @@index([parentId])
   @@map("categories")
 }
 
-model Product {
-  id          String   @id @default(uuid())
-  name        String
-  slug        String   @unique
+model Collection {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  slug        String    @unique
   description String?
-  price       Decimal  @db.Decimal(10, 2)
-  stock       Int      @default(0)
+  image       String?
+  startDate   DateTime?
+  endDate     DateTime?
+  status      String    @default("active")
+  featured    Boolean   @default(false)
+  products    Product[]
+  homeFeature HomeCollectionFeature?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("collections")
+}
+
+model Product {
+  id               String   @id @default(uuid())
+  name             String
+  slug             String   @unique
+  sku              String   @unique
+  description      String?
+  shortDescription String?
+
+  price           Decimal @db.Decimal(10, 2)
+  salePrice       Decimal? @db.Decimal(10, 2)
+  costPrice       Decimal? @db.Decimal(10, 2)
+  taxPercent      Decimal  @default(0) @db.Decimal(5, 2)
+  discountPercent Decimal  @default(0) @db.Decimal(5, 2)
+
+  stock             Int     @default(0)
+  lowStockThreshold Int     @default(5)
+  availability      String  @default("in-stock")
+  allowBackorder    Boolean @default(false)
+
   categoryId  String?
-  category    Category? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  category    Category?    @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  collections Collection[]
+
+  tags String[] @default([])
+
+  mainImage String?
+  thumbnail String?
+  gallery   String[] @default([])
+
+  metaTitle       String?
+  metaDescription String?
+  keywords        String?
+
+  status     String  @default("draft")
+  featured   Boolean @default(false)
+  bestSeller Boolean @default(false)
+
+  unitsSold   Int     @default(0)
+  revenue     Decimal @default(0) @db.Decimal(12, 2)
+  rating      Decimal @default(0) @db.Decimal(3, 2)
+  reviewCount Int     @default(0)
+
+  variants     ProductVariant[]
+  movements    InventoryMovement[]
+  orderItems   OrderItem[]
+  wishlistedBy WishlistItem[]
+  homeFeature  BestSellerFeature?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([categoryId])
   @@map("products")
+}
+
+model ProductVariant {
+  id        String  @id @default(uuid())
+  productId String
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  size      String?
+  color     String?
+  material  String?
+  sku       String
+  price     Decimal @db.Decimal(10, 2)
+  stock     Int     @default(0)
+
+  @@index([productId])
+  @@map("product_variants")
+}
+
+model InventoryMovement {
+  id        String   @id @default(uuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  type      String
+  quantity  Int
+  note      String?
+  createdAt DateTime @default(now())
+
+  @@index([productId])
+  @@map("inventory_movements")
+}
+
+model Order {
+  id          String @id @default(uuid())
+  orderNumber String @unique
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+
+  customerName String
+  email        String
+  phone        String
+  addressLine1 String
+  addressLine2 String?
+  city         String
+  state        String
+  pincode      String
+  country      String @default("India")
+
+  items OrderItem[]
+
+  subtotal Decimal @db.Decimal(10, 2)
+  discount Decimal @default(0) @db.Decimal(10, 2)
+  shipping Decimal @default(0) @db.Decimal(10, 2)
+  tax      Decimal @default(0) @db.Decimal(10, 2)
+  total    Decimal @db.Decimal(10, 2)
+
+  paymentMethod String @default("cod")
+  paymentStatus String @default("pending")
+  status        String @default("pending")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@map("orders")
+}
+
+model OrderItem {
+  id      String @id @default(uuid())
+  orderId String
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productId String?
+  product   Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  productName String
+  image       String?
+  variant     String?
+  quantity    Int
+  price       Decimal @db.Decimal(10, 2)
+
+  @@index([orderId])
+  @@map("order_items")
+}
+
+model WishlistItem {
+  id        String   @id @default(uuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+
+  @@unique([userId, productId])
+  @@map("wishlist_items")
+}
+
+model HeroBanner {
+  id                  String   @id @default(uuid())
+  desktopImage        String?
+  mobileImage         String?
+  heading             String
+  subheading          String?
+  description         String?
+  primaryButtonText   String?
+  primaryButtonLink   String?
+  secondaryButtonText String?
+  secondaryButtonLink String?
+  startDate           DateTime?
+  endDate             DateTime?
+  status              String   @default("active")
+  displayOrder        Int      @default(0)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@map("hero_banners")
+}
+
+model HomeCategoryFeature {
+  id            String   @id @default(uuid())
+  categoryId    String   @unique
+  category      Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  displayOrder  Int      @default(0)
+  status        String   @default("active")
+  createdAt     DateTime @default(now())
+
+  @@map("home_category_features")
+}
+
+model HomeCollectionFeature {
+  id               String     @id @default(uuid())
+  collectionId     String     @unique
+  collection       Collection @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  shortDescription String?
+  link             String?
+  displayOrder     Int        @default(0)
+  status           String     @default("active")
+  createdAt        DateTime   @default(now())
+
+  @@map("home_collection_features")
+}
+
+model BestSellerFeature {
+  id           String   @id @default(uuid())
+  productId    String   @unique
+  product      Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  displayOrder Int      @default(0)
+  status       String   @default("active")
+  createdAt    DateTime @default(now())
+
+  @@map("best_seller_features")
+}
+
+model CommunityImage {
+  id           String   @id @default(uuid())
+  image        String
+  title        String?
+  description  String?
+  socialUrl    String?
+  displayOrder Int      @default(0)
+  status       String   @default("active")
+  createdAt    DateTime @default(now())
+
+  @@map("community_images")
 }
