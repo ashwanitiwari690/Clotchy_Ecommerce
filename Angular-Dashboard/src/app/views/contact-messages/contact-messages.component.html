@@ -37,7 +37,7 @@
             <td>{{ m.email }}</td>
             <td>{{ m.subject }}</td>
             <td class="text-body-secondary">{{ truncate(m.message) }}</td>
-            <td class="text-body-secondary small">{{ m.date }}</td>
+            <td class="text-body-secondary small">{{ m.date | appDate }}</td>
             <td><app-status-badge [status]="m.status" /></td>
             <td class="text-end">
               <button class="btn btn-sm btn-outline-secondary" [cModalToggle]="viewModal.id" (click)="view(m)">View</button>
@@ -60,7 +60,7 @@
     @if (selected(); as m) {
       <dl class="row small">
         <dt class="col-3">From</dt><dd class="col-9">{{ m.name }} ({{ m.email }})</dd>
-        <dt class="col-3">Date</dt><dd class="col-9">{{ m.date }}</dd>
+        <dt class="col-3">Date</dt><dd class="col-9">{{ m.date | appDate }}</dd>
         <dt class="col-3">Status</dt><dd class="col-9"><app-status-badge [status]="m.status" /></dd>
       </dl>
       <p class="border rounded p-3 bg-body-tertiary">{{ m.message }}</p>

@@ -111,6 +111,27 @@
         <h2>ORDER SUMMARY</h2>
         <div><span>Subtotal</span><strong>₹{{ cart.subtotal().toLocaleString('en-IN') }}</strong></div>
         <div><span>Shipping</span><strong>{{ cart.shipping() ? '₹' + cart.shipping() : 'FREE' }}</strong></div>
+        @if (cart.discount() > 0) {
+          <div class="discount-row"><span>Discount @if (cart.couponCode()) { ({{ cart.couponCode() }}) }</span><strong>−₹{{ cart.discount().toLocaleString('en-IN') }}</strong></div>
+        }
+
+        <div class="coupon-box">
+          @if (cart.couponCode() && cart.discount() > 0 || cart.freeShippingFromCoupon()) {
+            <div class="coupon-applied">
+              <span>✓ Coupon <strong>{{ cart.couponCode() }}</strong> applied</span>
+              <button type="button" (click)="cart.removeCoupon()">REMOVE</button>
+            </div>
+          } @else {
+            <div class="coupon-input">
+              <input type="text" placeholder="Coupon code" [value]="couponInput()" (input)="onCouponInput($event)">
+              <button type="button" [disabled]="cart.applyingCoupon() || !couponInput().trim()" (click)="cart.applyCoupon(couponInput())">
+                {{ cart.applyingCoupon() ? '…' : 'APPLY' }}
+              </button>
+            </div>
+          }
+          @if (cart.couponError()) { <small class="error">{{ cart.couponError() }}</small> }
+        </div>
+
         <hr>
         <div class="total"><span>TOTAL</span><strong>₹{{ cart.total().toLocaleString('en-IN') }}</strong></div>
 

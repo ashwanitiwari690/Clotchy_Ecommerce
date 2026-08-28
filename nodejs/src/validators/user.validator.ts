@@ -4,6 +4,7 @@ export const updateProfileSchema = z.object({
   body: z.object({
     name: z.string().trim().min(2, "Name must be at least 2 characters").max(100).optional(),
     email: z.union([z.string().trim().email("Invalid email address"), z.literal("")]).optional(),
+    avatar: z.string().trim().max(2000).optional(),
   }),
 });
 

@@ -27,7 +27,7 @@
             <td>{{ discountLabel(c) }}</td>
             <td class="text-end">₹{{ c.minOrder | number }}</td>
             <td class="text-end">{{ c.maxDiscount != null ? ('₹' + (c.maxDiscount | number)) : '—' }}</td>
-            <td class="text-body-secondary small">{{ c.startDate }} – {{ c.endDate }}</td>
+            <td class="text-body-secondary small">{{ c.startDate | appDate:'date' }} – {{ c.endDate | appDate:'date' }}</td>
             <td>
               <div class="small mb-1">{{ c.usedCount }} / {{ c.usageLimit }}</div>
               <div class="progress" style="height: 4px;">

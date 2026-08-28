@@ -26,7 +26,7 @@
             <td class="fw-medium">{{ b.title }}</td>
             <td><span class="badge text-bg-info text-capitalize">{{ b.position }}</span></td>
             <td class="text-truncate d-inline-block" style="max-width: 180px;">{{ b.link }}</td>
-            <td class="text-body-secondary small">{{ b.startDate }} – {{ b.endDate }}</td>
+            <td class="text-body-secondary small">{{ b.startDate | appDate:'date' }} – {{ b.endDate | appDate:'date' }}</td>
             <td><app-status-badge [status]="b.status" /></td>
             <td class="text-end">
               <div class="btn-group btn-group-sm">

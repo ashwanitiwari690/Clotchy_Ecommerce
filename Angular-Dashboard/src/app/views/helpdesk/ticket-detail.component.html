@@ -18,8 +18,8 @@
           <dl class="row small mb-0">
             <dt class="col-5">Ticket ID</dt><dd class="col-7">{{ t.id }}</dd>
             <dt class="col-5">Category</dt><dd class="col-7">{{ t.category }}</dd>
-            <dt class="col-5">Created</dt><dd class="col-7">{{ t.createdAt }}</dd>
-            <dt class="col-5">Updated</dt><dd class="col-7">{{ t.updatedAt }}</dd>
+            <dt class="col-5">Created</dt><dd class="col-7">{{ t.createdAt | appDate }}</dd>
+            <dt class="col-5">Updated</dt><dd class="col-7">{{ t.updatedAt | appDate }}</dd>
           </dl>
         </div>
       </div>
@@ -34,7 +34,7 @@
               <div class="p-2 rounded" [class]="m.sender === 'admin' ? 'bg-primary text-white' : 'bg-body-tertiary'" style="max-width: 80%;">
                 <div class="small fw-semibold">{{ m.senderName }}</div>
                 <div>{{ m.message }}</div>
-                <div class="small" [class]="m.sender === 'admin' ? 'text-white-50' : 'text-body-secondary'">{{ m.date }}</div>
+                <div class="small" [class]="m.sender === 'admin' ? 'text-white-50' : 'text-body-secondary'">{{ m.date | appDate }}</div>
               </div>
             </div>
           }
@@ -73,7 +73,12 @@
           </div>
           <div>
             <label class="form-label small">Assigned Admin</label>
-            <input type="text" class="form-control" [ngModel]="t.assignedAdmin" (ngModelChange)="updateField('assignedAdmin', $event)" />
+            <select class="form-control" [ngModel]="t.assignedAdminId" (ngModelChange)="assignAdmin($event)">
+              <option value="">Unassigned</option>
+              @for (a of admins; track a.id) {
+                <option [value]="a.id">{{ a.name }}</option>
+              }
+            </select>
           </div>
           <div>
             <label class="form-label small">Category</label>

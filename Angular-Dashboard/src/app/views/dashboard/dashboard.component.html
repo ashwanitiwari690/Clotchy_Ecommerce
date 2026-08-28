@@ -48,7 +48,7 @@
   </c-col>
 </c-row>
 
-<!-- <c-row class="g-3 mt-1">
+<c-row class="g-3 mt-1">
   <c-col xs="12" xl="6">
     <c-card class="h-100">
       <c-card-header class="fw-semibold">Top Selling Products</c-card-header>
@@ -123,7 +123,6 @@
               <th>Registered</th>
               <th class="text-end">Orders</th>
               <th class="text-end">Total Spent</th>
-              <th>Status</th>
             </tr>
           </thead>
           <tbody>
@@ -135,10 +134,9 @@
                     <span>{{ c.name }}</span>
                   </div>
                 </td>
-                <td>{{ c.registeredAt }}</td>
+                <td>{{ c.registeredAt | appDate }}</td>
                 <td class="text-end">{{ c.totalOrders }}</td>
                 <td class="text-end">{{ formatCurrency(c.totalSpent) }}</td>
-                <td><app-status-badge [status]="c.status" /></td>
               </tr>
             }
           </tbody>
@@ -178,4 +176,4 @@
       </c-card-body>
     </c-card>
   </c-col>
-</c-row> -->
+</c-row>

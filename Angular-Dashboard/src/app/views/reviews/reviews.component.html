@@ -34,7 +34,7 @@
               }
             </td>
             <td class="text-truncate d-inline-block" style="max-width: 260px;" [title]="r.comment">{{ r.comment }}</td>
-            <td class="text-body-secondary small">{{ r.date }}</td>
+            <td class="text-body-secondary small">{{ r.date | appDate }}</td>
             <td><app-status-badge [status]="r.status" /></td>
             <td class="text-end">
               <div class="btn-group btn-group-sm">

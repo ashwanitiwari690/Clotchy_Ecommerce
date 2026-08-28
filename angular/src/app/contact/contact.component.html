@@ -26,7 +26,7 @@
         <textarea rows="5" [value]="message()" placeholder="How can we help?" (input)="onMessageInput($event)"></textarea>
 
         @if (error()) { <small class="error">{{ error() }}</small> }
-        <button class="primary-btn" (click)="submit()">SEND MESSAGE</button>
+        <button class="primary-btn" [disabled]="submitting()" (click)="submit()">{{ submitting() ? 'SENDING…' : 'SEND MESSAGE' }}</button>
       } @else {
         <div class="success-state">
           <div class="success-icon">✓</div>

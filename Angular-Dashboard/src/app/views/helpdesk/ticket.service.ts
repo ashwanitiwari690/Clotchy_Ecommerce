@@ -1,28 +1,58 @@
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { Ticket, TicketMessage } from '../../core/models/ticket.model';
-import { TICKETS_MOCK } from '../../core/mock-data/helpdesk.mock';
-import { MockCrudStore } from '../../core/services/mock-crud-store';
-import { generateId } from '../../core/models/common.model';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject, signal } from '@angular/core';
+import { Observable, map, tap } from 'rxjs';
+import { Ticket } from '../../core/models/ticket.model';
+import { environment } from '../../../environments/environment';
+
+interface ApiEnvelope<T> {
+  success: boolean;
+  data: T;
+}
 
 @Injectable({ providedIn: 'root' })
 export class TicketService {
-  private readonly store = new MockCrudStore<Ticket>(TICKETS_MOCK, 'tkt');
+  private readonly http = inject(HttpClient);
+  private readonly baseUrl = `${environment.ECOMMERCE_API}tickets`;
+  private readonly items = signal<Ticket[]>([]);
 
-  list(): Observable<Ticket[]> { return this.store.list(); }
-  get all(): Ticket[] { return this.store.all; }
-  getById(id: string): Ticket | undefined { return this.store.getById(id); }
-  create(data: Omit<Ticket, 'id'>): Observable<Ticket> { return this.store.create(data); }
-  update(id: string, data: Partial<Ticket>): Observable<Ticket | undefined> { return this.store.update(id, data); }
-  delete(id: string): Observable<boolean> { return this.store.delete(id); }
+  constructor() {
+    this.refresh();
+  }
 
-  addMessage(ticketId: string, message: Omit<TicketMessage, 'id'>): Observable<Ticket | undefined> {
-    const ticket = this.getById(ticketId);
-    if (!ticket) return this.update(ticketId, {});
-    const newMessage: TicketMessage = { ...message, id: generateId('msg') };
-    return this.update(ticketId, {
-      messages: [...ticket.messages, newMessage],
-      updatedAt: new Date().toISOString().slice(0, 10),
-    });
+  private refresh(): void {
+    this.list().subscribe();
+  }
+
+  list(): Observable<Ticket[]> {
+    return this.http.get<ApiEnvelope<Ticket[]>>(this.baseUrl, { params: { pageSize: '50' }, withCredentials: true }).pipe(
+      map((res) => res.data),
+      tap((list) => this.items.set(list)),
+    );
+  }
+
+  get all(): Ticket[] {
+    return this.items();
+  }
+
+  getById(id: string): Ticket | undefined {
+    return this.items().find((t) => t.id === id);
+  }
+
+  getByIdAsync(id: string): Observable<Ticket> {
+    return this.http.get<ApiEnvelope<Ticket>>(`${this.baseUrl}/${id}`, { withCredentials: true }).pipe(map((res) => res.data));
+  }
+
+  update(id: string, data: { status?: string; priority?: string; category?: string; assignedAdminId?: string | null }): Observable<Ticket | undefined> {
+    return this.http.patch<ApiEnvelope<Ticket>>(`${this.baseUrl}/${id}`, data, { withCredentials: true }).pipe(
+      map((res) => res.data),
+      tap(() => this.refresh()),
+    );
+  }
+
+  addMessage(ticketId: string, message: string): Observable<Ticket | undefined> {
+    return this.http.post<ApiEnvelope<Ticket>>(`${this.baseUrl}/${ticketId}/messages`, { message }, { withCredentials: true }).pipe(
+      map((res) => res.data),
+      tap(() => this.refresh()),
+    );
   }
 }

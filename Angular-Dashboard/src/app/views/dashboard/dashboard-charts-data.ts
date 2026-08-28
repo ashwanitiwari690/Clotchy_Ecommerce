@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { ChartData, ChartDataset, ChartOptions, ChartType, PluginOptionsByType, ScaleOptions, TooltipLabelStyle } from 'chart.js';
 import { DeepPartial } from './utils';
 import { getStyle } from '@coreui/utils';
-import { OrderStatusBucket } from './dashboard-kpi.service';
+import { DashboardTrend, OrderStatusBucket } from './dashboard-kpi.service';
 
 export interface IChartProps {
   data?: ChartData;
@@ -22,47 +22,22 @@ export type SalesPeriod = 'Today' | 'Week' | 'Month' | 'Year';
 })
 export class DashboardChartsData {
   constructor() {
-    this.initMainChart();
+    this.initMainChart({ labels: [], revenue: [], orders: [] });
   }
 
   public mainChart: IChartProps = { type: 'line' };
 
-  public random(min: number, max: number) {
-    return Math.floor(Math.random() * (max - min + 1) + min);
-  }
-
-  initMainChart(period: SalesPeriod = 'Month') {
+  /** Builds the Sales Overview line chart from the real `trend` block returned by `GET /dashboard/stats`. */
+  initMainChart(trend: DashboardTrend) {
     const brandPrimary = getStyle('--cui-primary') ?? '#d3a04e';
     const brandPrimaryBg = `rgba(${getStyle('--cui-primary-rgb')}, .12)`;
     const brandInfo = getStyle('--cui-info') ?? '#20a8d8';
 
-    let labels: string[] = [];
-    let elements = 12;
+    const labels = trend.labels;
 
-    switch (period) {
-      case 'Today':
-        labels = Array.from({ length: 12 }, (_, i) => `${(i * 2).toString().padStart(2, '0')}:00`);
-        elements = 12;
-        break;
-      case 'Week':
-        labels = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-        elements = 7;
-        break;
-      case 'Year':
-        const currentYear = new Date().getFullYear();
-        labels = Array.from({ length: 5 }, (_, i) => `${currentYear - 4 + i}`);
-        elements = 5;
-        break;
-      case 'Month':
-      default:
-        labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
-        elements = 12;
-        break;
-    }
-
-    this.mainChart['elements'] = elements;
-    this.mainChart['Data1'] = Array.from({ length: elements }, () => this.random(20000, 95000));
-    this.mainChart['Data2'] = Array.from({ length: elements }, () => this.random(80, 320));
+    this.mainChart['elements'] = labels.length;
+    this.mainChart['Data1'] = trend.revenue;
+    this.mainChart['Data2'] = trend.orders;
 
     const datasets: ChartDataset[] = [
       {

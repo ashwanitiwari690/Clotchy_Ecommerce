@@ -3,6 +3,7 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "../config/db";
 import { asyncHandler } from "../utils/asyncHandler";
 import { ApiError } from "../utils/ApiError";
+import { resolveCoupon } from "../services/coupon.service";
 
 // Mirrors the storefront cart's existing free-shipping rule (cart.service.ts) -
 // checkout has to compute the same total the cart displayed, server-side.
@@ -32,6 +33,7 @@ export const toOrderDto = (order: OrderWithItems) => ({
   })),
   subtotal: Number(order.subtotal),
   discount: Number(order.discount),
+  couponCode: order.couponCode ?? undefined,
   shipping: Number(order.shipping),
   tax: Number(order.tax),
   total: Number(order.total),
@@ -48,7 +50,7 @@ interface CheckoutLine {
 }
 
 export const createOrder = asyncHandler(async (req: Request, res: Response) => {
-  const { items } = req.body as { items: CheckoutLine[] };
+  const { items, couponCode } = req.body as { items: CheckoutLine[]; couponCode?: string };
   const userId = req.user!.id;
 
   const order = await prisma.$transaction(async (tx) => {
@@ -104,11 +106,24 @@ export const createOrder = asyncHandler(async (req: Request, res: Response) => {
       });
     }
 
-    const shipping = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
-    const total = subtotal + shipping;
+    let discount = 0;
+    let appliedCouponId: string | null = null;
+    let appliedCouponCode: string | null = null;
+    let freeShippingFromCoupon = false;
+
+    if (couponCode) {
+      const resolved = await resolveCoupon(tx, couponCode, subtotal);
+      discount = resolved.discount;
+      freeShippingFromCoupon = resolved.freeShipping;
+      appliedCouponId = resolved.coupon.id;
+      appliedCouponCode = resolved.coupon.code;
+    }
+
+    const shipping = freeShippingFromCoupon || subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_FEE;
+    const total = Math.max(0, subtotal - discount + shipping);
     const orderNumber = `CLT-${Date.now().toString(36).toUpperCase()}`;
 
-    return tx.order.create({
+    const createdOrder = await tx.order.create({
       data: {
         orderNumber,
         userId: user.id,
@@ -122,12 +137,20 @@ export const createOrder = asyncHandler(async (req: Request, res: Response) => {
         pincode: user.address.pincode,
         country: user.address.country,
         subtotal,
+        discount,
         shipping,
         total,
+        couponCode: appliedCouponCode,
         items: { createMany: { data: orderItems } },
       },
       include: { items: true },
     });
+
+    if (appliedCouponId) {
+      await tx.coupon.update({ where: { id: appliedCouponId }, data: { usedCount: { increment: 1 } } });
+    }
+
+    return createdOrder;
   });
 
   res.status(201).json({ success: true, data: toOrderDto(order) });

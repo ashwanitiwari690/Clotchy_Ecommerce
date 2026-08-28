@@ -58,7 +58,7 @@
         <div class="card-body">
           <dl class="row small mb-0">
             <dt class="col-5">Order ID</dt><dd class="col-7">{{ o.id }}</dd>
-            <dt class="col-5">Date</dt><dd class="col-7">{{ o.date }}</dd>
+            <dt class="col-5">Date</dt><dd class="col-7">{{ o.date | appDate }}</dd>
             <dt class="col-5">Payment</dt><dd class="col-7">{{ o.paymentMethod }}</dd>
             <dt class="col-5">Payment Status</dt><dd class="col-7"><app-status-badge [status]="o.paymentStatus" /></dd>
           </dl>

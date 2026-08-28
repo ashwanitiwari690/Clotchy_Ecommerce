@@ -71,15 +71,16 @@
 <ng-template #userDropdown>
   <c-dropdown [popperOptions]="{ placement: 'bottom-start' }" variant="nav-item">
     <button [caret]="false" cDropdownToggle class="py-0 pe-0" aria-label="Open user menu">
-      <c-avatar shape="rounded-1" size="md" src="./assets/images/avatars/8.jpg" status="success" textColor="primary"
-        alt="User avatar" />
+      <c-avatar shape="rounded-1" size="md" [src]="auth.user()?.avatar || './assets/images/avatars/8.jpg'"
+        status="success" textColor="primary" alt="User avatar" />
     </button>
     <ul cDropdownMenu class="pt-0 w-auto">
-      <!-- <li>
+      <li>
         <h6 cDropdownHeader class="bg-body-secondary text-body-secondary fw-semibold py-2 rounded-top">
-          Account
+          {{ auth.user()?.name }}
+          <div class="small text-body-secondary fw-normal">{{ auth.user()?.email || '+91 ' + auth.user()?.phone }}</div>
         </h6>
-      </li> -->
+      </li>
       <!-- <li>
         <a cDropdownItem routerLink="">
           <svg cIcon class="me-2" name="cilBell"></svg>

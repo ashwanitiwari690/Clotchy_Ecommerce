@@ -24,7 +24,7 @@
               <div class="fw-medium">{{ b.heading }}</div>
               <div class="small text-body-secondary">{{ b.subheading }}</div>
             </td>
-            <td class="text-body-secondary small">{{ b.startDate }} – {{ b.endDate }}</td>
+            <td class="text-body-secondary small">{{ b.startDate | appDate:'date' }} – {{ b.endDate | appDate:'date' }}</td>
             <td><app-status-badge [status]="b.status" /></td>
             <td class="text-end">
               <div class="btn-group btn-group-sm">

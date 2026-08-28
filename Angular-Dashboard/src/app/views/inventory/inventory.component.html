@@ -91,7 +91,7 @@
       <tbody>
         @for (mv of selectedRow()?.history ?? []; track mv.id) {
           <tr>
-            <td>{{ mv.date }}</td>
+            <td>{{ mv.date | appDate }}</td>
             <td><app-status-badge [status]="mv.type" /></td>
             <td class="text-end">{{ mv.quantity > 0 ? '+' : '' }}{{ mv.quantity }}</td>
             <td class="text-body-secondary small">{{ mv.note }}</td>

@@ -21,7 +21,7 @@ export const registerUser = async (name: string, phone: string, password: string
 
     return tx.user.create({
       data: { name, phone, passwordHash },
-      select: { id: true, name: true, phone: true, email: true, role: true, createdAt: true },
+      select: { id: true, name: true, phone: true, email: true, role: true, avatar: true, createdAt: true },
     });
   });
 };
@@ -43,7 +43,7 @@ export const validateCredentials = async (phone: string, password: string) => {
 export const getUserProfile = async (userId: string) => {
   const user = await prisma.user.findUnique({
     where: { id: userId },
-    select: { id: true, name: true, phone: true, email: true, role: true },
+    select: { id: true, name: true, phone: true, email: true, role: true, avatar: true },
   });
   if (!user) {
     throw ApiError.unauthorized("User no longer exists");
@@ -72,7 +72,7 @@ export const resetPassword = async (phone: string, newPassword: string) => {
     return tx.user.update({
       where: { phone },
       data: { passwordHash },
-      select: { id: true, name: true, phone: true, email: true, role: true },
+      select: { id: true, name: true, phone: true, email: true, role: true, avatar: true },
     });
   });
 };

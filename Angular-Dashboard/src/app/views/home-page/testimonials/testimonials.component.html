@@ -25,7 +25,7 @@
               }
             </td>
             <td class="text-body-secondary text-truncate d-inline-block" style="max-width:260px;">{{ t.review }}</td>
-            <td class="text-body-secondary small">{{ t.date }}</td>
+            <td class="text-body-secondary small">{{ t.date | appDate }}</td>
             <td><app-status-badge [status]="t.status" /></td>
             <td class="text-end">
               <div class="btn-group btn-group-sm">

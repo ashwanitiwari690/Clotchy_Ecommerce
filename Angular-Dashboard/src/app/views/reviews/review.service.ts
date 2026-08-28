@@ -1,19 +1,31 @@
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { Observable, map, tap } from 'rxjs';
 import { Review, ReviewStatus } from '../../core/models/review.model';
-import { REVIEWS_MOCK } from '../../core/mock-data/reviews.mock';
-import { MockCrudStore } from '../../core/services/mock-crud-store';
+import { HttpCrudStore } from '../../core/services/http-crud-store';
+import { environment } from '../../../environments/environment';
+
+interface ApiEnvelope<T> {
+  success: boolean;
+  data: T;
+}
 
 @Injectable({ providedIn: 'root' })
 export class ReviewService {
-  private readonly store = new MockCrudStore<Review>(REVIEWS_MOCK, 'rev');
+  private readonly http = inject(HttpClient);
+  private readonly baseUrl = `${environment.ECOMMERCE_API}reviews`;
+  private readonly store = new HttpCrudStore<Review>(this.http, this.baseUrl);
 
   list(): Observable<Review[]> { return this.store.list(); }
   get all(): Review[] { return this.store.all; }
   getById(id: string): Review | undefined { return this.store.getById(id); }
+  getByIdAsync(id: string): Observable<Review> { return this.store.getByIdAsync(id); }
 
   updateStatus(id: string, status: ReviewStatus): Observable<Review | undefined> {
-    return this.store.update(id, { status });
+    return this.http.patch<ApiEnvelope<Review>>(`${this.baseUrl}/${id}`, { status }, { withCredentials: true }).pipe(
+      map((res) => res.data),
+      tap(() => this.store.refresh()),
+    );
   }
 
   delete(id: string): Observable<boolean> { return this.store.delete(id); }

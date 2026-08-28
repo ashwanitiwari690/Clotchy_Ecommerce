@@ -22,6 +22,7 @@ import { PageHeaderComponent } from './components/page-header/page-header.compon
 import { EmptyStateComponent } from './components/empty-state/empty-state.component';
 import { ImageUploaderComponent } from './components/image-uploader/image-uploader.component';
 import { ChartCardComponent } from './components/chart-card/chart-card.component';
+import { AppDatePipe } from './pipes/app-date.pipe';
 
 @NgModule({
   imports: [
@@ -43,7 +44,8 @@ import { ChartCardComponent } from './components/chart-card/chart-card.component
     PageHeaderComponent,
     EmptyStateComponent,
     ImageUploaderComponent,
-    ChartCardComponent
+    ChartCardComponent,
+    AppDatePipe
   ],
   exports: [
     ButtonDirective,
@@ -63,7 +65,8 @@ import { ChartCardComponent } from './components/chart-card/chart-card.component
     PageHeaderComponent,
     EmptyStateComponent,
     ImageUploaderComponent,
-    ChartCardComponent
+    ChartCardComponent,
+    AppDatePipe
   ]
 })
 export class SharedUIModule { }

@@ -1,12 +1,14 @@
-import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Discount } from '../../../core/models/marketing.model';
-import { DISCOUNTS_MOCK } from '../../../core/mock-data/marketing.mock';
-import { MockCrudStore } from '../../../core/services/mock-crud-store';
+import { HttpCrudStore } from '../../../core/services/http-crud-store';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class DiscountService {
-  private readonly store = new MockCrudStore<Discount>(DISCOUNTS_MOCK, 'disc');
+  private readonly http = inject(HttpClient);
+  private readonly store = new HttpCrudStore<Discount>(this.http, `${environment.ECOMMERCE_API}discounts`);
 
   list(): Observable<Discount[]> { return this.store.list(); }
   get all(): Discount[] { return this.store.all; }

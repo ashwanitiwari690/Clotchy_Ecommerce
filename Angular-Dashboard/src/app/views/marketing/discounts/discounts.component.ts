@@ -4,7 +4,7 @@ import { IconDirective } from '@coreui/icons-angular';
 import { SharedUIModule } from '../../../shared/shared-ui.module';
 import { DiscountService } from './discount.service';
 import { Discount } from '../../../core/models/marketing.model';
-import { CATEGORIES_MOCK } from '../../../core/mock-data/categories.mock';
+import { CategoryService } from '../../categories/category.service';
 import { ToastService } from '../../../layout/toasts/toast.service';
 import { ConfirmDialogService } from '../../../shared/components/confirm-dialog/confirm-dialog.service';
 
@@ -19,8 +19,9 @@ export class DiscountsComponent {
   private readonly fb = inject(FormBuilder);
   private readonly toast = inject(ToastService);
   private readonly confirm = inject(ConfirmDialogService);
+  private readonly categorySvc = inject(CategoryService);
 
-  readonly categories = CATEGORIES_MOCK;
+  get categories() { return this.categorySvc.all; }
 
   search = '';
   editingId = signal<string | null>(null);

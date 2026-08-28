@@ -11,7 +11,7 @@ import {
 
 import { SharedUIModule } from '../../shared/shared-ui.module';
 import { DashboardChartsData, IChartProps, SalesPeriod } from './dashboard-charts-data';
-import { DashboardKpiService } from './dashboard-kpi.service';
+import { DashboardKpiService, DashboardPeriod } from './dashboard-kpi.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -44,22 +44,24 @@ export class DashboardComponent implements OnInit {
 
   ngOnInit(): void {
     this.setSalesPeriod('Month');
-    this.orderStatusChart = this.#chartsData.buildOrderStatusChart(this.kpi.orderStatusBuckets);
-    this.revenueByCategoryChart = this.#chartsData.buildRevenueByCategoryChart(this.kpi.revenueByCategory);
     this.updateChartOnColorModeChange();
   }
 
   setSalesPeriod(period: string): void {
     this.activePeriod = period as SalesPeriod;
-    this.#chartsData.initMainChart(this.activePeriod);
+    this.kpi.setPeriod(this.activePeriod.toLowerCase() as DashboardPeriod).subscribe(() => this.rebuildCharts());
+  }
+
+  private rebuildCharts(): void {
+    this.#chartsData.initMainChart(this.kpi.trend);
     this.salesChart = { ...this.#chartsData.mainChart };
+    this.orderStatusChart = this.#chartsData.buildOrderStatusChart(this.kpi.orderStatusBuckets);
+    this.revenueByCategoryChart = this.#chartsData.buildRevenueByCategoryChart(this.kpi.revenueByCategory);
   }
 
   updateChartOnColorModeChange(): void {
     const unListen = this.#renderer.listen(this.#document.documentElement, 'ColorSchemeChange', () => {
-      this.setSalesPeriod(this.activePeriod);
-      this.orderStatusChart = this.#chartsData.buildOrderStatusChart(this.kpi.orderStatusBuckets);
-      this.revenueByCategoryChart = this.#chartsData.buildRevenueByCategoryChart(this.kpi.revenueByCategory);
+      this.rebuildCharts();
     });
 
     this.#destroyRef.onDestroy(() => unListen());

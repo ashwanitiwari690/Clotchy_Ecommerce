@@ -36,6 +36,58 @@
       </div>
     </div>
   </div>
+
+  <div class="reviews-section">
+    <h2>CUSTOMER REVIEWS</h2>
+
+    @if (!loadingReviews()) {
+      <div class="reviews-summary">
+        <strong>{{ reviewsAverage() | number:'1.1-1' }}</strong>
+        <span class="stars">★★★★★</span>
+        <span class="count">Based on {{ reviewsCount() }} review{{ reviewsCount() === 1 ? '' : 's' }}</span>
+      </div>
+    }
+
+    @if (reviews().length) {
+      <div class="review-list">
+        @for (r of reviews(); track r.id) {
+          <div class="review-item">
+            <div class="review-head">
+              <strong>{{ r.customerName }}</strong>
+              <span class="review-stars">{{ '★'.repeat(r.rating) }}{{ '☆'.repeat(5 - r.rating) }}</span>
+            </div>
+            <p>{{ r.comment }}</p>
+          </div>
+        }
+      </div>
+    } @else if (!loadingReviews()) {
+      <p class="muted">No reviews yet. Be the first to review this product.</p>
+    }
+
+    <div class="review-form">
+      @if (auth.isAuthenticated()) {
+        @if (hasReviewed) {
+          <p class="muted">You've already reviewed this product. Thanks for your feedback!</p>
+        } @else if (reviewSubmitted()) {
+          <p class="review-thanks">✓ Thanks! Your review has been submitted and is awaiting approval.</p>
+        } @else {
+          <h3>Write a Review</h3>
+          <div class="star-picker">
+            @for (n of [1, 2, 3, 4, 5]; track n) {
+              <button type="button" [class.filled]="n <= reviewRating()" (click)="setReviewRating(n)">★</button>
+            }
+          </div>
+          <textarea rows="4" placeholder="Share your experience with this product…" [value]="reviewComment()" (input)="onReviewCommentInput($event)"></textarea>
+          @if (reviewError()) { <small class="error">{{ reviewError() }}</small> }
+          <button class="submit-review" [disabled]="submittingReview()" (click)="submitReview()">
+            {{ submittingReview() ? 'SUBMITTING…' : 'SUBMIT REVIEW' }}
+          </button>
+        }
+      } @else {
+        <p class="muted"><a routerLink="/login">Log in</a> to write a review.</p>
+      }
+    </div>
+  </div>
 </section>
 } @else {
 <div class="not-found">

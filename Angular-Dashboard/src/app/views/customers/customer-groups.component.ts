@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { SharedUIModule } from '../../shared/shared-ui.module';
-import { CUSTOMER_GROUPS_MOCK } from '../../core/mock-data/customers.mock';
+import { CustomerGroupService } from './customer-group.service';
 
 @Component({
   selector: 'app-customer-groups',
@@ -9,5 +9,7 @@ import { CUSTOMER_GROUPS_MOCK } from '../../core/mock-data/customers.mock';
   templateUrl: './customer-groups.component.html',
 })
 export class CustomerGroupsComponent {
-  readonly groups = CUSTOMER_GROUPS_MOCK;
+  private readonly svc = inject(CustomerGroupService);
+
+  get groups() { return this.svc.all; }
 }

@@ -19,7 +19,7 @@
               <div class="small text-body-secondary text-truncate d-inline-block" style="max-width:220px;">{{ p.description }}</div>
             </td>
             <td>{{ p.discount || '—' }}</td>
-            <td class="text-body-secondary small">{{ p.startDate }} – {{ p.endDate }}</td>
+            <td class="text-body-secondary small">{{ p.startDate | appDate:'date' }} – {{ p.endDate | appDate:'date' }}</td>
             <td><app-status-badge [status]="p.status" /></td>
             <td class="text-end">
               <div class="btn-group btn-group-sm">

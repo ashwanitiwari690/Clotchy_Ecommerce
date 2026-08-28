@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CardComponent, CardBodyComponent, CardHeaderComponent, RowComponent, ColComponent } from '@coreui/angular';
 import { SharedUIModule } from '../../../shared/shared-ui.module';
-import { ORDERS_MOCK } from '../../../core/mock-data/orders.mock';
+import { ReportService, SalesReport } from '../report.service';
 import { IChartProps } from '../../dashboard/dashboard-charts-data';
 
 @Component({
@@ -11,27 +11,24 @@ import { IChartProps } from '../../dashboard/dashboard-charts-data';
   templateUrl: './sales.component.html',
 })
 export class SalesReportComponent {
-  readonly orders = [...ORDERS_MOCK].sort((a, b) => b.date.localeCompare(a.date));
+  private readonly svc = inject(ReportService);
 
-  readonly revenue = ORDERS_MOCK.filter((o) => o.paymentStatus === 'paid').reduce((s, o) => s + o.total, 0);
-  readonly orderCount = ORDERS_MOCK.length;
-  readonly aov = this.orderCount ? Math.round(this.revenue / this.orderCount) : 0;
-  readonly refunds = ORDERS_MOCK.filter((o) => o.paymentStatus === 'refunded').reduce((s, o) => s + o.total, 0);
-  readonly discounts = ORDERS_MOCK.reduce((s, o) => s + o.discount, 0);
+  readonly report = signal<SalesReport | null>(null);
+  readonly revenueChart = signal<IChartProps | null>(null);
 
-  readonly revenueChart: IChartProps = this.buildRevenueChart();
+  constructor() {
+    this.svc.getSales().subscribe((report) => {
+      this.report.set(report);
+      this.revenueChart.set(this.buildRevenueChart(report.revenueByDate));
+    });
+  }
 
-  private buildRevenueChart(): IChartProps {
-    const byDate = new Map<string, number>();
-    for (const o of ORDERS_MOCK) {
-      byDate.set(o.date, (byDate.get(o.date) ?? 0) + o.total);
-    }
-    const labels = [...byDate.keys()].sort();
+  private buildRevenueChart(revenueByDate: { date: string; value: number }[]): IChartProps {
     return {
       type: 'bar',
       data: {
-        labels,
-        datasets: [{ label: 'Revenue', data: labels.map((d) => byDate.get(d)!), backgroundColor: '#d3a04e', borderRadius: 4 }],
+        labels: revenueByDate.map((d) => d.date),
+        datasets: [{ label: 'Revenue', data: revenueByDate.map((d) => d.value), backgroundColor: '#d3a04e', borderRadius: 4 }],
       },
       options: { maintainAspectRatio: false, plugins: { legend: { display: false } } },
     };

@@ -1,8 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { CardComponent, CardBodyComponent, CardHeaderComponent, RowComponent, ColComponent } from '@coreui/angular';
 import { SharedUIModule } from '../../../shared/shared-ui.module';
-import { ORDERS_MOCK } from '../../../core/mock-data/orders.mock';
-import { ORDER_STATUSES } from '../../../core/models/order.model';
+import { ReportService, OrdersReport } from '../report.service';
 import { IChartProps } from '../../dashboard/dashboard-charts-data';
 
 @Component({
@@ -12,25 +11,27 @@ import { IChartProps } from '../../dashboard/dashboard-charts-data';
   templateUrl: './orders.component.html',
 })
 export class OrderReportComponent {
-  readonly orders = [...ORDERS_MOCK].sort((a, b) => b.date.localeCompare(a.date));
+  private readonly svc = inject(ReportService);
 
-  readonly statusSummary = ORDER_STATUSES.map((status) => ({
-    status,
-    count: ORDERS_MOCK.filter((o) => o.status === status).length,
-    revenue: ORDERS_MOCK.filter((o) => o.status === status).reduce((s, o) => s + o.total, 0),
-  }));
+  readonly report = signal<OrdersReport | null>(null);
+  readonly statusChart = signal<IChartProps | null>(null);
 
-  readonly statusChart: IChartProps = {
-    type: 'doughnut',
-    data: {
-      labels: this.statusSummary.map((s) => s.status),
-      datasets: [{
-        data: this.statusSummary.map((s) => s.count),
-        backgroundColor: ['#f9b115', '#3399ff', '#20a8d8', '#6f42c1', '#0dcaf0', '#fd7e14', '#2eb85c', '#e55353', '#d63384', '#6c757d'],
-      }],
-    },
-    options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } },
-  };
+  constructor() {
+    this.svc.getOrders().subscribe((report) => {
+      this.report.set(report);
+      this.statusChart.set({
+        type: 'doughnut',
+        data: {
+          labels: report.statusSummary.map((s) => s.status),
+          datasets: [{
+            data: report.statusSummary.map((s) => s.count),
+            backgroundColor: ['#f9b115', '#3399ff', '#20a8d8', '#6f42c1', '#0dcaf0', '#fd7e14', '#2eb85c', '#e55353', '#d63384', '#6c757d'],
+          }],
+        },
+        options: { maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } },
+      });
+    });
+  }
 
   formatCurrency(value: number): string {
     return `₹${value.toLocaleString('en-IN')}`;

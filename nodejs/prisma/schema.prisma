@@ -24,10 +24,18 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  address  Address?
-  orders   Order[]
-  wishlist WishlistItem[]
+  groupId String?
+  group   CustomerGroup? @relation(fields: [groupId], references: [id], onDelete: SetNull)
 
+  address         Address?
+  orders          Order[]
+  wishlist        WishlistItem[]
+  reviews         Review[]
+  tickets         Ticket[]        @relation("CustomerTickets")
+  assignedTickets Ticket[]        @relation("AssignedTickets")
+  ticketMessages  TicketMessage[]
+
+  @@index([groupId])
   @@map("users")
 }
 
@@ -125,6 +133,9 @@ model Product {
   category    Category?    @relation(fields: [categoryId], references: [id], onDelete: SetNull)
   collections Collection[]
 
+  brandId String?
+  brand   Brand?  @relation(fields: [brandId], references: [id], onDelete: SetNull)
+
   tags String[] @default([])
 
   mainImage String?
@@ -149,12 +160,54 @@ model Product {
   orderItems   OrderItem[]
   wishlistedBy WishlistItem[]
   homeFeature  BestSellerFeature?
+  reviews      Review[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([categoryId])
+  @@index([brandId])
   @@map("products")
+}
+
+model Brand {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  slug      String    @unique
+  logo      String?
+  status    String    @default("active")
+  products  Product[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("brands")
+}
+
+model ProductAttribute {
+  id        String   @id @default(uuid())
+  name      String   @unique
+  values    String[] @default([])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("product_attributes")
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  rating    Int
+  comment   String
+  status    String   @default("pending")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([productId, userId])
+  @@index([productId])
+  @@map("reviews")
 }
 
 model ProductVariant {
@@ -210,9 +263,10 @@ model Order {
   tax      Decimal @default(0) @db.Decimal(10, 2)
   total    Decimal @db.Decimal(10, 2)
 
-  paymentMethod String @default("cod")
-  paymentStatus String @default("pending")
-  status        String @default("pending")
+  paymentMethod String  @default("cod")
+  paymentStatus String  @default("pending")
+  status        String  @default("pending")
+  couponCode    String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -318,4 +372,209 @@ model CommunityImage {
   createdAt    DateTime @default(now())
 
   @@map("community_images")
+}
+
+model Coupon {
+  id            String   @id @default(uuid())
+  code          String   @unique
+  discountType  String
+  discountValue Decimal  @db.Decimal(10, 2)
+  minOrder      Decimal  @default(0) @db.Decimal(10, 2)
+  maxDiscount   Decimal? @db.Decimal(10, 2)
+  startDate     DateTime
+  endDate       DateTime
+  usageLimit    Int      @default(0)
+  usedCount     Int      @default(0)
+  status        String   @default("active")
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("coupons")
+}
+
+model Discount {
+  id         String    @id @default(uuid())
+  name       String
+  type       String
+  value      Decimal   @db.Decimal(10, 2)
+  appliesTo  String    @default("all")
+  targetId   String?
+  targetName String?
+  startDate  DateTime
+  endDate    DateTime
+  status     String    @default("active")
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+
+  @@map("discounts")
+}
+
+model MarketingBanner {
+  id        String    @id @default(uuid())
+  title     String
+  image     String?
+  link      String?
+  position  String    @default("top")
+  startDate DateTime?
+  endDate   DateTime?
+  status    String    @default("active")
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@map("marketing_banners")
+}
+
+model Testimonial {
+  id            String   @id @default(uuid())
+  customerName  String
+  customerImage String?
+  rating        Int
+  review        String
+  date          DateTime @default(now())
+  status        String   @default("pending")
+  displayOrder  Int      @default(0)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@map("testimonials")
+}
+
+model HomePromotion {
+  id          String    @id @default(uuid())
+  title       String
+  description String?
+  bannerImage String?
+  buttonText  String?
+  buttonUrl   String?
+  discount    String?
+  startDate   DateTime?
+  endDate     DateTime?
+  status      String    @default("active")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("home_promotions")
+}
+
+model NewsletterConfig {
+  id              String   @id @default("singleton")
+  title           String   @default("")
+  description     String?
+  backgroundImage String?
+  buttonText      String   @default("Subscribe")
+  placeholderText String   @default("Enter your email address")
+  status          String   @default("active")
+  updatedAt       DateTime @updatedAt
+
+  @@map("newsletter_config")
+}
+
+model Faq {
+  id           String   @id @default(uuid())
+  question     String
+  answer       String
+  category     String?
+  displayOrder Int      @default(0)
+  status       String   @default("active")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("faqs")
+}
+
+model ContactMessage {
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  subject   String
+  message   String
+  status    String   @default("new")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("contact_messages")
+}
+
+model Ticket {
+  id      String @id @default(uuid())
+  ticketNumber String @unique
+
+  customerId String
+  customer   User   @relation("CustomerTickets", fields: [customerId], references: [id], onDelete: Cascade)
+
+  subject  String
+  category String?
+  priority String  @default("medium")
+  status   String  @default("open")
+
+  assignedAdminId String?
+  assignedAdmin   User?   @relation("AssignedTickets", fields: [assignedAdminId], references: [id], onDelete: SetNull)
+
+  messages TicketMessage[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([customerId])
+  @@map("tickets")
+}
+
+model TicketMessage {
+  id       String @id @default(uuid())
+  ticketId String
+  ticket   Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  senderId String
+  sender   User   @relation(fields: [senderId], references: [id], onDelete: Cascade)
+
+  message   String
+  createdAt DateTime @default(now())
+
+  @@index([ticketId])
+  @@map("ticket_messages")
+}
+
+model CustomerGroup {
+  id          String   @id @default(uuid())
+  name        String   @unique
+  description String?
+  members     User[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("customer_groups")
+}
+
+model StoreSettings {
+  id      String @id @default("singleton")
+
+  storeName    String  @default("")
+  logo         String?
+  favicon      String?
+  contactEmail String?
+  contactPhone String?
+  address      String?
+
+  shippingMethods       Json    @default("[]")
+  freeShippingThreshold Decimal @default(0) @db.Decimal(10, 2)
+
+  paymentMethods String[] @default(["cod"])
+  currency       String   @default("INR")
+
+  taxName          String  @default("GST")
+  taxRate          Decimal @default(0) @db.Decimal(5, 2)
+  pricesIncludeTax Boolean @default(false)
+
+  emailNotifications    Boolean @default(true)
+  orderNotifications    Boolean @default(true)
+  customerNotifications Boolean @default(true)
+
+  instagram String?
+  facebook  String?
+  youtube   String?
+  twitter   String?
+
+  updatedAt DateTime @updatedAt
+
+  @@map("store_settings")
 }

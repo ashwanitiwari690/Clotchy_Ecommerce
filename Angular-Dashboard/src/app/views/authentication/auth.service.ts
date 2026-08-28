@@ -9,7 +9,13 @@ export interface AdminUser {
   name: string;
   phone: string;
   email?: string | null;
+  avatar?: string | null;
   role: 'USER' | 'ADMIN';
+}
+
+interface UpdateProfileResponse {
+  success: boolean;
+  data: AdminUser;
 }
 
 interface AuthResponse {
@@ -58,6 +64,19 @@ export class AuthService {
 
   clearSession(): void {
     this.user.set(null);
+  }
+
+  // Updates the logged-in admin's own profile (name/email/avatar) and refreshes
+  // the session signal so the header/sidebar reflect the change immediately.
+  updateProfile(patch: { name?: string; email?: string; avatar?: string }): Observable<AdminUser> {
+    return this.http
+      .patch<UpdateProfileResponse>(`${environment.ECOMMERCE_API}users/me`, patch, { withCredentials: true })
+      .pipe(
+        switchMap((res) => {
+          this.user.set({ ...this.user(), ...res.data } as AdminUser);
+          return of(res.data);
+        }),
+      );
   }
 
   private assertAdmin(user: AdminUser): Observable<AdminUser> {

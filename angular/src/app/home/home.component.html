@@ -69,10 +69,10 @@
     <div class="section-heading"><span></span><h2>WHAT OUR CUSTOMERS SAY</h2><span></span></div>
     <div class="review-grid">
       @for (review of [
-        {name:'Adil S. Jitey', text:'Bold. Feels like I’m part of something bigger.', img:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=500&q=80'},
-        {name:'Aliuje Sertin', text:'Premium quality and fits perfectly.', img:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=500&q=80'},
-        {name:'Vikass Singh', text:'Finally, apparel that matches my vibe.', img:'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=500&q=80'},
-        {name:'Farmt Meckio', text:'From fabric to design—top notch.', img:'https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=500&q=80'}
+        {name:'Arjun Malhotra', text:'Bold designs that actually fit right. Clotchcy gets it.', img:'https://images.unsplash.com/photo-1712425718137-491250cfde88?auto=format&fit=crop&w=500&q=80'},
+        {name:'Priyanka Iyer', text:'Premium quality and the fit is spot on every time.', img:'https://images.unsplash.com/photo-1767607740661-05e668190cdc?auto=format&fit=crop&w=500&q=80'},
+        {name:'Sneha Kapoor', text:'Fast delivery to Bengaluru and the packaging felt premium.', img:'https://images.unsplash.com/photo-1725033489648-a819750348eb?auto=format&fit=crop&w=500&q=80'},
+        {name:'Ramesh Verma', text:'Been shopping here for a year — never disappointed with the fits.', img:'https://images.unsplash.com/photo-1531339413195-cc6c17163974?auto=format&fit=crop&w=500&q=80'}
       ]; track review.name) {
         <article class="review-card">
           <img [src]="review.img" [alt]="review.name" loading="lazy">

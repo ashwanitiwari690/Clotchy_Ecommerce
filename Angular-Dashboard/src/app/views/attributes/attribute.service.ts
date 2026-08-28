@@ -1,12 +1,14 @@
-import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ProductAttribute } from '../../core/models/brand.model';
-import { ATTRIBUTES_MOCK } from '../../core/mock-data/brands.mock';
-import { MockCrudStore } from '../../core/services/mock-crud-store';
+import { HttpCrudStore } from '../../core/services/http-crud-store';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AttributeService {
-  private readonly store = new MockCrudStore<ProductAttribute>(ATTRIBUTES_MOCK, 'attr');
+  private readonly http = inject(HttpClient);
+  private readonly store = new HttpCrudStore<ProductAttribute>(this.http, `${environment.ECOMMERCE_API}attributes`);
 
   list(): Observable<ProductAttribute[]> { return this.store.list(); }
   get all(): ProductAttribute[] { return this.store.all; }
