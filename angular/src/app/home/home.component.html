@@ -69,7 +69,7 @@
     <div class="section-heading"><span></span><h2>WHAT OUR CUSTOMERS SAY</h2><span></span></div>
     <div class="review-grid">
       @for (review of [
-        {name:'Arjun Malhotra', text:'Bold designs that actually fit right. Clotchcy gets it.', img:'https://images.unsplash.com/photo-1712425718137-491250cfde88?auto=format&fit=crop&w=500&q=80'},
+        {name:'Arjun Malhotra', text:'Bold designs that actually fit right. Clothcy gets it.', img:'https://images.unsplash.com/photo-1712425718137-491250cfde88?auto=format&fit=crop&w=500&q=80'},
         {name:'Priyanka Iyer', text:'Premium quality and the fit is spot on every time.', img:'https://images.unsplash.com/photo-1767607740661-05e668190cdc?auto=format&fit=crop&w=500&q=80'},
         {name:'Sneha Kapoor', text:'Fast delivery to Bengaluru and the packaging felt premium.', img:'https://images.unsplash.com/photo-1725033489648-a819750348eb?auto=format&fit=crop&w=500&q=80'},
         {name:'Ramesh Verma', text:'Been shopping here for a year — never disappointed with the fits.', img:'https://images.unsplash.com/photo-1531339413195-cc6c17163974?auto=format&fit=crop&w=500&q=80'}
@@ -85,11 +85,11 @@
 </section>
 
 <section class="community container">
-  <div class="community-title"><span></span><h2>JOIN THE CLOTCHCY COMMUNITY</h2><span></span></div>
+  <div class="community-title"><span></span><h2>JOIN THE CLOTHCY COMMUNITY</h2><span></span></div>
   <div class="community-content">
     <div class="community-photos">
       @for (img of home()?.community ?? []; track img.id) { <img [src]="img.image" [alt]="img.title ?? 'Community style'" loading="lazy"> }
     </div>
-    <div class="newsletter"><small>GET ₹100 OFF YOUR FIRST ORDER</small><h3>Join the Clotchcy family!</h3><div><input placeholder="Enter your email"><button>SUBSCRIBE</button></div></div>
+    <div class="newsletter"><small>GET ₹100 OFF YOUR FIRST ORDER</small><h3>Join the Clothcy family!</h3><div><input placeholder="Enter your email"><button>SUBSCRIBE</button></div></div>
   </div>
 </section>
