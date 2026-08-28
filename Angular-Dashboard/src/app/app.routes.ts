@@ -139,6 +139,10 @@ export const routes: Routes = [
       {
         path: 'settings',
         loadChildren: () => import('./views/settings/routes').then((m) => m.routes)
+      },
+      {
+        path: 'admin-users',
+        loadChildren: () => import('./views/admin-users/routes').then((m) => m.routes)
       }
     ]
   },

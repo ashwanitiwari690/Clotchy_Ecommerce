@@ -9,11 +9,18 @@ export interface PlacedOrder {
   orderNumber: string;
   total: number;
   status: string;
+  discount?: number;
+  couponCode?: string;
 }
 
 interface ApiEnvelope<T> {
   success: boolean;
   data: T;
+}
+
+interface CouponValidation {
+  discount: number;
+  freeShipping: boolean;
 }
 
 @Injectable({ providedIn: 'root' })
@@ -24,8 +31,18 @@ export class CartService {
 
   readonly count = computed(() => this.items().reduce((sum, item) => sum + item.quantity, 0));
   readonly subtotal = computed(() => this.items().reduce((sum, item) => sum + item.price * item.quantity, 0));
-  readonly shipping = computed(() => this.subtotal() >= 999 || this.subtotal() === 0 ? 0 : 79);
-  readonly total = computed(() => this.subtotal() + this.shipping());
+
+  readonly couponCode = signal('');
+  readonly discount = signal(0);
+  readonly freeShippingFromCoupon = signal(false);
+  readonly couponError = signal('');
+  readonly applyingCoupon = signal(false);
+
+  readonly shipping = computed(() => {
+    if (this.freeShippingFromCoupon()) return 0;
+    return this.subtotal() >= 999 || this.subtotal() === 0 ? 0 : 79;
+  });
+  readonly total = computed(() => Math.max(0, this.subtotal() - this.discount() + this.shipping()));
 
   add(product: Product, size = product.sizes[0], color = product.colors[0]): void {
     const current = this.items();
@@ -52,6 +69,45 @@ export class CartService {
 
   clear(): void {
     this.save([]);
+    this.couponCode.set('');
+    this.discount.set(0);
+    this.freeShippingFromCoupon.set(false);
+    this.couponError.set('');
+  }
+
+  // Previews a coupon's discount against the current subtotal without
+  // creating an order - actual redemption/usage-tracking happens server-side
+  // inside `checkout()` once the order is actually placed.
+  applyCoupon(code: string): void {
+    const trimmed = code.trim().toUpperCase();
+    if (!trimmed) return;
+    this.couponError.set('');
+    this.applyingCoupon.set(true);
+    this.http
+      .post<ApiEnvelope<CouponValidation>>(`${environment.apiUrl}/coupons/validate`, { code: trimmed, subtotal: this.subtotal() }, { withCredentials: true })
+      .pipe(map((res) => res.data))
+      .subscribe({
+        next: (res) => {
+          this.applyingCoupon.set(false);
+          this.couponCode.set(trimmed);
+          this.discount.set(res.discount);
+          this.freeShippingFromCoupon.set(res.freeShipping);
+        },
+        error: (err) => {
+          this.applyingCoupon.set(false);
+          this.couponCode.set('');
+          this.discount.set(0);
+          this.freeShippingFromCoupon.set(false);
+          this.couponError.set(err.error?.message ?? 'Could not apply this coupon.');
+        },
+      });
+  }
+
+  removeCoupon(): void {
+    this.couponCode.set('');
+    this.discount.set(0);
+    this.freeShippingFromCoupon.set(false);
+    this.couponError.set('');
   }
 
   // Places the current cart as a real order (requires a logged-in user with a
@@ -66,8 +122,9 @@ export class CartService {
         size: item.selectedSize || undefined,
         color: item.selectedColor || undefined,
       })),
+      couponCode: this.couponCode() || undefined,
     };
-    return this.http.post<ApiEnvelope<PlacedOrder>>(`${environment.apiUrl}/orders`, payload).pipe(
+    return this.http.post<ApiEnvelope<PlacedOrder>>(`${environment.apiUrl}/orders`, payload, { withCredentials: true }).pipe(
       map((res) => res.data),
       tap(() => this.clear()),
     );

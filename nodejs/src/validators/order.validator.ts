@@ -12,6 +12,7 @@ export const checkoutSchema = z.object({
         }),
       )
       .min(1),
+    couponCode: z.string().trim().toUpperCase().min(1).max(40).optional(),
   }),
 });
 

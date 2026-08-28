@@ -4,14 +4,19 @@ import { ApiError } from "../utils/ApiError";
 interface UpdateProfileInput {
   name?: string;
   email?: string;
+  avatar?: string;
 }
 
 // Phone is intentionally excluded: it's the account identifier and can't be changed here.
 export const updateProfile = async (userId: string, input: UpdateProfileInput) => {
-  const data: { name?: string; email?: string | null } = {};
+  const data: { name?: string; email?: string | null; avatar?: string } = {};
 
   if (input.name !== undefined) {
     data.name = input.name;
+  }
+
+  if (input.avatar !== undefined) {
+    data.avatar = input.avatar;
   }
 
   if (input.email !== undefined) {
@@ -29,7 +34,7 @@ export const updateProfile = async (userId: string, input: UpdateProfileInput) =
   return prisma.user.update({
     where: { id: userId },
     data,
-    select: { id: true, name: true, phone: true, email: true, role: true },
+    select: { id: true, name: true, phone: true, email: true, role: true, avatar: true },
   });
 };
 

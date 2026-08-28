@@ -37,7 +37,7 @@
           <tr>
             <td><a [routerLink]="['/orders', o.id]" class="fw-medium">{{ o.id }}</a></td>
             <td>{{ o.customerName }}</td>
-            <td class="text-body-secondary small">{{ o.date }}</td>
+            <td class="text-body-secondary small">{{ o.date | appDate }}</td>
             <td class="text-end">{{ o.items.length }}</td>
             <td class="text-end">{{ formatCurrency(o.total) }}</td>
             <td><app-status-badge [status]="o.paymentStatus" /></td>

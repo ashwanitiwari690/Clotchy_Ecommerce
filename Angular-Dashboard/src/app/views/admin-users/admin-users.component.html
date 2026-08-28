@@ -1,0 +1,77 @@
+<app-page-header title="Admin Users" [breadcrumb]="[{ label: 'Settings' }, { label: 'Admin Users' }]">
+  <button class="btn btn-primary" [cModalToggle]="adminModal.id" (click)="openAdd()">
+    <svg cIcon name="cilPlus" class="me-1"></svg> Add Admin
+  </button>
+</app-page-header>
+
+<div class="card">
+  <app-global-search (search)="onSearch($event)"></app-global-search>
+  <div class="card-body p-0">
+    <table class="table table-striped align-middle mb-0">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Phone</th>
+          <th>Email</th>
+          <th>Joined</th>
+          <th>Status</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (admin of admins; track admin.id) {
+          <tr>
+            <td class="fw-medium">{{ admin.name }} @if (admin.id === currentUserId) { <span class="badge text-bg-secondary ms-1">You</span> }</td>
+            <td class="text-body-secondary">+91 {{ admin.phone }}</td>
+            <td class="text-body-secondary">{{ admin.email || '—' }}</td>
+            <td class="text-body-secondary small">{{ admin.createdAt | appDate:'date' }}</td>
+            <td><app-status-badge [status]="admin.status" /></td>
+            <td class="text-end">
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-secondary" [cModalToggle]="adminModal.id" (click)="openEdit(admin)">Edit</button>
+                <button class="btn btn-outline-secondary" [disabled]="admin.id === currentUserId" (click)="toggleStatus(admin)">
+                  {{ admin.status === 'active' ? 'Deactivate' : 'Activate' }}
+                </button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="6"><app-empty-state title="No admin users found" message="Try a different search or add a new admin." /></td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<c-modal id="adminModal" #adminModal alignment="center" size="lg">
+  <c-modal-header>
+    <h5 cModalTitle>{{ editingId() ? 'Edit Admin' : 'Add Admin' }}</h5>
+    <button [cModalToggle]="adminModal.id" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body>
+    <form [formGroup]="form" class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Full Name</label>
+        <input type="text" class="form-control" formControlName="name" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Phone</label>
+        <input type="tel" class="form-control" formControlName="phone" maxlength="10" placeholder="10-digit mobile number" />
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Email (optional)</label>
+        <input type="email" class="form-control" formControlName="email" />
+      </div>
+      @if (!editingId()) {
+        <div class="col-md-6">
+          <label class="form-label">Password</label>
+          <input type="password" class="form-control" formControlName="password" />
+        </div>
+      }
+    </form>
+  </c-modal-body>
+  <c-modal-footer>
+    <button [cModalToggle]="adminModal.id" cButton color="secondary">Cancel</button>
+    <button cButton color="primary" [cModalToggle]="adminModal.id" (click)="save()">Save Admin</button>
+  </c-modal-footer>
+</c-modal>

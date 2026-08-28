@@ -77,7 +77,7 @@
                 <svg cIcon name="cilStar" [class]="p.featured ? 'text-warning' : 'text-body-secondary'"></svg>
               </button>
             </td>
-            <td class="text-body-secondary">{{ p.createdAt }}</td>
+            <td class="text-body-secondary">{{ p.createdAt | appDate }}</td>
             <td class="text-end">
               <div class="btn-group btn-group-sm">
                 <button class="btn btn-outline-secondary" (click)="view(p)" [cModalToggle]="previewModal.id">View</button>

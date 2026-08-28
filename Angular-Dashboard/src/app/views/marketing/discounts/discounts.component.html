@@ -24,7 +24,7 @@
             <td class="fw-medium">{{ d.name }}</td>
             <td>{{ valueLabel(d) }}</td>
             <td><span class="badge text-bg-light border">{{ d.appliesTo === 'all' ? 'All Products' : (d.appliesTo === 'category' ? 'Category: ' : 'Product: ') + d.targetName }}</span></td>
-            <td class="text-body-secondary small">{{ d.startDate }} – {{ d.endDate }}</td>
+            <td class="text-body-secondary small">{{ d.startDate | appDate:'date' }} – {{ d.endDate | appDate:'date' }}</td>
             <td><app-status-badge [status]="d.status" /></td>
             <td class="text-end">
               <div class="btn-group btn-group-sm">

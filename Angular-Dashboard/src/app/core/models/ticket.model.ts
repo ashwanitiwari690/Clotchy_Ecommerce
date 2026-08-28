@@ -17,7 +17,8 @@ export interface Ticket {
   subject: string;
   category: string;
   priority: TicketPriority;
-  assignedAdmin: string;
+  assignedAdmin: string | null;
+  assignedAdminId: string | null;
   createdAt: string;
   updatedAt: string;
   status: TicketStatus;

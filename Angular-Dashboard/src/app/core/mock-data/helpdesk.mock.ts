@@ -3,7 +3,7 @@ import { ContactMessage, Faq, Ticket } from '../models/ticket.model';
 export const TICKETS_MOCK: Ticket[] = [
   {
     id: 'TKT-5001', customerId: 'cust-002', customerName: 'Rohan Mehta', customerEmail: 'rohan.mehta@example.com',
-    subject: 'Wrong size delivered', category: 'Order Issue', priority: 'high', assignedAdmin: 'Aarav Singh',
+    subject: 'Wrong size delivered', category: 'Order Issue', priority: 'high', assignedAdmin: 'Aarav Singh', assignedAdminId: null,
     createdAt: '2026-08-14', updatedAt: '2026-08-15', status: 'in-progress',
     messages: [
       { id: 'm1', sender: 'customer', senderName: 'Rohan Mehta', message: 'I ordered size 32 but received size 34 jeans. Order CLT-100236.', date: '2026-08-14' },
@@ -12,7 +12,7 @@ export const TICKETS_MOCK: Ticket[] = [
   },
   {
     id: 'TKT-5002', customerId: 'cust-006', customerName: 'Arjun Kapoor', customerEmail: 'arjun.kapoor@example.com',
-    subject: 'Refund not received', category: 'Payments', priority: 'urgent', assignedAdmin: 'Meera Iyer',
+    subject: 'Refund not received', category: 'Payments', priority: 'urgent', assignedAdmin: 'Meera Iyer', assignedAdminId: null,
     createdAt: '2026-08-11', updatedAt: '2026-08-16', status: 'waiting-customer',
     messages: [
       { id: 'm1', sender: 'customer', senderName: 'Arjun Kapoor', message: 'My order was cancelled 5 days ago, refund still not credited.', date: '2026-08-11' },
@@ -21,13 +21,13 @@ export const TICKETS_MOCK: Ticket[] = [
   },
   {
     id: 'TKT-5003', customerId: 'cust-009', customerName: 'Neha Joshi', customerEmail: 'neha.joshi@example.com',
-    subject: 'Account access blocked', category: 'Account', priority: 'medium', assignedAdmin: 'Aarav Singh',
+    subject: 'Account access blocked', category: 'Account', priority: 'medium', assignedAdmin: 'Aarav Singh', assignedAdminId: null,
     createdAt: '2026-08-09', updatedAt: '2026-08-09', status: 'open',
     messages: [{ id: 'm1', sender: 'customer', senderName: 'Neha Joshi', message: 'I cannot log in to my account, it says blocked.', date: '2026-08-09' }],
   },
   {
     id: 'TKT-5004', customerId: 'cust-005', customerName: 'Kavya Reddy', customerEmail: 'kavya.reddy@example.com',
-    subject: 'Product quality concern', category: 'Product', priority: 'low', assignedAdmin: 'Meera Iyer',
+    subject: 'Product quality concern', category: 'Product', priority: 'low', assignedAdmin: 'Meera Iyer', assignedAdminId: null,
     createdAt: '2026-08-05', updatedAt: '2026-08-06', status: 'resolved',
     messages: [
       { id: 'm1', sender: 'customer', senderName: 'Kavya Reddy', message: 'Polo shirt stitching came loose after first wash.', date: '2026-08-05' },
@@ -36,7 +36,7 @@ export const TICKETS_MOCK: Ticket[] = [
   },
   {
     id: 'TKT-5005', customerId: 'cust-004', customerName: 'Vikram Singh', customerEmail: 'vikram.singh@example.com',
-    subject: 'Delivery delay', category: 'Shipping', priority: 'medium', assignedAdmin: 'Aarav Singh',
+    subject: 'Delivery delay', category: 'Shipping', priority: 'medium', assignedAdmin: 'Aarav Singh', assignedAdminId: null,
     createdAt: '2026-07-30', updatedAt: '2026-08-01', status: 'closed',
     messages: [{ id: 'm1', sender: 'customer', senderName: 'Vikram Singh', message: 'Package was 4 days late, just flagging for feedback.', date: '2026-07-30' }],
   },

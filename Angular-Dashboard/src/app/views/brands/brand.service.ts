@@ -1,12 +1,14 @@
-import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Brand } from '../../core/models/brand.model';
-import { BRANDS_MOCK } from '../../core/mock-data/brands.mock';
-import { MockCrudStore } from '../../core/services/mock-crud-store';
+import { HttpCrudStore } from '../../core/services/http-crud-store';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class BrandService {
-  private readonly store = new MockCrudStore<Brand>(BRANDS_MOCK, 'brand');
+  private readonly http = inject(HttpClient);
+  private readonly store = new HttpCrudStore<Brand>(this.http, `${environment.ECOMMERCE_API}brands`);
 
   list(): Observable<Brand[]> { return this.store.list(); }
   get all(): Brand[] { return this.store.all; }

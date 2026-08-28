@@ -1,12 +1,14 @@
-import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { HomePromotion } from '../../../core/models/homepage.model';
-import { HOME_PROMOTIONS_MOCK } from '../../../core/mock-data/home-page.mock';
-import { MockCrudStore } from '../../../core/services/mock-crud-store';
+import { HttpCrudStore } from '../../../core/services/http-crud-store';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class HomePromotionService {
-  private readonly store = new MockCrudStore<HomePromotion>(HOME_PROMOTIONS_MOCK, 'promo');
+  private readonly http = inject(HttpClient);
+  private readonly store = new HttpCrudStore<HomePromotion>(this.http, `${environment.ECOMMERCE_API}home-promotions`);
 
   list(): Observable<HomePromotion[]> { return this.store.list(); }
   get all(): HomePromotion[] { return this.store.all; }

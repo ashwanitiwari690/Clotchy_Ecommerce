@@ -1,12 +1,14 @@
-import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { MarketingBanner } from '../../../core/models/marketing.model';
-import { MARKETING_BANNERS_MOCK } from '../../../core/mock-data/marketing.mock';
-import { MockCrudStore } from '../../../core/services/mock-crud-store';
+import { HttpCrudStore } from '../../../core/services/http-crud-store';
+import { environment } from '../../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class MarketingBannerService {
-  private readonly store = new MockCrudStore<MarketingBanner>(MARKETING_BANNERS_MOCK, 'mb');
+  private readonly http = inject(HttpClient);
+  private readonly store = new HttpCrudStore<MarketingBanner>(this.http, `${environment.ECOMMERCE_API}marketing-banners`);
 
   list(): Observable<MarketingBanner[]> { return this.store.list(); }
   get all(): MarketingBanner[] { return this.store.all; }

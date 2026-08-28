@@ -117,4 +117,9 @@ export const navItemsEcommerce: INavData[] = [
       { name: 'Admin Profile', url: '/settings', linkProps: { queryParams: { tab: 'profile' } }, icon: 'nav-icon-bullet' },
     ],
   },
+  {
+    name: 'Admin Users',
+    url: '/admin-users',
+    iconComponent: { name: 'cilPeople' },
+  },
 ];

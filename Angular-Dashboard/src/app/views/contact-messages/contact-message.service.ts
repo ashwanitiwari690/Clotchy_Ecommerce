@@ -1,12 +1,14 @@
-import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ContactMessage } from '../../core/models/ticket.model';
-import { CONTACT_MESSAGES_MOCK } from '../../core/mock-data/helpdesk.mock';
-import { MockCrudStore } from '../../core/services/mock-crud-store';
+import { HttpCrudStore } from '../../core/services/http-crud-store';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ContactMessageService {
-  private readonly store = new MockCrudStore<ContactMessage>(CONTACT_MESSAGES_MOCK, 'cm');
+  private readonly http = inject(HttpClient);
+  private readonly store = new HttpCrudStore<ContactMessage>(this.http, `${environment.ECOMMERCE_API}contact-messages`);
 
   list(): Observable<ContactMessage[]> { return this.store.list(); }
   get all(): ContactMessage[] { return this.store.all; }

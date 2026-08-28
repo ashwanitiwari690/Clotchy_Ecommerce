@@ -1,12 +1,15 @@
-import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { Observable, tap } from 'rxjs';
 import { Faq } from '../../core/models/ticket.model';
-import { FAQS_MOCK } from '../../core/mock-data/helpdesk.mock';
-import { MockCrudStore } from '../../core/services/mock-crud-store';
+import { HttpCrudStore } from '../../core/services/http-crud-store';
+import { environment } from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class FaqService {
-  private readonly store = new MockCrudStore<Faq>(FAQS_MOCK, 'faq');
+  private readonly http = inject(HttpClient);
+  private readonly baseUrl = `${environment.ECOMMERCE_API}faqs`;
+  private readonly store = new HttpCrudStore<Faq>(this.http, this.baseUrl);
 
   list(): Observable<Faq[]> { return this.store.list(); }
   get all(): Faq[] { return this.store.all; }
@@ -16,13 +19,9 @@ export class FaqService {
   delete(id: string): Observable<boolean> { return this.store.delete(id); }
 
   move(id: string, direction: 'up' | 'down'): void {
-    const sorted = [...this.store.all].sort((a, b) => a.displayOrder - b.displayOrder);
-    const idx = sorted.findIndex((f) => f.id === id);
-    const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
-    if (idx < 0 || swapIdx < 0 || swapIdx >= sorted.length) return;
-    const tmp = sorted[idx].displayOrder;
-    sorted[idx] = { ...sorted[idx], displayOrder: sorted[swapIdx].displayOrder };
-    sorted[swapIdx] = { ...sorted[swapIdx], displayOrder: tmp };
-    this.store.replaceAll(sorted);
+    this.http
+      .post<{ success: boolean; data: Faq[] }>(`${this.baseUrl}/${id}/move`, { direction }, { withCredentials: true })
+      .pipe(tap((res) => this.store.replaceAll(res.data)))
+      .subscribe();
   }
 }

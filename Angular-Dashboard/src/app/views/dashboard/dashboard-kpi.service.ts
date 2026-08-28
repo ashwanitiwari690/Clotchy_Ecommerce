@@ -1,12 +1,9 @@
-import { Injectable } from '@angular/core';
-import { PRODUCTS_MOCK } from '../../core/mock-data/products.mock';
-import { ORDERS_MOCK } from '../../core/mock-data/orders.mock';
-import { CUSTOMERS_MOCK } from '../../core/mock-data/customers.mock';
-import { TICKETS_MOCK } from '../../core/mock-data/helpdesk.mock';
-import { CATEGORIES_MOCK } from '../../core/mock-data/categories.mock';
+import { HttpClient } from '@angular/common/http';
+import { Injectable, inject, signal } from '@angular/core';
+import { Observable, map, tap } from 'rxjs';
 import { Order } from '../../core/models/order.model';
 import { Product } from '../../core/models/product.model';
-import { Customer } from '../../core/models/customer.model';
+import { environment } from '../../../environments/environment';
 
 export interface OrderStatusBucket {
   label: string;
@@ -14,72 +11,139 @@ export interface OrderStatusBucket {
   color: string;
 }
 
+export type DashboardPeriod = 'today' | 'week' | 'month' | 'year';
+
+export interface DashboardTrend {
+  labels: string[];
+  revenue: number[];
+  orders: number[];
+}
+
+/** Lighter than the full `Customer` model - matches exactly what `GET /dashboard/stats` returns for recentCustomers. */
+export interface DashboardRecentCustomer {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  avatar: string;
+  registeredAt: string;
+  totalOrders: number;
+  totalSpent: number;
+}
+
+interface DashboardStats {
+  totalRevenue: number;
+  totalOrders: number;
+  totalCustomers: number;
+  totalProducts: number;
+  pendingOrders: number;
+  todaysSales: number;
+  openTickets: number;
+  orderStatusBuckets: OrderStatusBucket[];
+  revenueByCategory: { label: string; value: number }[];
+  topSellingProducts: Product[];
+  lowStockProducts: Product[];
+  recentOrders: Order[];
+  recentCustomers: DashboardRecentCustomer[];
+  trend: DashboardTrend;
+}
+
+interface ApiEnvelope<T> {
+  success: boolean;
+  data: T;
+}
+
+const EMPTY_STATS: DashboardStats = {
+  totalRevenue: 0,
+  totalOrders: 0,
+  totalCustomers: 0,
+  totalProducts: 0,
+  pendingOrders: 0,
+  todaysSales: 0,
+  openTickets: 0,
+  orderStatusBuckets: [],
+  revenueByCategory: [],
+  topSellingProducts: [],
+  lowStockProducts: [],
+  recentOrders: [],
+  recentCustomers: [],
+  trend: { labels: [], revenue: [], orders: [] },
+};
+
 @Injectable({ providedIn: 'root' })
 export class DashboardKpiService {
+  private readonly http = inject(HttpClient);
+  private readonly baseUrl = `${environment.ECOMMERCE_API}dashboard/stats`;
+  private readonly stats = signal<DashboardStats>(EMPTY_STATS);
+
+  readonly period = signal<DashboardPeriod>('month');
+
+  constructor() {
+    this.setPeriod(this.period()).subscribe();
+  }
+
+  /** Refetches `/dashboard/stats` for the given period and updates every KPI getter below. */
+  setPeriod(period: DashboardPeriod): Observable<DashboardStats> {
+    this.period.set(period);
+    return this.http.get<ApiEnvelope<DashboardStats>>(this.baseUrl, { params: { period } }).pipe(
+      map((res) => res.data),
+      tap((data) => this.stats.set(data)),
+    );
+  }
+
   get totalRevenue(): number {
-    return ORDERS_MOCK.filter(o => o.paymentStatus === 'paid').reduce((sum, o) => sum + o.total, 0);
+    return this.stats().totalRevenue;
   }
 
   get totalOrders(): number {
-    return ORDERS_MOCK.length;
+    return this.stats().totalOrders;
   }
 
   get totalCustomers(): number {
-    return CUSTOMERS_MOCK.length;
+    return this.stats().totalCustomers;
   }
 
   get totalProducts(): number {
-    return PRODUCTS_MOCK.length;
+    return this.stats().totalProducts;
   }
 
   get pendingOrders(): number {
-    return ORDERS_MOCK.filter(o => o.status === 'pending' || o.status === 'confirmed').length;
+    return this.stats().pendingOrders;
   }
 
   get lowStockProducts(): Product[] {
-    return PRODUCTS_MOCK.filter(p => p.stock > 0 && p.stock <= p.lowStockThreshold);
+    return this.stats().lowStockProducts;
   }
 
   get openTickets(): number {
-    return TICKETS_MOCK.filter(t => t.status === 'open' || t.status === 'in-progress').length;
+    return this.stats().openTickets;
   }
 
   get todaysSales(): number {
-    const latestDate = [...ORDERS_MOCK].sort((a, b) => b.date.localeCompare(a.date))[0]?.date;
-    return ORDERS_MOCK.filter(o => o.date === latestDate).reduce((sum, o) => sum + o.total, 0);
+    return this.stats().todaysSales;
   }
 
   get orderStatusBuckets(): OrderStatusBucket[] {
-    const buckets: Record<string, { statuses: Order['status'][]; color: string }> = {
-      Pending: { statuses: ['pending', 'confirmed'], color: '#f9b115' },
-      Processing: { statuses: ['processing', 'packed'], color: '#3399ff' },
-      Shipped: { statuses: ['shipped', 'out-for-delivery'], color: '#20a8d8' },
-      Delivered: { statuses: ['delivered'], color: '#2eb85c' },
-      Cancelled: { statuses: ['cancelled', 'returned', 'refunded'], color: '#e55353' },
-    };
-    return Object.entries(buckets).map(([label, cfg]) => ({
-      label,
-      value: ORDERS_MOCK.filter(o => cfg.statuses.includes(o.status)).length,
-      color: cfg.color,
-    }));
+    return this.stats().orderStatusBuckets;
   }
 
   get revenueByCategory(): { label: string; value: number }[] {
-    return CATEGORIES_MOCK.map(cat => ({
-      label: cat.name,
-      value: PRODUCTS_MOCK.filter(p => p.categoryId === cat.id).reduce((sum, p) => sum + p.revenue, 0),
-    })).sort((a, b) => b.value - a.value);
+    return this.stats().revenueByCategory;
   }
 
   get topSellingProducts(): Product[] {
-    return [...PRODUCTS_MOCK].sort((a, b) => b.unitsSold - a.unitsSold).slice(0, 5);
+    return this.stats().topSellingProducts;
   }
 
   get recentOrders(): Order[] {
-    return [...ORDERS_MOCK].sort((a, b) => b.date.localeCompare(a.date)).slice(0, 6);
+    return this.stats().recentOrders;
   }
 
-  get recentCustomers(): Customer[] {
-    return [...CUSTOMERS_MOCK].sort((a, b) => b.registeredAt.localeCompare(a.registeredAt)).slice(0, 5);
+  get recentCustomers(): DashboardRecentCustomer[] {
+    return this.stats().recentCustomers;
+  }
+
+  get trend(): DashboardTrend {
+    return this.stats().trend;
   }
 }

@@ -10,7 +10,7 @@
       </div>
       <div class="ms-auto text-end">
         <app-status-badge [status]="c.status" />
-        <div class="small text-body-secondary mt-1">Member since {{ c.registeredAt }}</div>
+        <div class="small text-body-secondary mt-1">Member since {{ c.registeredAt | appDate:'date' }}</div>
       </div>
     </div>
   </div>
@@ -34,7 +34,7 @@
             <dt class="col-3">Name</dt><dd class="col-9">{{ c.name }}</dd>
             <dt class="col-3">Email</dt><dd class="col-9">{{ c.email }}</dd>
             <dt class="col-3">Phone</dt><dd class="col-9">{{ c.phone }}</dd>
-            <dt class="col-3">Registered</dt><dd class="col-9">{{ c.registeredAt }}</dd>
+            <dt class="col-3">Registered</dt><dd class="col-9">{{ c.registeredAt | appDate }}</dd>
             <dt class="col-3">Total Orders</dt><dd class="col-9">{{ c.totalOrders }}</dd>
             <dt class="col-3">Total Spent</dt><dd class="col-9">{{ formatCurrency(c.totalSpent) }}</dd>
             <dt class="col-3">Status</dt><dd class="col-9"><app-status-badge [status]="c.status" /></dd>
@@ -52,7 +52,7 @@
               @for (o of orders; track o.id) {
                 <tr>
                   <td><a [routerLink]="['/orders', o.id]">{{ o.id }}</a></td>
-                  <td class="text-body-secondary small">{{ o.date }}</td>
+                  <td class="text-body-secondary small">{{ o.date | appDate }}</td>
                   <td class="text-end">{{ formatCurrency(o.total) }}</td>
                   <td><app-status-badge [status]="o.status" /></td>
                 </tr>
@@ -114,7 +114,7 @@
                   <td>{{ r.productName }}</td>
                   <td>{{ r.rating }} / 5</td>
                   <td class="text-body-secondary text-truncate d-inline-block" style="max-width:240px;">{{ r.comment }}</td>
-                  <td class="text-body-secondary small">{{ r.date }}</td>
+                  <td class="text-body-secondary small">{{ r.date | appDate }}</td>
                   <td><app-status-badge [status]="r.status" /></td>
                 </tr>
               } @empty {
@@ -158,7 +158,7 @@
                 <tr>
                   <td>{{ h.productName }}</td>
                   <td><a [routerLink]="['/orders', h.orderId]">{{ h.orderId }}</a></td>
-                  <td class="text-body-secondary small">{{ h.date }}</td>
+                  <td class="text-body-secondary small">{{ h.date | appDate }}</td>
                   <td class="text-end">{{ h.quantity }}</td>
                   <td class="text-end">{{ formatCurrency(h.price) }}</td>
                 </tr>

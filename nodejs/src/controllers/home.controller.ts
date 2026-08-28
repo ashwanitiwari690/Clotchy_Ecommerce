@@ -22,7 +22,7 @@ interface OrderedDelegate {
 // best sellers, community images) is a small admin-curated, manually-ordered
 // list with identical CRUD + reorder behavior - built once here instead of
 // five near-identical copies of the same handlers.
-const buildOrderedHandlers = (delegate: OrderedDelegate, notFoundMessage: string, conflictMessage: string) => {
+export const buildOrderedHandlers = (delegate: OrderedDelegate, notFoundMessage: string, conflictMessage: string) => {
   const list = asyncHandler(async (_req: Request, res: Response) => {
     const items = await delegate.findMany({ orderBy: { displayOrder: "asc" } });
     res.json({ success: true, data: items });

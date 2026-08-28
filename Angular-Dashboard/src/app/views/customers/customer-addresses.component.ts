@@ -1,6 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { SharedUIModule } from '../../shared/shared-ui.module';
-import { CUSTOMERS_MOCK } from '../../core/mock-data/customers.mock';
+import { CustomerService } from './customer.service';
 
 @Component({
   selector: 'app-customer-addresses',
@@ -9,7 +9,9 @@ import { CUSTOMERS_MOCK } from '../../core/mock-data/customers.mock';
   templateUrl: './customer-addresses.component.html',
 })
 export class CustomerAddressesComponent {
+  private readonly svc = inject(CustomerService);
+
   get rows() {
-    return CUSTOMERS_MOCK.flatMap((c) => c.addresses.map((a) => ({ customer: c, address: a })));
+    return this.svc.all.flatMap((c) => c.addresses.map((a) => ({ customer: c, address: a })));
   }
 }

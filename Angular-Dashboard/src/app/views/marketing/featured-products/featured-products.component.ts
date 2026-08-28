@@ -3,7 +3,7 @@ import { DecimalPipe } from '@angular/common';
 import { SharedUIModule } from '../../../shared/shared-ui.module';
 import { ProductService } from '../../products/product.service';
 import { Product } from '../../../core/models/product.model';
-import { getCategoryById } from '../../../core/mock-data/categories.mock';
+import { CategoryService } from '../../categories/category.service';
 import { ToastService } from '../../../layout/toasts/toast.service';
 
 @Component({
@@ -15,6 +15,7 @@ import { ToastService } from '../../../layout/toasts/toast.service';
 export class FeaturedProductsComponent {
   private readonly svc = inject(ProductService);
   private readonly toast = inject(ToastService);
+  private readonly categorySvc = inject(CategoryService);
 
   search = '';
 
@@ -29,7 +30,7 @@ export class FeaturedProductsComponent {
   }
 
   categoryName(id: string): string {
-    return getCategoryById(id)?.name ?? '—';
+    return this.categorySvc.getById(id)?.name ?? '—';
   }
 
   onSearch(value: string): void {

@@ -24,8 +24,8 @@ export class CustomerService {
   }
 
   list(): Observable<Customer[]> {
-    return this.http.get<ApiEnvelope<Omit<Customer, 'addresses' | 'wishlistProductIds'>[]>>(this.baseUrl).pipe(
-      map((res) => res.data.map((c): Customer => ({ ...c, addresses: [], wishlistProductIds: [] }))),
+    return this.http.get<ApiEnvelope<Omit<Customer, 'wishlistProductIds'>[]>>(this.baseUrl).pipe(
+      map((res) => res.data.map((c): Customer => ({ ...c, wishlistProductIds: [] }))),
       tap((list) => this.items.set(list)),
     );
   }

@@ -52,6 +52,9 @@ export class CheckoutComponent {
   readonly locating = signal(false);
   readonly locateError = signal('');
 
+  readonly couponInput = signal('');
+  onCouponInput(e: Event): void { this.couponInput.set((e.target as HTMLInputElement).value); }
+
   constructor(public cart: CartService, private auth: AuthService, private http: HttpClient) {
     this.auth.getAddress().subscribe({
       next: (res) => {

@@ -26,7 +26,7 @@ export const listCustomers = asyncHandler(async (req: Request, res: Response) =>
     prisma.user.findMany({
       where,
       orderBy: { createdAt: "desc" },
-      include: { _count: { select: { orders: true } } },
+      include: { _count: { select: { orders: true } }, address: true },
     }),
     prisma.order.groupBy({ by: ["userId"], _sum: { total: true } }),
   ]);
@@ -42,10 +42,24 @@ export const listCustomers = asyncHandler(async (req: Request, res: Response) =>
       phone: u.phone,
       avatar: u.avatar,
       registeredAt: u.createdAt,
-      groupId: "",
+      groupId: u.groupId,
       status: u.status,
       totalOrders: u._count.orders,
       totalSpent: spendMap.get(u.id) ?? 0,
+      addresses: u.address
+        ? [
+            {
+              id: u.address.id,
+              label: "Default",
+              line1: u.address.line1,
+              city: u.address.city,
+              state: u.address.state,
+              zip: u.address.pincode,
+              country: u.address.country,
+              isDefault: true,
+            },
+          ]
+        : [],
     })),
   });
 });
@@ -72,7 +86,7 @@ export const getCustomer = asyncHandler(async (req: Request, res: Response) => {
       phone: user.phone,
       avatar: user.avatar,
       registeredAt: user.createdAt,
-      groupId: "",
+      groupId: user.groupId,
       status: user.status,
       totalOrders: user.orders.length,
       totalSpent,
@@ -96,10 +110,11 @@ export const getCustomer = asyncHandler(async (req: Request, res: Response) => {
   });
 });
 
-export const updateCustomerStatus = asyncHandler(async (req: Request, res: Response) => {
+export const updateCustomer = asyncHandler(async (req: Request, res: Response) => {
+  const { status, groupId } = req.body as { status?: string; groupId?: string | null };
   const user = await prisma.user
-    .update({ where: { id: req.params.id }, data: { status: req.body.status } })
+    .update({ where: { id: req.params.id }, data: { ...(status ? { status } : {}), ...(groupId !== undefined ? { groupId } : {}) } })
     .catch(() => null);
   if (!user) throw ApiError.notFound("Customer not found");
-  res.json({ success: true, data: { id: user.id, status: user.status } });
+  res.json({ success: true, data: { id: user.id, status: user.status, groupId: user.groupId } });
 });

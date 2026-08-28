@@ -4,6 +4,7 @@ import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { SharedUIModule } from '../../shared/shared-ui.module';
 import { SettingsService } from './settings.service';
+import { AuthService } from '../authentication/auth.service';
 import { ToastService } from '../../layout/toasts/toast.service';
 import { UploadedImage } from '../../shared/components/image-uploader/image-uploader.component';
 
@@ -19,6 +20,7 @@ export class SettingsComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly settingsSvc = inject(SettingsService);
+  private readonly auth = inject(AuthService);
   private readonly fb = inject(FormBuilder);
   private readonly toast = inject(ToastService);
   private readonly destroyRef = inject(DestroyRef);
@@ -38,7 +40,7 @@ export class SettingsComponent {
 
   logoImages = signal<UploadedImage[]>([{ url: this.settingsSvc.value.general.logo, name: 'logo' }]);
   faviconImages = signal<UploadedImage[]>([{ url: this.settingsSvc.value.general.favicon, name: 'favicon' }]);
-  avatarImages = signal<UploadedImage[]>([{ url: this.settingsSvc.value.adminProfile.avatar, name: 'avatar' }]);
+  avatarImages = signal<UploadedImage[]>([{ url: this.auth.user()?.avatar ?? '', name: 'avatar' }]);
 
   shippingMethods = signal(this.settingsSvc.value.shipping.methods.map((m) => ({ ...m })));
   checkedPaymentMethods = signal(new Set(this.settingsSvc.value.payment.methods));
@@ -79,9 +81,9 @@ export class SettingsComponent {
   });
 
   profileForm = this.fb.nonNullable.group({
-    name: [this.settingsSvc.value.adminProfile.name, Validators.required],
-    email: [this.settingsSvc.value.adminProfile.email],
-    phone: [this.settingsSvc.value.adminProfile.phone],
+    name: [this.auth.user()?.name ?? '', Validators.required],
+    email: [this.auth.user()?.email ?? ''],
+    phone: [{ value: this.auth.user()?.phone ?? '', disabled: true }],
   });
 
   constructor() {
@@ -145,7 +147,14 @@ export class SettingsComponent {
   }
 
   saveProfile(): void {
-    this.settingsSvc.update({ adminProfile: { ...this.profileForm.getRawValue(), avatar: this.avatarImages()[0]?.url ?? '' } });
-    this.toast.success('Settings saved.');
+    if (this.profileForm.invalid) {
+      this.profileForm.markAllAsTouched();
+      return;
+    }
+    const { name, email } = this.profileForm.getRawValue();
+    this.auth.updateProfile({ name, email, avatar: this.avatarImages()[0]?.url ?? '' }).subscribe({
+      next: () => this.toast.success('Profile updated.'),
+      error: (err) => this.toast.error(err.error?.message ?? 'Could not update your profile.'),
+    });
   }
 }

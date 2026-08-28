@@ -3,8 +3,8 @@ import { DecimalPipe } from '@angular/common';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { SharedUIModule } from '../../shared/shared-ui.module';
 import { CustomerService } from './customer.service';
-import { REVIEWS_MOCK } from '../../core/mock-data/reviews.mock';
-import { TICKETS_MOCK } from '../../core/mock-data/helpdesk.mock';
+import { ReviewService } from '../reviews/review.service';
+import { TicketService } from '../helpdesk/ticket.service';
 import { ProductService } from '../products/product.service';
 
 type TabId = 'profile' | 'orders' | 'addresses' | 'wishlist' | 'reviews' | 'tickets' | 'history';
@@ -19,6 +19,8 @@ export class CustomerDetailComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly svc = inject(CustomerService);
   private readonly productSvc = inject(ProductService);
+  private readonly reviewSvc = inject(ReviewService);
+  private readonly ticketSvc = inject(TicketService);
 
   readonly customerId = this.route.snapshot.paramMap.get('id')!;
   customer = signal<ReturnType<CustomerService['getById']>>(undefined);
@@ -44,11 +46,11 @@ export class CustomerDetailComponent {
   }
 
   get reviews() {
-    return REVIEWS_MOCK.filter((r) => r.customerId === this.customerId);
+    return this.reviewSvc.all.filter((r) => r.customerId === this.customerId);
   }
 
   get tickets() {
-    return TICKETS_MOCK.filter((t) => t.customerId === this.customerId);
+    return this.ticketSvc.all.filter((t) => t.customerId === this.customerId);
   }
 
   get wishlistProducts() {

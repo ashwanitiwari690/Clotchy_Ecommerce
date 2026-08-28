@@ -2,74 +2,78 @@
 
 <c-row class="g-3">
   <c-col xs="12">
-    <app-chart-card title="Products by Category" [chart]="categoryChart" [height]="280" />
+    @if (categoryChart(); as chart) {
+      <app-chart-card title="Products by Category" [chart]="chart" [height]="280" />
+    }
   </c-col>
 </c-row>
 
-<c-row class="g-3 mt-1">
-  <c-col xs="12" xl="6">
-    <c-card class="h-100">
-      <c-card-header class="fw-semibold">Best Selling Products</c-card-header>
-      <c-card-body class="p-0">
-        <table class="table table-striped align-middle mb-0">
-          <thead><tr><th>Product</th><th>SKU</th><th class="text-end">Units Sold</th><th class="text-end">Revenue</th></tr></thead>
-          <tbody>
-            @for (p of bestSelling; track p.id) {
-              <tr>
-                <td><div class="d-flex align-items-center gap-2"><img [src]="p.thumbnail" class="rpt-thumb" [alt]="p.name" /><span class="text-truncate" style="max-width:150px;">{{ p.name }}</span></div></td>
-                <td class="text-body-secondary">{{ p.sku }}</td>
-                <td class="text-end">{{ p.unitsSold }}</td>
-                <td class="text-end">₹{{ p.revenue | number }}</td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </c-card-body>
-    </c-card>
-  </c-col>
+@if (report(); as r) {
+  <c-row class="g-3 mt-1">
+    <c-col xs="12" xl="6">
+      <c-card class="h-100">
+        <c-card-header class="fw-semibold">Best Selling Products</c-card-header>
+        <c-card-body class="p-0">
+          <table class="table table-striped align-middle mb-0">
+            <thead><tr><th>Product</th><th>SKU</th><th class="text-end">Units Sold</th><th class="text-end">Revenue</th></tr></thead>
+            <tbody>
+              @for (p of r.bestSelling; track p.id) {
+                <tr>
+                  <td><div class="d-flex align-items-center gap-2"><img [src]="p.thumbnail" class="rpt-thumb" [alt]="p.name" /><span class="text-truncate" style="max-width:150px;">{{ p.name }}</span></div></td>
+                  <td class="text-body-secondary">{{ p.sku }}</td>
+                  <td class="text-end">{{ p.unitsSold }}</td>
+                  <td class="text-end">₹{{ p.revenue | number }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </c-card-body>
+      </c-card>
+    </c-col>
 
-  <c-col xs="12" xl="6">
-    <c-card class="h-100">
-      <c-card-header class="fw-semibold">Most Viewed Products</c-card-header>
-      <c-card-body class="p-0">
-        <table class="table table-striped align-middle mb-0">
-          <thead><tr><th>Product</th><th>SKU</th><th class="text-end">Views</th></tr></thead>
-          <tbody>
-            @for (p of mostViewed; track p.id) {
-              <tr>
-                <td><div class="d-flex align-items-center gap-2"><img [src]="p.thumbnail" class="rpt-thumb" [alt]="p.name" /><span class="text-truncate" style="max-width:150px;">{{ p.name }}</span></div></td>
-                <td class="text-body-secondary">{{ p.sku }}</td>
-                <td class="text-end">{{ p.views }}</td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </c-card-body>
-    </c-card>
-  </c-col>
-</c-row>
+    <c-col xs="12" xl="6">
+      <c-card class="h-100">
+        <c-card-header class="fw-semibold">Most Viewed Products</c-card-header>
+        <c-card-body class="p-0">
+          <table class="table table-striped align-middle mb-0">
+            <thead><tr><th>Product</th><th>SKU</th><th class="text-end">Views</th></tr></thead>
+            <tbody>
+              @for (p of r.mostViewed; track p.id) {
+                <tr>
+                  <td><div class="d-flex align-items-center gap-2"><img [src]="p.thumbnail" class="rpt-thumb" [alt]="p.name" /><span class="text-truncate" style="max-width:150px;">{{ p.name }}</span></div></td>
+                  <td class="text-body-secondary">{{ p.sku }}</td>
+                  <td class="text-end">{{ p.views }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </c-card-body>
+      </c-card>
+    </c-col>
+  </c-row>
 
-<c-card class="mt-3">
-  <c-card-header class="fw-semibold">Low Stock Products</c-card-header>
-  <c-card-body class="p-0">
-    <table class="table table-striped align-middle mb-0">
-      <thead><tr><th>Product</th><th>SKU</th><th class="text-end">Stock</th><th class="text-end">Threshold</th><th>Status</th></tr></thead>
-      <tbody>
-        @for (p of lowStock; track p.id) {
-          <tr>
-            <td class="text-truncate" style="max-width:160px;">{{ p.name }}</td>
-            <td class="text-body-secondary">{{ p.sku }}</td>
-            <td class="text-end">{{ p.stock }}</td>
-            <td class="text-end">{{ p.lowStockThreshold }}</td>
-            <td><app-status-badge status="low-stock" /></td>
-          </tr>
-        } @empty {
-          <tr><td colspan="5"><app-empty-state title="No low stock products" message="Everything is well stocked." /></td></tr>
-        }
-      </tbody>
-    </table>
-  </c-card-body>
-</c-card>
+  <c-card class="mt-3">
+    <c-card-header class="fw-semibold">Low Stock Products</c-card-header>
+    <c-card-body class="p-0">
+      <table class="table table-striped align-middle mb-0">
+        <thead><tr><th>Product</th><th>SKU</th><th class="text-end">Stock</th><th class="text-end">Threshold</th><th>Status</th></tr></thead>
+        <tbody>
+          @for (p of r.lowStock; track p.id) {
+            <tr>
+              <td class="text-truncate" style="max-width:160px;">{{ p.name }}</td>
+              <td class="text-body-secondary">{{ p.sku }}</td>
+              <td class="text-end">{{ p.stock }}</td>
+              <td class="text-end">{{ p.lowStockThreshold }}</td>
+              <td><app-status-badge status="low-stock" /></td>
+            </tr>
+          } @empty {
+            <tr><td colspan="5"><app-empty-state title="No low stock products" message="Everything is well stocked." /></td></tr>
+          }
+        </tbody>
+      </table>
+    </c-card-body>
+  </c-card>
+}
 
 <style>
   .rpt-thumb { width: 32px; height: 32px; object-fit: cover; border-radius: 0.25rem; }

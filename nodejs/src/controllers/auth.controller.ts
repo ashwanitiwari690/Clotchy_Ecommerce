@@ -24,7 +24,7 @@ export const login = asyncHandler(async (req: Request, res: Response) => {
   res.json({
     success: true,
     data: {
-      user: { id: user.id, name: user.name, phone: user.phone, email: user.email, role: user.role },
+      user: { id: user.id, name: user.name, phone: user.phone, email: user.email, role: user.role, avatar: user.avatar },
       accessToken,
     },
   });

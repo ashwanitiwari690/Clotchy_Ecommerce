@@ -30,7 +30,7 @@
             </td>
             <td class="text-body-secondary text-truncate d-inline-block" style="max-width: 220px;">{{ col.description }}</td>
             <td class="text-end">{{ productCount(col.id) }}</td>
-            <td class="text-body-secondary small">{{ col.startDate }} – {{ col.endDate }}</td>
+            <td class="text-body-secondary small">{{ col.startDate | appDate:'date' }} – {{ col.endDate | appDate:'date' }}</td>
             <td><app-status-badge [status]="col.status" /></td>
             <td>
               @if (col.featured) {

@@ -24,9 +24,9 @@ import {
 
 import { IconDirective } from '@coreui/icons-angular';
 import { AuthService } from '../../../views/authentication/auth.service';
-import { TICKETS_MOCK } from '../../../core/mock-data/helpdesk.mock';
-import { ORDERS_MOCK } from '../../../core/mock-data/orders.mock';
-import { PRODUCTS_MOCK } from '../../../core/mock-data/products.mock';
+import { TicketService } from '../../../views/helpdesk/ticket.service';
+import { OrderService } from '../../../views/orders/order.service';
+import { ProductService } from '../../../views/products/product.service';
 
 export interface HeaderNotification {
   icon: string;
@@ -58,21 +58,30 @@ export class DefaultHeaderComponent extends HeaderComponent {
     return this.colorModes.find(mode => mode.name === currentMode)?.icon ?? 'cilSun';
   });
 
-  readonly notifications: HeaderNotification[] = [
-    ...TICKETS_MOCK.filter(t => t.status === 'open').slice(0, 2).map(t => ({
-      icon: 'cilHeadphones', color: 'danger', message: `New ticket: ${t.subject}`, time: t.createdAt, link: '/helpdesk',
-    })),
-    ...ORDERS_MOCK.filter(o => o.status === 'pending').slice(0, 2).map(o => ({
-      icon: 'cilCart', color: 'warning', message: `New order ${o.id} from ${o.customerName}`, time: o.date, link: '/orders',
-    })),
-    ...PRODUCTS_MOCK.filter(p => p.stock > 0 && p.stock <= p.lowStockThreshold).slice(0, 2).map(p => ({
-      icon: 'cilBasket', color: 'info', message: `Low stock: ${p.name} (${p.stock} left)`, time: 'Today', link: '/inventory',
-    })),
-  ];
+  private readonly ticketSvc = inject(TicketService);
+  private readonly orderSvc = inject(OrderService);
+  private readonly productSvc = inject(ProductService);
 
+  get notifications(): HeaderNotification[] {
+    return [
+      ...this.ticketSvc.all.filter(t => t.status === 'open').slice(0, 2).map(t => ({
+        icon: 'cilHeadphones', color: 'danger', message: `New ticket: ${t.subject}`, time: t.createdAt, link: '/helpdesk',
+      })),
+      ...this.orderSvc.all.filter(o => o.status === 'pending').slice(0, 2).map(o => ({
+        icon: 'cilCart', color: 'warning', message: `New order ${o.id} from ${o.customerName}`, time: o.date, link: '/orders',
+      })),
+      ...this.productSvc.all.filter(p => p.stock > 0 && p.stock <= p.lowStockThreshold).slice(0, 2).map(p => ({
+        icon: 'cilBasket', color: 'info', message: `Low stock: ${p.name} (${p.stock} left)`, time: 'Today', link: '/inventory',
+      })),
+    ];
+  }
 
-  constructor(private auth: AuthService,protected router: Router) {
+  constructor(protected auth: AuthService,protected router: Router) {
     super();
+  }
+
+  get currentUserInitial(): string {
+    return (this.auth.user()?.name || '?').trim().charAt(0).toUpperCase();
   }
 
   ngOnInit() {}

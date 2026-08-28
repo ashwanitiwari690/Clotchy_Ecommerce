@@ -29,7 +29,7 @@
             </td>
             <td>{{ c.email }}</td>
             <td>{{ c.phone }}</td>
-            <td class="text-body-secondary small">{{ c.registeredAt }}</td>
+            <td class="text-body-secondary small">{{ c.registeredAt | appDate }}</td>
             <td class="text-end">{{ c.totalOrders }}</td>
             <td class="text-end">{{ formatCurrency(c.totalSpent) }}</td>
             <td><app-status-badge [status]="c.status" /></td>
