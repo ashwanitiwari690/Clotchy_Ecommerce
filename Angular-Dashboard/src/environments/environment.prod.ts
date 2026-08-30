@@ -1,7 +1,7 @@
 export const environment = {
     production: true,
-    appurl: "https://faxdev.fastadvert.services/",
-    SERVER: "https://faxdev.fastadvert.services:4227/",
+    appurl: "https://clotchy-ecommerce-dashboard.vercel.app/",
+    SERVER: "https://clotchy-ecommerce-dashboard.vercel.app/",
     SERVERURL: "",
     RECORDRURL: "",
     // TODO: point this at the deployed Clotchcy backend once it has a production URL.

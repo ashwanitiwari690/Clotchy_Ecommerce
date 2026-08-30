@@ -4,9 +4,9 @@
 
 export const environment = {
     production: false,
-    appurl: "http://localhost:4200/",
+    appurl: "https://clotchy-ecommerce-dashboard.vercel.app/",
     //  SERVER: "https://faxdev.fastadvert.services:4227/",
-    SERVER: "http://localhost:4227/",
+    SERVER: "https://clotchy-ecommerce-dashboard.vercel.app/",
     SERVERURL: "",
     RECORDRURL: "",
     // Clotchcy ecommerce backend - same API the storefront Angular app calls.
