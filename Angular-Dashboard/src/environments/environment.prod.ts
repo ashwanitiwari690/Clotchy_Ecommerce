@@ -5,5 +5,5 @@ export const environment = {
     SERVERURL: "",
     RECORDRURL: "",
     // TODO: point this at the deployed Clotchcy backend once it has a production URL.
-    ECOMMERCE_API: "http://localhost:5000/api/v1/"
+    ECOMMERCE_API: "https://clotchyecommerce-production.up.railway.app/api/v1/"
 };

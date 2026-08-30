@@ -10,7 +10,7 @@ export const environment = {
     SERVERURL: "",
     RECORDRURL: "",
     // Clotchcy ecommerce backend - same API the storefront Angular app calls.
-    ECOMMERCE_API: "http://localhost:5000/api/v1/"
+    ECOMMERCE_API: "https://clotchyecommerce-production.up.railway.app/api/v1/"
 };
 
 /*
