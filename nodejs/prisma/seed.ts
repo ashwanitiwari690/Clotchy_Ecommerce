@@ -7,8 +7,11 @@ const prisma = new PrismaClient();
 // through the public API - registration always assigns role=USER) plus a
 // handful of demo catalog rows so the dashboard and storefront aren't empty
 // while wiring up each phase.
-const ADMIN_PHONE = "9999999999";
-const ADMIN_PASSWORD = "Admin@12345";
+const ADMIN_PHONE = "8447993958";
+const ADMIN_PASSWORD = "Password@1234";
+
+const DEMO_USER_PHONE = "8881115599";
+const DEMO_USER_PASSWORD = "123456789";
 
 async function seedAdmin() {
   const passwordHash = await bcrypt.hash(ADMIN_PASSWORD, 12);
@@ -24,6 +27,22 @@ async function seedAdmin() {
     },
   });
   console.log(`Admin ready -> phone: ${admin.phone}, password: ${ADMIN_PASSWORD}`);
+}
+
+async function seedDemoUser() {
+  const passwordHash = await bcrypt.hash(DEMO_USER_PASSWORD, 12);
+  const user = await prisma.user.upsert({
+    where: { phone: DEMO_USER_PHONE },
+    update: {},
+    create: {
+      name: "Demo User",
+      phone: DEMO_USER_PHONE,
+      email: "demo.user@clotchcy.test",
+      passwordHash,
+      role: "USER",
+    },
+  });
+  console.log(`Demo user ready -> phone: ${user.phone}, password: ${DEMO_USER_PASSWORD}`);
 }
 
 async function seedCatalog() {
@@ -252,6 +271,7 @@ async function seedHomeManagement() {
 
 async function main() {
   await seedAdmin();
+  await seedDemoUser();
   await seedCatalog();
   await seedHomeManagement();
 }
