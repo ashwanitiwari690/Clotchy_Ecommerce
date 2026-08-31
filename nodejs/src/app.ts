@@ -9,7 +9,7 @@ import { logger } from "./utils/logger";
 import { apiLimiter } from "./middlewares/rateLimit.middleware";
 import { notFoundHandler, errorHandler } from "./middlewares/error.middleware";
 import routes from "./routes";
-
+import cors from "cors";
 const app = express();
 
 app.disable("x-powered-by");
@@ -20,7 +20,7 @@ app.use(helmet());
 // reachable from any port/host during development, instead of erroring out
 // whenever a local dev server isn't running on one of a fixed set of ports.
 // Temporarily disabled for debugging the live-server login redirect issue.
-// app.use(cors({ origin: true, credentials: true }));
+app.use(cors({ origin: true, credentials: true }));
 app.use(compression());
 app.use(hpp());
 app.use(express.json({ limit: "10kb" }));
