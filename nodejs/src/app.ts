@@ -20,7 +20,8 @@ app.use(helmet());
 // Reflects whatever Origin the request sends (no allowlist) so the API is
 // reachable from any port/host during development, instead of erroring out
 // whenever a local dev server isn't running on one of a fixed set of ports.
-app.use(cors({ origin: true, credentials: true }));
+// Temporarily disabled for debugging the live-server login redirect issue.
+// app.use(cors({ origin: true, credentials: true }));
 app.use(compression());
 app.use(hpp());
 app.use(express.json({ limit: "10kb" }));
