@@ -1,7 +1,6 @@
 import path from "path";
 import express from "express";
 import helmet from "helmet";
-import cors from "cors";
 import cookieParser from "cookie-parser";
 import compression from "compression";
 import hpp from "hpp";
