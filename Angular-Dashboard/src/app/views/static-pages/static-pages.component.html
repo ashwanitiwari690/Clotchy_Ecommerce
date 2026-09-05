@@ -1,0 +1,76 @@
+<app-page-header title="Pages" [breadcrumb]="[{ label: 'Support' }, { label: 'Pages' }]">
+  <button class="btn btn-primary" [cModalToggle]="pageModal.id" (click)="openAdd()">
+    <svg cIcon name="cilPlus" class="me-1"></svg> Add Page
+  </button>
+</app-page-header>
+
+<div class="card">
+  <app-global-search (search)="onSearch($event)"></app-global-search>
+  <div class="card-body p-0">
+    <table class="table table-striped align-middle mb-0">
+      <thead>
+        <tr>
+          <th>Title</th>
+          <th>Slug</th>
+          <th>Status</th>
+          <th class="text-end">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (p of pages; track p.id) {
+          <tr>
+            <td class="fw-medium">{{ p.title }}</td>
+            <td><code>/{{ p.slug }}</code></td>
+            <td><app-status-badge [status]="p.status" /></td>
+            <td class="text-end">
+              <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-secondary" [cModalToggle]="pageModal.id" (click)="openEdit(p)">Edit</button>
+                <button class="btn btn-outline-secondary" (click)="toggleStatus(p)">
+                  {{ p.status === 'active' ? 'Disable' : 'Enable' }}
+                </button>
+                <button class="btn btn-outline-danger" (click)="remove(p)">Delete</button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr><td colspan="4"><app-empty-state title="No pages found" message="Try a different search or add a new page." /></td></tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<c-modal id="pageModal" #pageModal alignment="center" size="lg">
+  <c-modal-header>
+    <h5 cModalTitle>{{ editingId() ? 'Edit Page' : 'Add Page' }}</h5>
+    <button [cModalToggle]="pageModal.id" cButtonClose></button>
+  </c-modal-header>
+  <c-modal-body>
+    <form [formGroup]="form" class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Slug</label>
+        <input type="text" class="form-control" formControlName="slug" placeholder="e.g. shipping-policy" />
+        <small class="text-body-secondary">Used in the storefront URL. Cannot be changed after creation.</small>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Status</label>
+        <select class="form-control" formControlName="status">
+          <option value="active">Active</option>
+          <option value="inactive">Inactive</option>
+        </select>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Title</label>
+        <input type="text" class="form-control" formControlName="title" />
+      </div>
+      <div class="col-12">
+        <label class="form-label">Content</label>
+        <textarea class="form-control" rows="10" formControlName="content"></textarea>
+      </div>
+    </form>
+  </c-modal-body>
+  <c-modal-footer>
+    <button [cModalToggle]="pageModal.id" cButton color="secondary">Cancel</button>
+    <button cButton color="primary" [cModalToggle]="pageModal.id" (click)="save()">Save Page</button>
+  </c-modal-footer>
+</c-modal>

@@ -482,6 +482,18 @@ model Faq {
   @@map("faqs")
 }
 
+model StaticPage {
+  id        String   @id @default(uuid())
+  slug      String   @unique
+  title     String
+  content   String
+  status    String   @default("active")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("static_pages")
+}
+
 model ContactMessage {
   id        String   @id @default(uuid())
   name      String

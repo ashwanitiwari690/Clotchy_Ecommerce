@@ -1,0 +1,25 @@
+<section class="page-head">
+  <div class="container"><span>HOME / FAQs</span><h1>FREQUENTLY ASKED QUESTIONS</h1><p>Everything you need to know before you shop.</p></div>
+</section>
+
+<section class="container faq-body">
+  @if (loading()) {
+    <p class="muted">Loading…</p>
+  } @else if (faqs().length === 0) {
+    <p class="muted">No FAQs available right now. Please check back soon.</p>
+  } @else {
+    <div class="faq-list">
+      @for (f of faqs(); track f.id) {
+        <div class="faq-item" [class.open]="openId() === f.id">
+          <button class="faq-question" (click)="toggle(f.id)">
+            <span>{{ f.question }}</span>
+            <span class="chevron">{{ openId() === f.id ? '−' : '+' }}</span>
+          </button>
+          @if (openId() === f.id) {
+            <div class="faq-answer">{{ f.answer }}</div>
+          }
+        </div>
+      }
+    </div>
+  }
+</section>

@@ -86,7 +86,8 @@ export const navItemsEcommerce: INavData[] = [
     children: [
       // { name: 'Support Tickets', url: '/helpdesk', icon: 'nav-icon-bullet' },
       { name: 'Contact Messages', url: '/contact-messages', icon: 'nav-icon-bullet' },
-      // { name: 'FAQ', url: '/faq', icon: 'nav-icon-bullet' },
+      { name: 'FAQ', url: '/faq', icon: 'nav-icon-bullet' },
+      { name: 'Help & Policy Pages', url: '/static-pages', icon: 'nav-icon-bullet' },
       // { name: 'Support Categories', url: '/helpdesk/categories', icon: 'nav-icon-bullet' },
     ],
   },
