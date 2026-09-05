@@ -1,5 +1,5 @@
 <app-page-header title="Categories" [breadcrumb]="[{ label: 'Catalog' }, { label: 'Categories' }]">
-  <button class="btn btn-primary" [cModalToggle]="catModal.id" (click)="openAdd()">
+  <button class="btn btn-primary" (click)="openAdd()">
     <svg cIcon name="cilPlus" class="me-1"></svg> Add Category
   </button>
 </app-page-header>
@@ -44,7 +44,7 @@
             </td>
             <td class="text-end">
               <div class="btn-group btn-group-sm">
-                <button class="btn btn-outline-secondary" [cModalToggle]="catModal.id" (click)="openEdit(cat)">Edit</button>
+                <button class="btn btn-outline-secondary" (click)="openEdit(cat)">Edit</button>
                 <button class="btn btn-outline-secondary" (click)="toggleStatus(cat)">
                   {{ cat.status === 'active' ? 'Disable' : 'Enable' }}
                 </button>
@@ -60,20 +60,50 @@
   </div>
 </div>
 
-<c-modal id="categoryModal" #catModal alignment="center" size="lg">
+<c-modal id="categoryModal" #catModal alignment="center" size="lg" [visible]="modalVisible()" (visibleChange)="modalVisible.set($event)">
   <c-modal-header>
     <h5 cModalTitle>{{ editingId() ? 'Edit Category' : 'Add Category' }}</h5>
     <button [cModalToggle]="catModal.id" cButtonClose></button>
   </c-modal-header>
   <c-modal-body>
     <form [formGroup]="form" class="row g-3">
+      <div class="col-12">
+        <label class="form-label">Category Image</label>
+        <app-image-uploader [multiple]="false" [images]="categoryImage()" (imagesChange)="categoryImage.set($event)" />
+      </div>
       <div class="col-md-6">
         <label class="form-label">Category Name</label>
-        <input type="text" class="form-control" formControlName="name" />
+        <input
+          type="text"
+          class="form-control"
+          formControlName="name"
+          [class.is-invalid]="form.controls.name.invalid && form.controls.name.touched"
+        />
+        @if (form.controls.name.invalid && form.controls.name.touched) {
+          <span class="text-danger">
+            @if (form.controls.name.errors?.['required']) {
+              Category name is required
+            }
+          </span>
+        }
       </div>
       <div class="col-md-6">
         <label class="form-label">Slug</label>
-        <input type="text" class="form-control" formControlName="slug" />
+        <input
+          type="text"
+          class="form-control"
+          formControlName="slug"
+          [class.is-invalid]="form.controls.slug.invalid && form.controls.slug.touched"
+        />
+        @if (form.controls.slug.invalid && form.controls.slug.touched) {
+          <span class="text-danger">
+            @if (form.controls.slug.errors?.['required']) {
+              Slug is required
+            } @else if (form.controls.slug.errors?.['pattern']) {
+              Slug must be lowercase letters, numbers, and hyphens only
+            }
+          </span>
+        }
       </div>
       <div class="col-md-6">
         <label class="form-label">Parent Category</label>
@@ -99,7 +129,7 @@
   </c-modal-body>
   <c-modal-footer>
     <button [cModalToggle]="catModal.id" cButton color="secondary">Cancel</button>
-    <button cButton color="primary" [cModalToggle]="catModal.id" (click)="save()">Save Category</button>
+    <button cButton color="primary" (click)="save()">Save Category</button>
   </c-modal-footer>
 </c-modal>
 

@@ -1,4 +1,5 @@
 import { Component, inject, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { IconDirective } from '@coreui/icons-angular';
 import { SharedUIModule } from '../../shared/shared-ui.module';
@@ -24,10 +25,11 @@ export class CollectionsComponent {
   search = '';
   editingId = signal<string | null>(null);
   imageItems = signal<UploadedImage[]>([]);
+  modalVisible = signal(false);
 
   form = this.fb.nonNullable.group({
     name: ['', Validators.required],
-    slug: ['', Validators.required],
+    slug: ['', [Validators.required, Validators.pattern(/^[a-z0-9-]+$/)]],
     description: [''],
     startDate: ['', Validators.required],
     endDate: ['', Validators.required],
@@ -53,6 +55,7 @@ export class CollectionsComponent {
     this.editingId.set(null);
     this.imageItems.set([]);
     this.form.reset({ name: '', slug: '', description: '', startDate: '', endDate: '', status: 'active', featured: false });
+    this.modalVisible.set(true);
   }
 
   openEdit(col: Collection): void {
@@ -67,20 +70,35 @@ export class CollectionsComponent {
       status: col.status,
       featured: col.featured,
     });
+    this.modalVisible.set(true);
   }
 
   save(): void {
     if (this.form.invalid) {
       this.form.markAllAsTouched();
+      this.toast.error('Please fill in all required fields.');
       return;
     }
     const raw = this.form.getRawValue();
     const image = this.imageItems()[0]?.url ?? placeholderImage(raw.slug || 'collection', 800, 600);
     const id = this.editingId();
+    const onError = (err: HttpErrorResponse) => this.toast.error(err.error?.message ?? 'Failed to save collection.');
     if (id) {
-      this.svc.update(id, { ...raw, image }).subscribe(() => this.toast.success('Collection updated.'));
+      this.svc.update(id, { ...raw, image }).subscribe({
+        next: () => {
+          this.toast.success('Collection updated.');
+          this.modalVisible.set(false);
+        },
+        error: onError,
+      });
     } else {
-      this.svc.create({ ...raw, image }).subscribe(() => this.toast.success('Collection created.'));
+      this.svc.create({ ...raw, image }).subscribe({
+        next: () => {
+          this.toast.success('Collection created.');
+          this.modalVisible.set(false);
+        },
+        error: onError,
+      });
     }
   }
 

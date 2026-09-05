@@ -1,5 +1,5 @@
 <app-page-header title="Collections" [breadcrumb]="[{ label: 'Catalog' }, { label: 'Collections' }]">
-  <button class="btn btn-primary" [cModalToggle]="colModal.id" (click)="openAdd()">
+  <button class="btn btn-primary" (click)="openAdd()">
     <svg cIcon name="cilPlus" class="me-1"></svg> Add Collection
   </button>
 </app-page-header>
@@ -28,7 +28,9 @@
                 <span class="fw-medium">{{ col.name }}</span>
               </div>
             </td>
-            <td class="text-body-secondary text-truncate d-inline-block" style="max-width: 220px;">{{ col.description }}</td>
+            <td class="text-body-secondary">
+              <div class="text-truncate" style="max-width: 220px;">{{ col.description }}</div>
+            </td>
             <td class="text-end">{{ productCount(col.id) }}</td>
             <td class="text-body-secondary small">{{ col.startDate | appDate:'date' }} – {{ col.endDate | appDate:'date' }}</td>
             <td><app-status-badge [status]="col.status" /></td>
@@ -41,7 +43,7 @@
             </td>
             <td class="text-end">
               <div class="btn-group btn-group-sm">
-                <button class="btn btn-outline-secondary" [cModalToggle]="colModal.id" (click)="openEdit(col)">Edit</button>
+                <button class="btn btn-outline-secondary" (click)="openEdit(col)">Edit</button>
                 <button class="btn btn-outline-secondary" (click)="toggleStatus(col)">
                   {{ col.status === 'active' ? 'Disable' : 'Enable' }}
                 </button>
@@ -57,7 +59,7 @@
   </div>
 </div>
 
-<c-modal id="collectionModal" #colModal alignment="center" size="lg">
+<c-modal id="collectionModal" #colModal alignment="center" size="lg" [visible]="modalVisible()" (visibleChange)="modalVisible.set($event)">
   <c-modal-header>
     <h5 cModalTitle>{{ editingId() ? 'Edit Collection' : 'Add Collection' }}</h5>
     <button [cModalToggle]="colModal.id" cButtonClose></button>
@@ -66,11 +68,37 @@
     <form [formGroup]="form" class="row g-3">
       <div class="col-md-6">
         <label class="form-label">Collection Name</label>
-        <input type="text" class="form-control" formControlName="name" />
+        <input
+          type="text"
+          class="form-control"
+          formControlName="name"
+          [class.is-invalid]="form.controls.name.invalid && form.controls.name.touched"
+        />
+        @if (form.controls.name.invalid && form.controls.name.touched) {
+          <span class="text-danger">
+            @if (form.controls.name.errors?.['required']) {
+              Collection name is required
+            }
+          </span>
+        }
       </div>
       <div class="col-md-6">
         <label class="form-label">Slug</label>
-        <input type="text" class="form-control" formControlName="slug" />
+        <input
+          type="text"
+          class="form-control"
+          formControlName="slug"
+          [class.is-invalid]="form.controls.slug.invalid && form.controls.slug.touched"
+        />
+        @if (form.controls.slug.invalid && form.controls.slug.touched) {
+          <span class="text-danger">
+            @if (form.controls.slug.errors?.['required']) {
+              Slug is required
+            } @else if (form.controls.slug.errors?.['pattern']) {
+              Slug must be lowercase letters, numbers, and hyphens only
+            }
+          </span>
+        }
       </div>
       <div class="col-12">
         <label class="form-label">Description</label>
@@ -78,11 +106,27 @@
       </div>
       <div class="col-md-6">
         <label class="form-label">Start Date</label>
-        <input type="date" class="form-control" formControlName="startDate" />
+        <input
+          type="date"
+          class="form-control"
+          formControlName="startDate"
+          [class.is-invalid]="form.controls.startDate.invalid && form.controls.startDate.touched"
+        />
+        @if (form.controls.startDate.invalid && form.controls.startDate.touched) {
+          <span class="text-danger">Start date is required</span>
+        }
       </div>
       <div class="col-md-6">
         <label class="form-label">End Date</label>
-        <input type="date" class="form-control" formControlName="endDate" />
+        <input
+          type="date"
+          class="form-control"
+          formControlName="endDate"
+          [class.is-invalid]="form.controls.endDate.invalid && form.controls.endDate.touched"
+        />
+        @if (form.controls.endDate.invalid && form.controls.endDate.touched) {
+          <span class="text-danger">End date is required</span>
+        }
       </div>
       <div class="col-md-6">
         <label class="form-label">Status</label>
@@ -105,7 +149,7 @@
   </c-modal-body>
   <c-modal-footer>
     <button [cModalToggle]="colModal.id" cButton color="secondary">Cancel</button>
-    <button cButton color="primary" [cModalToggle]="colModal.id" (click)="save()">Save Collection</button>
+    <button cButton color="primary" (click)="save()">Save Collection</button>
   </c-modal-footer>
 </c-modal>
 

@@ -39,6 +39,9 @@
             <td><app-status-badge [status]="row.status" /></td>
             <td class="text-end">
               <div class="btn-group btn-group-sm">
+                <button class="btn btn-outline-secondary" [routerLink]="['/products/edit', row.productId]">
+                  <svg cIcon name="cilImage" size="sm"></svg> Edit
+                </button>
                 <button class="btn btn-outline-secondary" [cModalToggle]="adjModal.id" (click)="openAdjust(row)">
                   <svg cIcon name="cilPen" size="sm"></svg> Adjust
                 </button>

@@ -41,10 +41,14 @@
 
 <c-row class="g-3 mt-1">
   <c-col xs="12" md="6">
-    <app-chart-card title="Orders Overview" subtitle="Orders by current status" [chart]="orderStatusChart" [height]="260" />
+    @if (orderStatusChart) {
+      <app-chart-card title="Orders Overview" subtitle="Orders by current status" [chart]="orderStatusChart" [height]="260" />
+    }
   </c-col>
   <c-col xs="12" md="6">
-    <app-chart-card title="Revenue Overview" subtitle="Revenue by category" [chart]="revenueByCategoryChart" [height]="260" />
+    @if (revenueByCategoryChart) {
+      <app-chart-card title="Revenue Overview" subtitle="Revenue by category" [chart]="revenueByCategoryChart" [height]="260" />
+    }
   </c-col>
 </c-row>
 

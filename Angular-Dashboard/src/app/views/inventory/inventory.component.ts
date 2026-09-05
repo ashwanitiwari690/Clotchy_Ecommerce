@@ -1,5 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { IconDirective } from '@coreui/icons-angular';
 import { SharedUIModule } from '../../shared/shared-ui.module';
 import { InventoryService, InventoryRow } from './inventory.service';
@@ -13,7 +14,7 @@ interface DisplayRow extends InventoryRow {
 @Component({
   selector: 'app-inventory',
   standalone: true,
-  imports: [SharedUIModule, FormsModule, IconDirective],
+  imports: [SharedUIModule, FormsModule, RouterLink, IconDirective],
   templateUrl: './inventory.component.html',
 })
 export class InventoryComponent {
