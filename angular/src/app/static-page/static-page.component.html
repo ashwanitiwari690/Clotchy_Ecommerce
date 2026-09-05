@@ -1,0 +1,16 @@
+<section class="page-head">
+  <div class="container"><span>HOME / {{ label }}</span><h1>{{ page()?.title ?? label }}</h1></div>
+</section>
+
+<section class="container page-body">
+  @if (loading()) {
+    <p class="muted">Loading…</p>
+  } @else if (notFound() || !page()) {
+    <div class="empty-state">
+      <p>This page hasn't been published yet. Please check back soon.</p>
+      <a routerLink="/contact" class="primary-btn">CONTACT US</a>
+    </div>
+  } @else {
+    <div class="content">{{ page()!.content }}</div>
+  }
+</section>

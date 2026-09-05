@@ -117,6 +117,10 @@ export const routes: Routes = [
         loadChildren: () => import('./views/faq/routes').then((m) => m.routes)
       },
       {
+        path: 'static-pages',
+        loadChildren: () => import('./views/static-pages/routes').then((m) => m.routes)
+      },
+      {
         path: 'reports/sales',
         loadChildren: () => import('./views/reports/sales/routes').then((m) => m.routes)
       },
