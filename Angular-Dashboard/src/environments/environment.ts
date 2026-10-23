@@ -4,13 +4,13 @@
 
 export const environment = {
     production: false,
-    appurl: "https://clotchy-ecommerce-dashboard.vercel.app/",
+    appurl: "https://cotloom-ecommerce-dashboard.vercel.app/",
     //  SERVER: "https://faxdev.fastadvert.services:4227/",
-    SERVER: "https://clotchy-ecommerce-dashboard.vercel.app/",
+    SERVER: "https://cotloom-ecommerce-dashboard.vercel.app/",
     SERVERURL: "",
     RECORDRURL: "",
-    // Clotchcy ecommerce backend - same API the storefront Angular app calls.
-    ECOMMERCE_API: "https://clotchyecommerce-production.up.railway.app/api/v1/"
+    // Cotloom ecommerce backend - same API the storefront Angular app calls.
+    ECOMMERCE_API: "https://cotloomecommerce-production.up.railway.app/api/v1/"
 };
 
 /*

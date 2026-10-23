@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 // through the public API - registration always assigns role=USER) plus a
 // handful of demo catalog rows so the dashboard and storefront aren't empty
 // while wiring up each phase.
-const ADMIN_PHONE = "admin@clotchcy.in";
+const ADMIN_PHONE = "admin@cotloom.in";
 const ADMIN_PASSWORD = "Admin@!1234";
 
 const DEMO_USER_PHONE = "8881115599";
@@ -20,9 +20,9 @@ async function seedAdmin() {
     where: { phone: ADMIN_PHONE },
     update: { role: "ADMIN" },
     create: {
-      name: "Clotchcy Admin",
+      name: "Cotloom Admin",
       phone: ADMIN_PHONE,
-      email: "admin@clotchcy.in",
+      email: "admin@cotloom.in",
       passwordHash,
       role: "ADMIN",
     },
@@ -38,7 +38,7 @@ async function seedDemoUser() {
     create: {
       name: "Demo User",
       phone: DEMO_USER_PHONE,
-      email: "demo.user@clotchcy.test",
+      email: "demo.user@cotloom.test",
       passwordHash,
       role: "USER",
     },

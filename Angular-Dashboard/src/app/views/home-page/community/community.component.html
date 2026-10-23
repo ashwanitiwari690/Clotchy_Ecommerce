@@ -1,4 +1,4 @@
-<app-page-header title="Clotchy Community" [breadcrumb]="[{ label: 'Home Page Management', url: '/home-page' }, { label: 'Community' }]">
+<app-page-header title="Cotloom Community" [breadcrumb]="[{ label: 'Home Page Management', url: '/home-page' }, { label: 'Community' }]">
   <button class="btn btn-primary" [cModalToggle]="commModal.id" (click)="openAdd()">
     <svg cIcon name="cilPlus" class="me-1"></svg> Add Image
   </button>
@@ -28,7 +28,7 @@
       </div>
     </div>
   } @empty {
-    <div class="col-12"><app-empty-state title="No community images" message="Add images to showcase the Clotchy community." /></div>
+    <div class="col-12"><app-empty-state title="No community images" message="Add images to showcase the Cotloom community." /></div>
   }
 </div>
 

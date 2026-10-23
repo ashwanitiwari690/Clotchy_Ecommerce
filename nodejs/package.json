@@ -1,5 +1,5 @@
 {
-  "name": "clotchcy-ecommerce-api",
+  "name": "cotloom-ecommerce-api",
   "version": "1.0.0",
   "description": "Ecommerce backend API (TypeScript, Express, Prisma, JWT auth)",
   "main": "dist/server.js",

@@ -1,7 +1,7 @@
 {
-  "name": "clotchcy-ecommerce",
+  "name": "cotloom-ecommerce",
   "version": "1.0.0",
-  "description": "Responsive fashion e-commerce website inspired by the supplied Clotchcy design.",
+  "description": "Responsive fashion e-commerce website inspired by the supplied Cotloom design.",
   "private": true,
   "scripts": {
     "start": "ng serve",

@@ -20,7 +20,7 @@ import { ConfirmDialogComponent } from './shared/components/confirm-dialog/confi
   imports: [RouterOutlet, ToastComponent, ConfirmDialogComponent]
 })
 export class AppComponent implements OnInit {
-  title = 'Clotchcy Admin';
+  title = 'Cotloom Admin';
 
   readonly #destroyRef: DestroyRef = inject(DestroyRef);
   readonly #activatedRoute: ActivatedRoute = inject(ActivatedRoute);
@@ -33,7 +33,7 @@ export class AppComponent implements OnInit {
   constructor() {
     this.#titleService.setTitle(this.title);
     this.#iconSetService.icons = { ...iconSubset };
-    this.#colorModeService.localStorageItemName.set('clotchcy-admin');
+    this.#colorModeService.localStorageItemName.set('cotloom-admin');
     this.#colorModeService.eventName.set('ColorSchemeChange');
   }
 

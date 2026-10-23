@@ -30,7 +30,7 @@ export const sendOtpSms = async (phone: string, otp: string): Promise<void> => {
     },
     body: JSON.stringify({
       route: "q",
-      message: `Your Clotchcy verification code is ${otp}. Valid for ${env.OTP_EXPIRY_MINUTES} minutes. Do not share this code.`,
+      message: `Your Cotloom verification code is ${otp}. Valid for ${env.OTP_EXPIRY_MINUTES} minutes. Do not share this code.`,
       language: "english",
       flash: 0,
       numbers: phone,

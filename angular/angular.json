@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "clotchcy-ecommerce": {
+    "cotloom-ecommerce": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -18,7 +18,7 @@
         "build": {
           "builder": "@angular/build:application",
           "options": {
-            "outputPath": "dist/clotchcy-ecommerce",
+            "outputPath": "dist/cotloom-ecommerce",
             "index": "src/index.html",
             "browser": "src/main.ts",
             "polyfills": ["zone.js"],
@@ -59,10 +59,10 @@
           "builder": "@angular/build:dev-server",
           "configurations": {
             "production": {
-              "buildTarget": "clotchcy-ecommerce:build:production"
+              "buildTarget": "cotloom-ecommerce:build:production"
             },
             "development": {
-              "buildTarget": "clotchcy-ecommerce:build:development"
+              "buildTarget": "cotloom-ecommerce:build:development"
             }
           },
           "defaultConfiguration": "development"

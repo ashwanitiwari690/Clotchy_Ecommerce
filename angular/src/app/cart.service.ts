@@ -26,7 +26,7 @@ interface CouponValidation {
 @Injectable({ providedIn: 'root' })
 export class CartService {
   private readonly http = inject(HttpClient);
-  private readonly storageKey = 'clotchcy-cart';
+  private readonly storageKey = 'cotloom-cart';
   readonly items = signal<CartItem[]>(this.read());
 
   readonly count = computed(() => this.items().reduce((sum, item) => sum + item.quantity, 0));

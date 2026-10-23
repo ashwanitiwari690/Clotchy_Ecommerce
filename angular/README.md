@@ -1,4 +1,4 @@
-# Clotchcy E-commerce — Angular 22
+# Cotloom E-commerce — Angular 22
 
 Responsive e-commerce UI converted from the supplied reference image, with a cleaner modern implementation.
 

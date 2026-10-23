@@ -28,7 +28,7 @@ interface MeResponse {
   data: AdminUser;
 }
 
-// Talks to the same Node/Express backend the Clotchcy storefront uses
+// Talks to the same Node/Express backend the Cotloom storefront uses
 // (POST /auth/login, GET /auth/me, POST /auth/logout). The storefront relies
 // on the httpOnly session cookie, but this dashboard is deployed on a
 // different domain than the API, so the cookie is a third-party cookie that
@@ -40,7 +40,7 @@ interface MeResponse {
 // role=ADMIN: every login and every session check is verified against that
 // role, and a non-admin account has its token cleared immediately rather
 // than being left valid.
-const TOKEN_STORAGE_KEY = 'clotchcy_admin_token';
+const TOKEN_STORAGE_KEY = 'cotloom_admin_token';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {

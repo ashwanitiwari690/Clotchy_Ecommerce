@@ -44,7 +44,7 @@ export class HomePageComponent {
       { title: 'Best Sellers', description: 'Products shown in the Best Sellers section.', icon: 'cilStar', link: '/home-page/best-sellers', count: this.bestSellers.all.length, activeCount: this.bestSellers.all.filter((b) => b.status === 'active').length },
       { title: 'Promotional Sections', description: 'Homepage promotional banners.', icon: 'cilGift', link: '/home-page/promotions', count: this.promotions.all.length, activeCount: this.promotions.all.filter((p) => p.status === 'active').length },
       { title: 'Testimonials', description: 'Customer testimonials and reviews.', icon: 'cilCommentSquare', link: '/home-page/testimonials', count: this.testimonials.all.length, activeCount: this.testimonials.all.filter((t) => t.status === 'approved').length },
-      { title: 'Community Section', description: 'Clotchy community gallery images.', icon: 'cilGrid', link: '/home-page/community', count: this.community.all.length, activeCount: this.community.all.filter((c) => c.status === 'active').length },
+      { title: 'Community Section', description: 'Cotloom community gallery images.', icon: 'cilGrid', link: '/home-page/community', count: this.community.all.length, activeCount: this.community.all.filter((c) => c.status === 'active').length },
       { title: 'Newsletter Section', description: 'Newsletter / Join Community CTA.', icon: 'cilEnvelopeClosed', link: '/home-page/newsletter', count: 1, activeCount: this.newsletter.value.status === 'active' ? 1 : 0 },
     ];
   }

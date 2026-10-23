@@ -27,7 +27,7 @@ export class CommunityComponent {
   form = this.fb.nonNullable.group({
     title: ['', Validators.required],
     description: [''],
-    socialUrl: ['https://instagram.com/clotchy'],
+    socialUrl: ['https://instagram.com/cotloom'],
     status: ['active' as CommunityImage['status']],
   });
 
@@ -38,7 +38,7 @@ export class CommunityComponent {
   openAdd(): void {
     this.editingId.set(null);
     this.images.set([]);
-    this.form.reset({ title: '', description: '', socialUrl: 'https://instagram.com/clotchy', status: 'active' });
+    this.form.reset({ title: '', description: '', socialUrl: 'https://instagram.com/cotloom', status: 'active' });
   }
 
   openEdit(img: CommunityImage): void {

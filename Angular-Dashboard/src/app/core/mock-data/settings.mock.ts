@@ -3,10 +3,10 @@ import { placeholderImage } from '../models/common.model';
 
 export const STORE_SETTINGS_MOCK: StoreSettings = {
   general: {
-    storeName: 'Clotchy',
-    logo: placeholderImage('clotchy-logo', 200, 80),
-    favicon: placeholderImage('clotchy-favicon', 64, 64),
-    email: 'support@clotchy.com',
+    storeName: 'Cotloom',
+    logo: placeholderImage('cotloom-logo', 200, 80),
+    favicon: placeholderImage('cotloom-favicon', 64, 64),
+    email: 'support@cotloom.com',
     phone: '+91 1800 123 4567',
     address: '4th Floor, Fashion House, Bandra Kurla Complex, Mumbai, Maharashtra 400051',
   },
@@ -33,14 +33,14 @@ export const STORE_SETTINGS_MOCK: StoreSettings = {
     customerNotifications: true,
   },
   social: {
-    instagram: 'https://instagram.com/clotchy',
-    facebook: 'https://facebook.com/clotchy',
-    youtube: 'https://youtube.com/@clotchy',
-    twitter: 'https://x.com/clotchy',
+    instagram: 'https://instagram.com/cotloom',
+    facebook: 'https://facebook.com/cotloom',
+    youtube: 'https://youtube.com/@cotloom',
+    twitter: 'https://x.com/cotloom',
   },
   adminProfile: {
     name: 'Admin User',
-    email: 'admin@clotchy.com',
+    email: 'admin@cotloom.com',
     phone: '+91 98765 00000',
     avatar: placeholderImage('admin-profile', 150, 150),
   },

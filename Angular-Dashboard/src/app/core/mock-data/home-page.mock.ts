@@ -58,7 +58,7 @@ export const HOME_PROMOTIONS_MOCK: HomePromotion[] = [
 ];
 
 export const TESTIMONIALS_MOCK: Testimonial[] = [
-  { id: 'test-001', customerName: 'Ananya Sharma', customerImage: placeholderImage('cust-001', 150, 150), rating: 5, review: 'Clotchy completely changed how I think about everyday fashion. The fit and fabric quality is unmatched.', date: '2026-07-30', status: 'approved', displayOrder: 1 },
+  { id: 'test-001', customerName: 'Ananya Sharma', customerImage: placeholderImage('cust-001', 150, 150), rating: 5, review: 'Cotloom completely changed how I think about everyday fashion. The fit and fabric quality is unmatched.', date: '2026-07-30', status: 'approved', displayOrder: 1 },
   { id: 'test-002', customerName: 'Karan Malhotra', customerImage: placeholderImage('cust-010', 150, 150), rating: 5, review: 'Fast delivery, premium packaging, and the hoodie is honestly the best I own.', date: '2026-07-22', status: 'approved', displayOrder: 2 },
   { id: 'test-003', customerName: 'Priya Nair', customerImage: placeholderImage('cust-003', 150, 150), rating: 4, review: 'Love the streetwear drops — always something fresh worth adding to cart.', date: '2026-07-10', status: 'approved', displayOrder: 3 },
   { id: 'test-004', customerName: 'Rohan Mehta', customerImage: placeholderImage('cust-002', 150, 150), rating: 5, review: 'The denim quality rivals brands twice the price. Customer for life.', date: '2026-06-28', status: 'pending', displayOrder: 4 },
@@ -66,16 +66,16 @@ export const TESTIMONIALS_MOCK: Testimonial[] = [
 ];
 
 export const COMMUNITY_IMAGES_MOCK: CommunityImage[] = [
-  { id: 'comm-001', image: placeholderImage('community-1', 500, 500), title: 'Streetwear season', description: 'Tagged by @rohanwears', socialUrl: 'https://instagram.com/clotchy', displayOrder: 1, status: 'active' },
-  { id: 'comm-002', image: placeholderImage('community-2', 500, 500), title: 'City nights', description: 'Tagged by @kavya.style', socialUrl: 'https://instagram.com/clotchy', displayOrder: 2, status: 'active' },
-  { id: 'comm-003', image: placeholderImage('community-3', 500, 500), title: 'Denim on denim', description: 'Tagged by @karan.m', socialUrl: 'https://instagram.com/clotchy', displayOrder: 3, status: 'active' },
-  { id: 'comm-004', image: placeholderImage('community-4', 500, 500), title: 'Weekend fits', description: 'Tagged by @priya.n', socialUrl: 'https://instagram.com/clotchy', displayOrder: 4, status: 'active' },
-  { id: 'comm-005', image: placeholderImage('community-5', 500, 500), title: 'Layer game strong', description: 'Tagged by @ishita.v', socialUrl: 'https://instagram.com/clotchy', displayOrder: 5, status: 'active' },
-  { id: 'comm-006', image: placeholderImage('community-6', 500, 500), title: 'Minimal mood', description: 'Tagged by @arjun.k', socialUrl: 'https://instagram.com/clotchy', displayOrder: 6, status: 'inactive' },
+  { id: 'comm-001', image: placeholderImage('community-1', 500, 500), title: 'Streetwear season', description: 'Tagged by @rohanwears', socialUrl: 'https://instagram.com/cotloom', displayOrder: 1, status: 'active' },
+  { id: 'comm-002', image: placeholderImage('community-2', 500, 500), title: 'City nights', description: 'Tagged by @kavya.style', socialUrl: 'https://instagram.com/cotloom', displayOrder: 2, status: 'active' },
+  { id: 'comm-003', image: placeholderImage('community-3', 500, 500), title: 'Denim on denim', description: 'Tagged by @karan.m', socialUrl: 'https://instagram.com/cotloom', displayOrder: 3, status: 'active' },
+  { id: 'comm-004', image: placeholderImage('community-4', 500, 500), title: 'Weekend fits', description: 'Tagged by @priya.n', socialUrl: 'https://instagram.com/cotloom', displayOrder: 4, status: 'active' },
+  { id: 'comm-005', image: placeholderImage('community-5', 500, 500), title: 'Layer game strong', description: 'Tagged by @ishita.v', socialUrl: 'https://instagram.com/cotloom', displayOrder: 5, status: 'active' },
+  { id: 'comm-006', image: placeholderImage('community-6', 500, 500), title: 'Minimal mood', description: 'Tagged by @arjun.k', socialUrl: 'https://instagram.com/cotloom', displayOrder: 6, status: 'inactive' },
 ];
 
 export const NEWSLETTER_CONFIG_MOCK: NewsletterConfig = {
-  title: 'Join the Clotchy family!',
+  title: 'Join the Cotloom family!',
   description: 'Sign up for early access to new drops, exclusive discounts and style edits.',
   backgroundImage: placeholderImage('newsletter-bg', 1600, 600),
   buttonText: 'Subscribe',

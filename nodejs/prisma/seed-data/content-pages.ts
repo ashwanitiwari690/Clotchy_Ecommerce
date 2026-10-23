@@ -8,7 +8,7 @@ export async function seedStaticPages(prisma: PrismaClient) {
       slug: "help",
       title: "Help Center",
       content:
-        "Need a hand? Browse our FAQs, send us a message from the Contact Us page, or email support@clothcy.com and our team will get back to you within 24 hours.",
+        "Need a hand? Browse our FAQs, send us a message from the Contact Us page, or email support@cotloom.com and our team will get back to you within 24 hours.",
     },
     {
       slug: "shipping-policy",

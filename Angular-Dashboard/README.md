@@ -1,6 +1,6 @@
-# Clotchcy Admin Panel
+# Cotloom Admin Panel
 
-Admin dashboard for the Clotchcy ecommerce platform, built on Angular 22 and the [CoreUI](https://coreui.io/angular/) component library.
+Admin dashboard for the Cotloom ecommerce platform, built on Angular 22 and the [CoreUI](https://coreui.io/angular/) component library.
 
 ## Prerequisites
 
@@ -21,7 +21,7 @@ npm start
 
 Navigate to [http://localhost:4200](http://localhost:4200). The app reloads automatically on source changes.
 
-To run alongside the main Clotchcy storefront (which also defaults to port 4200), use a different port:
+To run alongside the main Cotloom storefront (which also defaults to port 4200), use a different port:
 
 ```bash
 npx ng serve --port 4300
@@ -33,7 +33,7 @@ npx ng serve --port 4300
 npm run build
 ```
 
-Build artifacts are written to `dist/clotchcy-admin/`.
+Build artifacts are written to `dist/cotloom-admin/`.
 
 ## Tests
 
