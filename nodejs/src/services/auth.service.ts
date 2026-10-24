@@ -17,7 +17,8 @@ export const registerUser = async (name: string, phone: string, password: string
       throw ApiError.conflict("An account with this mobile number already exists");
     }
 
-    await consumeVerifiedOtp(tx, phone);
+    // OTP verification temporarily bypassed for registration
+    // await consumeVerifiedOtp(tx, phone);
 
     return tx.user.create({
       data: { name, phone, passwordHash },

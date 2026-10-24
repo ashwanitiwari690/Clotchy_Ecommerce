@@ -133,10 +133,6 @@ export class RegisterComponent implements OnDestroy {
       this.error.set('Enter a valid 10-digit mobile number');
       return;
     }
-    if (this.otpState() !== 'verified') {
-      this.error.set('Please verify your mobile number with OTP before registering');
-      return;
-    }
     if (!/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/.test(this.password())) {
       this.error.set('Password must be at least 8 characters and include an uppercase letter, a lowercase letter, and a number');
       return;
