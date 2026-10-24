@@ -4,13 +4,13 @@
 
 export const environment = {
     production: false,
-    appurl: "http://localhost:5000/api/v1/",
+    appurl: "https://api.cotloom.com/api/v1/",
     //  SERVER: "https://faxdev.fastadvert.services:4227/",
-    SERVER: "http://localhost:5000/api/v1/",
+    SERVER: "https://api.cotloom.com/api/v1/",
     SERVERURL: "",
     RECORDRURL: "",
     // Cotloom ecommerce backend - same API the storefront Angular app calls.
-    ECOMMERCE_API: "http://localhost:5000/api/v1/"
+    ECOMMERCE_API: "https://api.cotloom.com/api/v1/"
 };
 
 /*

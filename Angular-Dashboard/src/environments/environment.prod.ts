@@ -1,9 +1,9 @@
 export const environment = {
     production: true,
-    appurl: "https://cotloom-ecommerce-dashboard.vercel.app/",
-    SERVER: "https://cotloom-ecommerce-dashboard.vercel.app/",
+    appurl: "https://api.cotloom.com/",
+    SERVER: "https://api.cotloom.com/",
     SERVERURL: "",
     RECORDRURL: "",
     // TODO: point this at the deployed Cotloom backend once it has a production URL.
-    ECOMMERCE_API: "https://cotloomecommerce-production.up.railway.app/api/v1/"
+    ECOMMERCE_API: "https://api.cotloom.com/api/v1/"
 };
